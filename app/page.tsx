@@ -13,7 +13,7 @@ export default function Home() {
           <Articles />
         </div>
         <div className="flex flex-col my-8">
-          <Link href="/chatrooms" className="px-4 text-2xl font-bold text-gray-700 dark:text-gray-300">채팅 목록</Link>
+          <Link href="/chatroom" className="px-4 text-2xl font-bold text-gray-700 dark:text-gray-300">채팅 목록</Link>
           <ChatRooms />
         </div>
       </div>

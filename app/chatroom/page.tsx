@@ -10,7 +10,7 @@ export default function Page() {
       <Header />
       <div className="flex flex-col border-x border-gray-400 mt-12 p-4 w-full max-w-xl h-full bg-white dark:bg-gray-700">
         <div className="w-full h-full">
-        <ChatRooms />
+          <ChatRooms />
         </div>
         <div className="flex justify-end w-full h-8">
           <Link
