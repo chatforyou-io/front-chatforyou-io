@@ -5,7 +5,6 @@ import Header from "@/components/Header";
 import Link from "next/link";
 
 export default function Page() {
-
   return (
     <main className="flex flex-col items-center justify-center h-full bg-gray-200 dark:bg-gray-900 transition-colors duration-500">
       <Header />

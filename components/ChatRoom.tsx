@@ -15,7 +15,7 @@ type SessionState = {
 
 export default function ChatRoom() {  
   const ovRef = useRef<OpenVidu | null>(null);
-  const [sessionState, setSessioState] = useState<SessionState>({
+  const [sessionState, setSessionState] = useState<SessionState>({
     sessionId: '',
     userName: '',
     session: undefined,
@@ -32,7 +32,7 @@ export default function ChatRoom() {
     const sessionObj = sessionState;
     if (!sessionObj.session) {
       sessionObj.session = ovRef.current?.initSession();
-      setSessioState(sessionObj);
+      setSessionState(sessionObj);
     };
     if (!sessionObj.session) {
       return;
@@ -52,7 +52,7 @@ export default function ChatRoom() {
       const subscriber = sessionObj.session.subscribe(event.stream, undefined);
       sessionObj.subscribers.push(subscriber);
 
-      setSessioState(sessionObj);
+      setSessionState(sessionObj);
     });
 
     // On every Stream destroyed...
@@ -71,7 +71,7 @@ export default function ChatRoom() {
         subscribers.splice(index, 1);
         sessionObj.subscribers = subscribers;
 
-        setSessioState(sessionObj);
+        setSessionState(sessionObj);
       }
     });
 
@@ -121,7 +121,7 @@ export default function ChatRoom() {
           sessionObj.currentVideoDevice = currentVideoDevice;
           sessionObj.mainStreamManager = publisher;
           sessionObj.publisher = publisher;
-          setSessioState(sessionObj);
+          setSessionState(sessionObj);
         })
         .catch((error) => {
           console.log('There was an error connecting to the session:', error.code, error.message);
@@ -133,19 +133,23 @@ export default function ChatRoom() {
     // --- 1) Get an OpenVidu object ---
     ovRef.current = new OpenVidu();
   }, []);
+  
+  useEffect(() => {
+    console.log(sessionState);
+  }, [sessionState]);
 
   const handleChangeUserName = (event: ChangeEvent<HTMLInputElement>) => {
     const sessionObj = sessionState;
     sessionObj.userName = event.target.value;
 
-    setSessioState(sessionObj);
+    setSessionState(sessionObj);
   }
 
   const handleChangeSessionId = (event: ChangeEvent<HTMLInputElement>) => {
     const sessionObj = sessionState;
     sessionObj.sessionId = event.target.value;
 
-    setSessioState(sessionObj);
+    setSessionState(sessionObj);
   }
 
   function deleteSubscriber(streamManager: StreamManager) {
@@ -223,6 +227,10 @@ export default function ChatRoom() {
           <input className="btn btn-lg btn-success" name="commit" type="submit" value="JOIN" />
         </p>
       </form>
+      {sessionState.mainStreamManager !== undefined ? (
+        <div id="main-video" className="col-md-6">
+        </div>
+    ) : null}
     </div>
   );
 }
