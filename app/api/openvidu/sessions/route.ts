@@ -15,10 +15,11 @@ export async function POST(req: NextRequest) {
         'Authorization': 'Basic ' + btoa(process.env.OPENVIDU_USERNAME + ':' + process.env.OPENVIDU_PASSWORD),
         'Content-Type': 'application/json',
         'Mode': 'no-cors',
-        'customSessionId': customSessionId
-      }
+      },
+      body: JSON.stringify({ customSessionId: customSessionId }),
     })
       .then(response => response.json());
+    console.log(data);
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
     console.error('세션 생성 중 오류 발생:', error);

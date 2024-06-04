@@ -7,7 +7,7 @@ export async function POST(req: NextRequest, { params }: { params: { sessionId: 
   }
 
   try {
-    const data = await fetch(process.env.OPENVIDU_URL + '/api/sessions/' + params.sessionId + '/connections', {
+    const data = await fetch(process.env.OPENVIDU_URL + '/api/sessions/' + params.sessionId + '/connection', {
       method: 'POST',
       headers: {
         'Authorization': 'Basic ' + btoa(process.env.OPENVIDU_USERNAME + ':' + process.env.OPENVIDU_PASSWORD),
