@@ -16,6 +16,7 @@ export default function Home() {
           <Link href="/chatroom" className="px-4 text-2xl font-bold text-gray-700 dark:text-gray-300">채팅 목록</Link>
           <ChatRooms />
         </div>
+        <Link href="/test/openvidu" className="px-4 text-2xl font-bold text-gray-700 dark:text-gray-300">테스트</Link>
       </div>
     </main>
   );
