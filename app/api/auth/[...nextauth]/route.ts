@@ -1,5 +1,4 @@
 import NextAuth, { NextAuthOptions } from 'next-auth'
-import FacebookProvider from 'next-auth/providers/facebook'
 import NaverProvider from 'next-auth/providers/naver'
 import KakaoProvider from 'next-auth/providers/kakao'
 import GoogleProvider from 'next-auth/providers/google'
