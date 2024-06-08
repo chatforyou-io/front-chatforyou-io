@@ -33,6 +33,10 @@ export default function Header() {
       <div className="flex justify-between border-b border-gray-400 bg-white dark:bg-gray-700 px-4 py-2 text-right transition-colors duration-500">
         <Link href="/" className="text-2xl font-bold text-gray-700 dark:text-gray-300 transition-colors duration-500">ChatForYou.io</Link>
         <div className="flex gap-2">
+          <Link
+            href="/test/openvidu"
+            className="flex justify-center items-center border border-gray-400 px-2 bg-white dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 rounded"
+          >OV Test</Link>
           <label
             htmlFor="toggle"        
             onClick={handleDarkMode}

@@ -1,6 +1,6 @@
 interface OpenviduState {
-  sessionId: string,
-  userName: string,
+  mySessionId: string,
+  myUserName: string,
   session: Session | undefined,
   currentVideoDevice: Device | undefined,
   mainStreamManager: StreamManager | undefined,
