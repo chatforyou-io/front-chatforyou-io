@@ -22,7 +22,7 @@ export default function LoginButtons() {
             height={32}
           />
         </div>
-        <p>Kakao</p>
+        <p className="text-gray-700 dark:text-gray-300">Kakao</p>
       </button>
       <button
         onClick={() => handleClick('naver')}
@@ -35,7 +35,7 @@ export default function LoginButtons() {
             height={28}
           />
         </div>
-        <p>Naver</p>
+        <p className="text-gray-700 dark:text-gray-300">Naver</p>
       </button>
       <button
         onClick={() => handleClick('google')}
@@ -48,7 +48,7 @@ export default function LoginButtons() {
             height={36}
           />
         </div>
-        <p>Google</p>
+        <p className="text-gray-700 dark:text-gray-300">Google</p>
       </button>
     </div>
   );

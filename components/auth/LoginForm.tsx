@@ -35,7 +35,7 @@ export default function LoginForm() {
     <>
       <form
         onSubmit={handleSubmit}
-        className='flex flex-col gap-6 justify-center w-full bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded'
+        className='flex flex-col gap-6 justify-center w-full text-gray-700 dark:text-gray-300 rounded'
       >
         <div className='flex flex-col items-center gap-2 w-full'>
           <input
