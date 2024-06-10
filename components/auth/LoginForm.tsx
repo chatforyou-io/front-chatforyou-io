@@ -33,28 +33,26 @@ export default function LoginForm() {
 
   return (
     <>
-      { errorMessage && LoginAlert(errorMessage) }
       <form
         onSubmit={handleSubmit}
-        className='flex flex-col gap-4 justify-center w-96 border border-black dark:border-white bg-white dark:bg-black text-black dark:text-white p-4 rounded'
+        className='flex flex-col gap-6 justify-center w-full text-gray-700 dark:text-gray-300 rounded'
       >
-        <div className='flex justify-between items-center gap-2'>
-          <label className='font-bold' htmlFor='username'>아이디</label>
+        <div className='flex flex-col items-center gap-2 w-full'>
           <input
             type='text'
             ref={usernameRef}
-            className='p-2 w-52 border border-black dark:border-white bg-white dark:bg-black text-black dark:text-white hover:bg-neutral-300 dark:hover:bg-neutral-500 focus:bg-neutral-300 dark:focus:bg-neutral-500 placeholder:text-neutral-500 dark:placeholder:text-neutral-300 outline-none rounded'
-            placeholder='아이디를 입력해주세요' />
-        </div>
-        <div className='flex justify-between items-center gap-2'>
-          <label className='font-bold' htmlFor='password'>비밀번호</label>
+            className='border border-gray-700 dark:border-gray-300 p-2 w-full text-gray-700 outline-none rounded'
+            placeholder='이메일 주소' />
           <input
             type='password'
             ref={passwordRef}
-            className='p-2 w-52 border border-black dark:border-white bg-white dark:bg-black text-black dark:text-white hover:bg-neutral-300 dark:hover:bg-neutral-500 focus:bg-neutral-300 dark:focus:bg-neutral-500 placeholder:text-neutral-500 dark:placeholder:text-neutral-300 outline-none rounded'
-            placeholder='비밀번호를 입력해주세요' />
+            className='border border-gray-700 dark:border-gray-300 p-2 w-full text-gray-700 outline-none rounded'
+            placeholder='비밀번호' />
         </div>
-        <button className='w-full border border-black dark:border-white bg-white dark:bg-black text-black dark:text-white p-2 font-bold hover:bg-neutral-300 dark:hover:bg-neutral-500 active:bg-neutral-500 dark:active:bg-neutral-300 rounded'>로그인</button>
+        <div className="flex flex-col gap-2">
+          <p className="hover:text-neutral-500 dark:hover:text-neutral-300 text-sm">비밀번호를 잊으셨나요?</p>
+          <button className='w-full border border-gray-700 dark:border-gray-300 p-2 font-bold hover:bg-gray-200 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 rounded'>로그인</button>
+        </div>
       </form>
     </>
   );
@@ -63,7 +61,7 @@ export default function LoginForm() {
 const LoginAlert = (errorMessage: string) => {
   return (
     <div
-      className='border border-black dark:border-white bg-white dark:bg-black text-black dark:text-white p-4 w-96 rounded'
+      className='border border-gray-700 dark:border-gray-300 bg-white dark:bg-black text-black dark:text-white p-4 w-96 rounded'
       role='alert'
     >{errorMessage}</div>
   );

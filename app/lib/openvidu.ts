@@ -1,6 +1,6 @@
 export const getToken = async (customSessionId: string) => {
   let sessionId = await getSession(customSessionId);
-  if (!sessionId) {
+  if (sessionId.error) {
     sessionId = await createSession(customSessionId);
   }
   
