@@ -1,19 +1,19 @@
 export const getToken = async (customSessionId: string) => {
-  let sessionId = await getSession(customSessionId);
-  if (sessionId.error) {
-    sessionId = await createSession(customSessionId);
+  let session = await getSession(customSessionId);
+  if (session.error) {
+    session = await createSession(customSessionId);
   }
   
-  if (!sessionId) {
+  if (!session) {
     throw new Error('Session ID is not valid');
   }
 
-  const token = await createToken(sessionId);
-  return token;
+  const connection = await createConnection(session.sessionId);
+  return connection.token;
 }
 
 const getSession = async (customSessionId: string) => {
-  const sessionId = await fetch('/api/openvidu/sessions/' + customSessionId, {
+  const session = await fetch('/api/openvidu/sessions/' + customSessionId, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -21,11 +21,11 @@ const getSession = async (customSessionId: string) => {
     },
   })
     .then(response => response.json());
-  return sessionId;
+  return session;
 }
 
 const createSession = async (customSessionId: string) => {
-  const sessionId = await fetch('/api/openvidu/sessions', {
+  const session = await fetch('/api/openvidu/sessions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -33,17 +33,16 @@ const createSession = async (customSessionId: string) => {
     },
   })
     .then(response => response.json());
-  return sessionId;
+  return session;
 }
 
-const createToken = async (sessionId: string) => {
-  const token = await fetch('/api/openvidu/sessions/' + sessionId + '/connections', {
+const createConnection = async (sessionId: string) => {
+  const connection = await fetch('/api/openvidu/sessions/' + sessionId + '/connections', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
   })
-    .then(response => response.json())
-    .then(data => data.token);
-  return token;
+    .then(response => response.json());
+  return connection;
 }

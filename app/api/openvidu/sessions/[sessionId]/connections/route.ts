@@ -13,9 +13,12 @@ export async function POST(req: NextRequest, { params }: { params: { sessionId: 
         'Authorization': 'Basic ' + btoa(process.env.OPENVIDU_USERNAME + ':' + process.env.OPENVIDU_PASSWORD),
         'Content-Type': 'application/json',
         'Mode': 'no-cors',
+        'RejectUnauthorized': 'false',
       }
     })
       .then(response => response.json());
+    console.log('커넥션 생성');
+    console.log(data);
       
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
