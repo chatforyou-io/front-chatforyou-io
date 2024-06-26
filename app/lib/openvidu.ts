@@ -1,48 +1,40 @@
-export const getToken = async (customSessionId: string) => {
-  let session = await getSession(customSessionId);
-  if (session.error) {
-    session = await createSession(customSessionId);
-  }
-  
-  if (!session) {
-    throw new Error('Session ID is not valid');
-  }
+import axios from "axios";
 
-  const connection = await createConnection(session.sessionId);
-  return connection.token;
+const OPENVIDU_HOST = process.env.NEXT_PUBLIC_OPENVIDU_HOST!;
+const OPENVIDU_USERNAME = process.env.NEXT_PUBLIC_OPENVIDU_USERNAME!;
+const OPENVIDU_PASSWORD = process.env.NEXT_PUBLIC_OPENVIDU_PASSWORD!;
+const OPENVIDU_CREDENTIALS = btoa(OPENVIDU_USERNAME + ':' + OPENVIDU_PASSWORD);
+
+export const getToken = async (mySessionId: string) => {
+  const sessionId = await createSession(mySessionId);
+  return await createToken(sessionId);
 }
 
-const getSession = async (customSessionId: string) => {
-  const session = await fetch('/api/openvidu/sessions/' + customSessionId, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'customSessionId': customSessionId
-    },
-  })
-    .then(response => response.json());
-  return session;
-}
-
-const createSession = async (customSessionId: string) => {
-  const session = await fetch('/api/openvidu/sessions', {
+const createSession = async (sessionId: string) => {
+  const data = await fetch(OPENVIDU_HOST + '/api/sessions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'customSessionId': customSessionId
+      'Authorization': 'Basic ' + OPENVIDU_CREDENTIALS,
+      'Access-Control-Allow-Origin': OPENVIDU_HOST,
+      'Access-Control-Allow-Credentials': 'true',
+      'rejectUnauthorized': 'false',
     },
-  })
-    .then(response => response.json());
-  return session;
+    body: JSON.stringify({ customSessionId: sessionId }),
+  }).then((response) => response.json());
+  return data.id; // The sessionId
 }
 
-const createConnection = async (sessionId: string) => {
-  const connection = await fetch('/api/openvidu/sessions/' + sessionId + '/connections', {
+const createToken = async (sessionId: string) => {
+  const data = await fetch(OPENVIDU_HOST + '/api/sessions/' + sessionId + '/connection', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': 'Basic ' + OPENVIDU_CREDENTIALS,
+      'Access-Control-Allow-Origin': OPENVIDU_HOST,
+      'Access-Control-Allow-Credentials': 'true',
+      'rejectUnauthorized': 'false',
     },
-  })
-    .then(response => response.json());
-  return connection;
+  }).then((response) => response.json());
+  return data.token; // The token
 }
