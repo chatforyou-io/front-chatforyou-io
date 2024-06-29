@@ -1,11 +1,10 @@
 'use client';
 
 import Header from '@/components/Header';
-import { getToken } from '@/app/lib/openvidu';
 import { Device, OpenVidu, Publisher, Session, StreamManager, Subscriber } from 'openvidu-browser';
-import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
-import { set } from 'firebase/database';
+import { FormEvent, useEffect, useRef, useState } from "react";
 import UserVideo from '@/components/openvidu/UserVideo';
+import { getToken } from '@/lib/openvidu';
 
 export default function ChatRoom() {
   const mySessionIdRef = useRef<HTMLInputElement>(null);
@@ -112,20 +111,22 @@ export default function ChatRoom() {
           <h1 className="text-xl font-bold">Join a video session</h1>
           <form className="flex flex-col gap-2 w-full max-w-xs" onSubmit={joinSession}>
             <div className="flex justify-between items-center gap-4 w-full">
-              <label className="font-bold">Username</label>
-              <input
-                type="text"
-                ref={myUserNameRef}
-                className='border border-black px-2 py-1 w-full rounded'
-                required
-              />
-            </div>
-            <div className="flex justify-between items-center gap-4 w-full">
               <label className="font-bold">Sessionid</label>
               <input
                 type="text"
                 ref={mySessionIdRef}
                 className='border border-black px-2 py-1 w-full rounded'
+                defaultValue='SessionA'
+                required
+              />
+            </div>
+            <div className="flex justify-between items-center gap-4 w-full">
+              <label className="font-bold">Username</label>
+              <input
+                type="text"
+                ref={myUserNameRef}
+                className='border border-black px-2 py-1 w-full rounded'
+                defaultValue={'Participant' + Math.floor(Math.random() * 100)}
                 required
               />
             </div>

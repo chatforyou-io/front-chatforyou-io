@@ -19,9 +19,7 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({ customSessionId: customSessionId }),
     })
-      .then(response => response.json());
-    console.log('세션 생성');
-    console.log(data);
+      .then(response => response.text());
       
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
