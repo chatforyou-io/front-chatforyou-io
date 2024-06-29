@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import { Device, OpenVidu, Publisher, Session, StreamManager, Subscriber } from 'openvidu-browser';
 import { FormEvent, useEffect, useRef, useState } from "react";
 import UserVideo from '@/components/openvidu/UserVideo';
-import { getToken } from '@/app/lib/openvidu';
+import { getToken } from '@/lib/openvidu';
 
 export default function ChatRoom() {
   const mySessionIdRef = useRef<HTMLInputElement>(null);
