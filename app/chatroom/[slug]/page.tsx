@@ -1,6 +1,6 @@
 'use client';
 
-import Articles from "@/components/Articles";
+import ChatRoom from "@/components/ChatRoom";
 import Header from "@/components/Header";
 import Link from "next/link";
 
@@ -10,7 +10,7 @@ export default function Page() {
       <Header />
       <div className="flex flex-col mt-12 p-4 w-full max-w-xl h-full">
         <div className="w-full h-full">
-          <Articles />
+          <ChatRoom />
         </div>
         <div className="flex justify-end w-full h-8">
           <Link
