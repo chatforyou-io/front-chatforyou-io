@@ -16,9 +16,6 @@ const createSession = async (sessionId: string) => {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Basic ' + OPENVIDU_CREDENTIALS,
-      'Access-Control-Allow-Origin': OPENVIDU_HOST,
-      'Access-Control-Allow-Credentials': 'true',
-      'rejectUnauthorized': 'false',
     },
     body: JSON.stringify({ customSessionId: sessionId }),
   }).then((response) => response.json());
@@ -31,9 +28,6 @@ const createToken = async (sessionId: string) => {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Basic ' + OPENVIDU_CREDENTIALS,
-      'Access-Control-Allow-Origin': OPENVIDU_HOST,
-      'Access-Control-Allow-Credentials': 'true',
-      'rejectUnauthorized': 'false',
     },
   }).then((response) => response.json());
   return data.token; // The token
