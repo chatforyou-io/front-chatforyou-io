@@ -14,41 +14,41 @@ export default function LoginButtons() {
       <button
         onClick={() => handleClick('kakao')}
         className="flex flex-col justify-center items-center gap-2">
-        <div className="flex justify-center items-center w-12 h-12 bg-yellow-400 shadow">
+        <div className="flex justify-center items-center w-16 h-16 bg-yellow-400 shadow rounded-2xl">
           <Image
             src="/images/icon-kakao.svg"
-            alt="naver"
-            width={32}
-            height={32}
-          />
-        </div>
-        <p className="text-gray-700 dark:text-gray-300">Kakao</p>
-      </button>
-      <button
-        onClick={() => handleClick('naver')}
-        className="flex flex-col justify-center items-center gap-2">
-        <div className="flex justify-center items-center w-12 h-12 bg-green-600 shadow">
-          <Image
-            src="/images/icon-naver.svg"
-            alt="naver"
-            width={28}
-            height={28}
-          />
-        </div>
-        <p className="text-gray-700 dark:text-gray-300">Naver</p>
-      </button>
-      <button
-        onClick={() => handleClick('google')}
-        className="flex flex-col justify-center items-center gap-2">      
-        <div className="flex justify-center items-center w-12 h-12 bg-white shadow">
-          <Image
-            src="/images/icon-google.svg"
             alt="naver"
             width={36}
             height={36}
           />
         </div>
-        <p className="text-gray-700 dark:text-gray-300">Google</p>
+        <p className="text-lg text-gray-700 dark:text-gray-300">Kakao</p>
+      </button>
+      <button
+        onClick={() => handleClick('naver')}
+        className="flex flex-col justify-center items-center gap-2">
+        <div className="flex justify-center items-center w-16 h-16 bg-green-600 shadow rounded-2xl">
+          <Image
+            src="/images/icon-naver.svg"
+            alt="naver"
+            width={32}
+            height={32}
+          />
+        </div>
+        <p className="text-lg text-gray-700 dark:text-gray-300">Naver</p>
+      </button>
+      <button
+        onClick={() => handleClick('google')}
+        className="flex flex-col justify-center items-center gap-2">      
+        <div className="flex justify-center items-center w-16 h-16 bg-white shadow rounded-2xl">
+          <Image
+            src="/images/icon-google.svg"
+            alt="naver"
+            width={40}
+            height={40}
+          />
+        </div>
+        <p className="text-lg text-gray-700 dark:text-gray-300">Google</p>
       </button>
     </div>
   );

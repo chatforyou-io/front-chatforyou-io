@@ -40,18 +40,17 @@ export default function LoginForm() {
         <input
           type='text'
           ref={usernameRef}
-          className='border border-gray-700 dark:border-gray-300 mt-2 p-2 w-full text-gray-700 outline-none rounded'
+          className='border mt-8 px-6 py-4 w-full bg-gray-100 text-xl text-gray-700 placeholder-gray-700 outline-none rounded-full'
           placeholder='이메일 주소' />
         <input
           type='password'
           ref={passwordRef}
-          className='border border-gray-700 dark:border-gray-300 mt-2 p-2 w-full text-gray-700 outline-none rounded'
+          className='border mt-8 px-6 py-4 w-full bg-gray-100 text-xl text-gray-700 placeholder-gray-700 outline-none rounded-full'
           placeholder='비밀번호' />
-        <div className='flex justify-between mt-2 w-full'>
-          <p className="hover:text-neutral-500 dark:hover:text-neutral-300 text-sm">비밀번호를 잊으셨나요?</p>
-          <Link href="/auth/signup" className="hover:text-neutral-500 dark:hover:text-neutral-300 text-sm">가입하기</Link>
+        <div className='mt-8 w-full'>
+          <p className="text-blue-500 text-xl font-semibold">비밀번호를 잊으셨나요?</p>
         </div>
-        <button className='w-full border border-gray-700 dark:border-gray-300 mt-2 p-2 font-bold hover:bg-gray-200 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 rounded'>로그인</button>
+        <button className='w-full border mt-8 px-6 py-4 bg-blue-500 text-xl text-white rounded-full'>로그인</button>
       </form>
     </>
   );
