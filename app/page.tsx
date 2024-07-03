@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <main className="flex flex-col items-center justify-center h-full bg-white transition-colors duration-500">
       <Header />
-      <div className="flex flex-col mt-12 p-4 w-full max-w-xl h-full">
+      <div className="flex flex-col mt-20 p-4 w-full max-w-xl h-full">
         <div className="flex flex-col my-8">
           <Link href="/articles" className="px-4 text-2xl font-bold text-gray-700">게시글</Link>
           <Articles />

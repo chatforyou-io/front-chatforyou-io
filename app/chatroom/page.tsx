@@ -8,7 +8,7 @@ export default function Page() {
   return (
     <main className="flex flex-col items-center justify-center h-full bg-white dark:bg-gray-700 transition-colors duration-500">
       <Header />
-      <div className="flex flex-col mt-12 p-4 w-full max-w-xl h-full">
+      <div className="flex flex-col mt-20 p-4 w-full max-w-xl h-full">
         <div className="w-full h-full">
           <ChatRooms />
         </div>
