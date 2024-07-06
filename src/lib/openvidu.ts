@@ -1,5 +1,3 @@
-import axios from "axios";
-
 const OPENVIDU_HOST = process.env.NEXT_PUBLIC_OPENVIDU_HOST!;
 const OPENVIDU_USERNAME = process.env.NEXT_PUBLIC_OPENVIDU_USERNAME!;
 const OPENVIDU_PASSWORD = process.env.NEXT_PUBLIC_OPENVIDU_PASSWORD!;
@@ -11,24 +9,28 @@ export const getToken = async (mySessionId: string) => {
 }
 
 const createSession = async (sessionId: string) => {
-  const data = await fetch(OPENVIDU_HOST + '/api/sessions', {
+  const data = await fetch(OPENVIDU_HOST + '/openvidu/api/sessions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Basic ' + OPENVIDU_CREDENTIALS,
+      'Access-Control-Allow-Origin': '*',
     },
     body: JSON.stringify({ customSessionId: sessionId }),
   }).then((response) => response.json());
+  console.log(data);
   return data.id; // The sessionId
 }
 
 const createToken = async (sessionId: string) => {
-  const data = await fetch(OPENVIDU_HOST + '/api/sessions/' + sessionId + '/connection', {
+  const data = await fetch(OPENVIDU_HOST + '/openvidu/api/sessions/' + sessionId + '/connection', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Basic ' + OPENVIDU_CREDENTIALS,
+      'Access-Control-Allow-Origin': '*',
     },
   }).then((response) => response.json());
+  console.log(data);
   return data.token; // The token
 }
