@@ -4,7 +4,6 @@ import { Device, OpenVidu, Publisher, Session, StreamManager, Subscriber } from 
 import { FormEvent, useEffect, useRef, useState } from "react";
 import UserVideo from '@/src/components/openvidu/UserVideo';
 import { getToken } from '@/src/lib/openvidu';
-import SignUpRoom from '@/src/components/openvidu/SignUpRoom';
 
 interface FormData {
   mySessionId: string;
@@ -13,7 +12,9 @@ interface FormData {
 }
 
 export default function Page() {
-  const [formData, setFormData] = useState<FormData | undefined>(undefined);
+  const mySessionIdRef = useRef<HTMLInputElement>(null);
+  const myUserNameRef = useRef<HTMLInputElement>(null);
+  const maxUserCountRef = useRef<HTMLInputElement>(null);
   const [ov, setOv] = useState<OpenVidu | undefined>(undefined);
   const [session, setSession] = useState<Session | undefined>(undefined);
   const [currentVideoDevice, setCurrentVideoDevice] = useState<Device | undefined>(undefined);
@@ -21,12 +22,8 @@ export default function Page() {
   const [publisher, setPublisher] = useState<Publisher | undefined>(undefined);
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
 
-  const getFormData = async (formData: FormData) => {
-    setFormData(formData);
-  }
-
-  useEffect(() => {
-    if (!formData) return;
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
 
     // --- 1) Get an OpenVidu object ---
     const newOv = new OpenVidu();
@@ -35,7 +32,7 @@ export default function Page() {
     // --- 2) Init a session ---
     const newSession = newOv.initSession();
     setSession(newSession);
-  }, [formData]);
+  };
     
   useEffect(() => {
     if (!ov || !session) return;
@@ -69,8 +66,9 @@ export default function Page() {
 
     // --- 4) Connect to the session with a valid user token ---
     // Get a token from the OpenVidu deployment
-    const mySessionId = formData!.mySessionId!;
-    const myUserName = formData!.myUsername!;
+    const mySessionId = mySessionIdRef.current!.value;
+    const myUserName = mySessionIdRef.current!.value;
+    const maxUserCount = parseInt(maxUserCountRef.current!.value);
 
     getToken(mySessionId).then((token) => {      
       // First param is the token got from the OpenVidu deployment. Second param can be retrieved by every user on event
@@ -110,15 +108,44 @@ export default function Page() {
           console.log('There was an error connecting to the session:', error.code, error.message);
         });
     });
-  }, [ov, session]);
+  }, [ov, session, subscribers]);
 
   return (
     <>
       <div className="flex flex-col items-center gap-4">
         <h1 className="text-gray-700 text-[2.5rem] font-semibold">방 만들기</h1>
       </div>
-      <div className="mt-12 mx-auto px-8">
-        <SignUpRoom onSubmit={getFormData} />
+      <div className="mt-12 mx-auto px-8"> 
+        <form className="w-full max-w-md" onSubmit={handleSubmit}>
+          <input
+            type="text"
+            ref={mySessionIdRef}
+            className="border mt-8 px-6 py-4 w-full bg-gray-100 text-xl text-gray-700 placeholder-gray-700 outline-none rounded-full"
+            placeholder="제목"
+            defaultValue="SessionA"
+            required
+          />
+          <input
+            type="text"
+            ref={myUserNameRef}
+            className="border mt-8 px-6 py-4 w-full bg-gray-100 text-xl text-gray-700 placeholder-gray-700 outline-none rounded-full"
+            placeholder="참가자 이름"
+            defaultValue={"Participant" + Math.floor(Math.random() * 100)}
+            required
+          />
+          <input
+            type="text"
+            ref={maxUserCountRef}
+            className="border mt-8 px-6 py-4 w-full bg-gray-100 text-xl text-gray-700 placeholder-gray-700 outline-none rounded-full"
+            placeholder="최대 참가자 수"
+            defaultValue="2"
+            required
+          />
+          <button
+            type="submit"
+            className="w-full border mt-8 px-6 py-4 bg-blue-500 text-xl text-white text-center rounded-full"
+          >방 만들기</button>
+        </form>
         {session && (
           <UserVideo
             publisher={publisher as Publisher}
