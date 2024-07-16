@@ -32,11 +32,11 @@ export default function Header() {
     <div className="absolute top-0 w-full">
       <div className="flex justify-between items-center border-b border-gray-400 bg-white px-4 py-2 h-20 text-right transition-colors duration-500">
         <Link href="/" className="text-3xl font-bold text-blue-500 transition-colors duration-500">ChatForYou.io</Link>
-        <div className="flex gap-2">
+        <div className="flex gap-8">
           <Link
-            href="/test/openvidu"
-            className="flex justify-center items-center border border-gray-400 px-2 bg-white hover:bg-gray-200 text-gray-700 rounded"
-          >OV Test</Link>
+            href="/test"
+            className="border px-6 py-4 bg-blue-500 text-xl text-white text-center rounded-full"
+          >테스트</Link>
           {
             false &&
             <label
