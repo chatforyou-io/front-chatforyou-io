@@ -1,6 +1,6 @@
 'use client';
 
-import SignUpRoom from "@/src/components/openvidu/SignUpRoom";
+import SignUpChatroom from "@/src/components/chatroom/SignUpChatroom";
 
 interface FormData {
   mySessionId: string;
@@ -18,8 +18,8 @@ export default function Page() {
       <div className="flex flex-col items-center gap-4">
         <h1 className="text-gray-700 text-[2.5rem] font-semibold">방 만들기</h1>
       </div>
-      <div className="mt-12 mx-auto px-8">
-        <SignUpRoom onSubmit={getFormData} />
+      <div className="mt-12 mx-auto px-8 w-full">
+        <SignUpChatroom onSubmit={getFormData} />
       </div>
     </>
   );
