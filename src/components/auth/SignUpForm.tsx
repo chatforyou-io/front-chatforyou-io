@@ -33,13 +33,15 @@ export default function SignUpForm() {
       return;
     }
 
-    const data = await fetch(`/api/user/validate?id=${id}`, {
+    const response = await fetch(`/api/user/validate?id=${id}`, {
       method: 'GET',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
-    }).then(response => response.json());
+    });
 
+    const data = await response.json();
     if (!data.isSuccess) {
       alert('이미 등록된 이메일 주소입니다.');
       return;

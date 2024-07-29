@@ -11,7 +11,6 @@ export async function GET(req: Request) {
     }
 
     const result = await userValidate(id);
-    console.log(result);
     return NextResponse.json(result, { status: 201 });
   } catch (error) {
     console.error('fail get user info: ' + error);

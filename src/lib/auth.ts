@@ -191,7 +191,7 @@ const userValidate = async (email: string) => {
     let mailCode = '';
     const setCookieHeader = apiResponse.headers.get('set-Cookie');
     if (setCookieHeader) {
-      // 쿠키 문자열을 파싱하여 'hello-world' 키의 값을 찾습니다.
+      // 쿠키 문자열을 파싱하여 'mailCode' 키의 값을 찾습니다.
       const cookies = setCookieHeader.split(';').map(cookie => cookie.trim());
       for (const cookie of cookies) {
         if (cookie.startsWith('mailCode=')) {
