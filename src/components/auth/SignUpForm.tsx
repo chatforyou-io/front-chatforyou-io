@@ -33,7 +33,7 @@ export default function SignUpForm() {
       return;
     }
 
-    const data = await fetch(`/api/user/validate/${id}`, {
+    const data = await fetch(`/api/user/validate?id=${id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

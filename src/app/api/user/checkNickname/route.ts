@@ -1,4 +1,4 @@
-import { userValidate } from '@/src/lib/auth';
+import { userCheckNickname } from '@/src/lib/auth';
 import { NextResponse } from 'next/server';
 
 export async function GET(req: Request) {
@@ -10,11 +10,10 @@ export async function GET(req: Request) {
       throw new Error('id is required');
     }
 
-    const result = await userValidate(id);
-    console.log(result);
+    const result = await userCheckNickname(id);
     return NextResponse.json(result, { status: 201 });
   } catch (error) {
-    console.error('fail get user info: ' + error);
-    return NextResponse.json({ result: 'fail validate' }, { status: 501 });
+    console.error('fail check nickname: ' + error);
+    return NextResponse.json({ result: 'fail check nickname' }, { status: 501 });
   }
 }

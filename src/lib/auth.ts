@@ -7,7 +7,7 @@ const authToken = btoa(authUsername + ':' + authPassword);
 
 const userCreate = async (user: User) => {
   try {
-    const data = await fetch(`${authHost}/auth/create`, {
+    const data = await fetch(`${authHost}/user/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -21,8 +21,21 @@ const userCreate = async (user: User) => {
       return response.json();
     });
 
+    /*
+      {
+        result: 'success',
+        user_data: {
+          idx: number,
+          id: string,
+          pwd: string,
+          usePwd: boolean,
+          nickName: string,
+          name: string
+        }
+      }
+    */
     data.isSuccess = true;
-    return data; // { isSuccess: true, result: 'send success' }
+    return data;
   } catch (error) {
     console.error('fail validate: ' + error);
     return { isSuccess: false, result: 'fail create' };
@@ -31,7 +44,7 @@ const userCreate = async (user: User) => {
 
 const userUpdate = async (user: User) => {
   try {
-    const data = await fetch(`${authHost}/auth/update`, {
+    const data = await fetch(`${authHost}/user/update`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -45,8 +58,21 @@ const userUpdate = async (user: User) => {
       return response.json();
     });
 
+    /*
+      {
+        result: 'success',
+        user_data: {
+          idx: number,
+          id: string,
+          pwd: string,
+          usePwd: boolean,
+          nickName: string,
+          name: string
+        }
+      }
+    */
     data.isSuccess = true;
-    return data; // { isSuccess: true, result: 'send success' }
+    return data;
   } catch (error) {
     console.error('fail validate: ' + error);
     return { isSuccess: false, result: 'fail update' };
@@ -55,7 +81,7 @@ const userUpdate = async (user: User) => {
 
 const userDelete = async (id: string) => {
   try {
-    const data = await fetch(`${authHost}/auth/delete/${id}`, {
+    const data = await fetch(`${authHost}/user/delete?id=${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -68,17 +94,22 @@ const userDelete = async (id: string) => {
       return response.json();
     });
 
+    /*
+      {
+        "result": "success"
+      }
+    */
     data.isSuccess = true;
-    return data; // { isSuccess: true, result: 'send success' }
+    return data;
   } catch (error) {
     console.error('fail validate: ' + error);
-    return { isSuccess: false, result: 'fail delete' };
+    return { isSuccess: false, result: 'fail delete user' };
   }
 };
 
 const userInfo = async (id: string) => {
   try {
-    const data = await fetch(`${authHost}/auth/info/${id}`, {
+    const data = await fetch(`${authHost}/user/info?id=${id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -91,17 +122,30 @@ const userInfo = async (id: string) => {
       return response.json();
     });
 
+    /*
+      {
+        result: 'success',
+        user_data: {
+          idx: number,
+          id: string,
+          pwd: string,
+          usePwd: boolean,
+          nickName: string,
+          name: string
+        }
+      }
+    */
     data.isSuccess = true;
-    return data; // { isSuccess: true, result: 'send success' }
+    return data;
   } catch (error) {
     console.error('fail validate: ' + error);
     return { isSuccess: false, result: 'fail info' };
   }
 };
 
-const userValidate = async (id: string) => {
+const userCheckNickname = async (nickname: string) => {
   try {
-    const data = await fetch(`${authHost}/auth/validate/${id}`, {
+    const data = await fetch(`${authHost}/user/check_nick_name?nickName=${nickname}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -114,12 +158,63 @@ const userValidate = async (id: string) => {
       return response.json();
     });
 
+    /*
+      {
+        result: 'success',
+        isDuplicate: boolean
+      }
+    */
     data.isSuccess = true;
-    return data; // { isSuccess: true, result: 'send success' }
+    return data;
   } catch (error) {
     console.error('fail validate: ' + error);
     return { isSuccess: false, result: 'fail validate' };
   }
 };
 
-export { userCreate, userUpdate, userDelete, userValidate };
+const userValidate = async (email: string) => {
+  try {
+    const apiResponse = await fetch(`${authHost}/auth/validate?email=${email}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${authToken}`,
+      },
+    });
+  
+    if (!apiResponse.ok) {
+      throw new Error('서버와의 통신 중 오류가 발생했습니다.');
+    }
+
+    const data = await apiResponse.json();
+
+    let mailCode = '';
+    const setCookieHeader = apiResponse.headers.get('set-Cookie');
+    if (setCookieHeader) {
+      // 쿠키 문자열을 파싱하여 'hello-world' 키의 값을 찾습니다.
+      const cookies = setCookieHeader.split(';').map(cookie => cookie.trim());
+      for (const cookie of cookies) {
+        if (cookie.startsWith('mailCode=')) {
+          mailCode = cookie.split('=')[1];
+          break;
+        }
+      }
+    }
+
+    /*
+      {
+        result: 'send success'
+      }
+    */
+    return {
+      isSuccess: true,
+      result: data.result,
+      mailCode: mailCode,
+    };
+  } catch (error) {
+    console.error('fail validate: ' + error);
+    return { isSuccess: false, result: 'fail validate' };
+  }
+};
+
+export { userCreate, userUpdate, userDelete, userInfo, userCheckNickname, userValidate };
