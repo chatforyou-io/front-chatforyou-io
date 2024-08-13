@@ -1,5 +1,6 @@
 'use client';
 
+import PrimaryButton from '@/src/components/atoms/Button/PrimaryButton';
 import { deleteUser } from '@/src/lib/auth';
 
 export default function Page() {
@@ -10,7 +11,7 @@ export default function Page() {
   return (
     <>
       <div className="flex flex-col items-center gap-4 mt-12">
-        <h1 className="text-gray-700 text-[2.5rem] font-semibold">정보수정</h1>
+        <h1 className="text-gray-700 text-[40px] font-semibold">정보수정</h1>
       </div>
       <div className="flex flex-col justify-center items-center gap-8 mt-8 w-full max-w-xl h-full">
         <div className='flex gap-8 w-full items-center'>
@@ -29,7 +30,7 @@ export default function Page() {
         <input type="text" name="nickName" className="w-full border px-6 py-4 text-xl" placeholder="닉네임" />
       </div>
       <div className="flex flex-col justify-center items-center gap-8 mt-8 w-full max-w-xl h-full">
-        <button onClick={handleDelete} className="w-full border px-6 py-4 bg-blue-500 text-xl text-white text-center rounded-full">회원탈퇴</button>
+        <PrimaryButton onClick={handleDelete} label={"회원탈퇴"} />
       </div>
     </>
   );

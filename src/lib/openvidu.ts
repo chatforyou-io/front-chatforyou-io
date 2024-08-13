@@ -9,7 +9,11 @@ export const getToken = async (mySessionId: string) => {
 }
 
 const createSession = async (sessionId: string) => {
-  const data = await fetch(OPENVIDU_HOST + '/api/sessions', {
+  console.log(OPENVIDU_HOST);
+  console.log(OPENVIDU_USERNAME);
+  console.log(OPENVIDU_PASSWORD);
+  console.log(OPENVIDU_CREDENTIALS);
+  const data = await fetch(OPENVIDU_HOST + '/openvidu/api/sessions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -22,7 +26,7 @@ const createSession = async (sessionId: string) => {
 }
 
 const createToken = async (sessionId: string) => {
-  const data = await fetch(OPENVIDU_HOST + '/api/sessions/' + sessionId + '/connection', {
+  const data = await fetch(OPENVIDU_HOST + '/openvidu/api/sessions/' + sessionId + '/connection', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

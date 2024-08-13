@@ -6,7 +6,7 @@ export default function Page() {
   return (
     <>
       <div className="flex flex-col items-center gap-4">
-        <h1 className="text-gray-700 text-[2.5rem] font-semibold">로그인</h1>
+        <h1 className="text-gray-700 text-[40px] font-semibold">로그인</h1>
       </div>
       <div className="flex flex-col justify-center items-center mt-8 w-full">
         <div className="flex flex-col gap-4 border p-8 w-full max-w-xl rounded-3xl">

@@ -4,6 +4,7 @@ import KakaoProvider from 'next-auth/providers/kakao'
 import GoogleProvider from 'next-auth/providers/google'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { addOAuthUser, getOAuthUser, getCredentialsUser } from '@/firebase'
+import { userInfo } from '@/src/lib/auth'
 
 const authOptions: NextAuthOptions = {
   providers: [
@@ -33,8 +34,13 @@ const authOptions: NextAuthOptions = {
           return null;
         }
 
+        const data = await userInfo(credentials.username, credentials.password);
+        if (!data || data.result !== 'success') {
+          return null;
+        }
+
         // 회원 조회 (User 객체 또는 null 반환)
-        return getCredentialsUser(credentials.username, credentials.password);
+        return data.userData;
       }
     })
   ],

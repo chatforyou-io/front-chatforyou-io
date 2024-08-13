@@ -8,6 +8,13 @@ declare module 'next-auth' {
 
   interface User {
     provider: string,
-    username: string
+    idx: number,
+    id: string,
+    pwd: string,
+    confirmPwd: string,
+    use_pwd: boolean,
+    name: string,
+    nick_name: string,
+    create_date: date,
   }
 }

@@ -107,9 +107,10 @@ const userDelete = async (id: string) => {
   }
 };
 
-const userInfo = async (id: string) => {
+const userInfo = async (id: string, pwd: string) => {
   try {
-    const data = await fetch(`${authHost}/user/info?id=${id}`, {
+    const querysting = new URLSearchParams({ id, pwd }).toString();
+    const data = await fetch(`${authHost}/user/info?${querysting}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -128,7 +129,6 @@ const userInfo = async (id: string) => {
         user_data: {
           idx: number,
           id: string,
-          pwd: string,
           usePwd: boolean,
           nickName: string,
           name: string
@@ -138,7 +138,7 @@ const userInfo = async (id: string) => {
     data.isSuccess = true;
     return data;
   } catch (error) {
-    console.error('fail validate: ' + error);
+    console.error('fail info: ' + error);
     return { isSuccess: false, result: 'fail info' };
   }
 };
@@ -187,18 +187,18 @@ const userValidate = async (email: string) => {
     }
 
     const data = await apiResponse.json();
-    const cookies = apiResponse.headers.get('set-Cookie');
-    
+
     let mailCode = '';
-    if (cookies) {
+    const setCookieHeader = apiResponse.headers.get('set-Cookie');
+    if (setCookieHeader) {
       // 쿠키 문자열을 파싱하여 'mailCode' 키의 값을 찾습니다.
-      mailCode = cookies.split(';')
-        .map(cookie => cookie.trim())
-        .filter(cookie => cookie.startsWith('mailCode='))
-        .map(cookie => cookie.split('=')[1])[0];
-    }
-    if (!mailCode) {
-      throw new Error('mailCode not found');
+      const cookies = setCookieHeader.split(';').map(cookie => cookie.trim());
+      for (const cookie of cookies) {
+        if (cookie.startsWith('mailCode=')) {
+          mailCode = cookie.split('=')[1];
+          break;
+        }
+      }
     }
 
     /*
@@ -206,10 +206,11 @@ const userValidate = async (email: string) => {
         result: 'send success'
       }
     */
-    data.isSuccess = true;
-    data.mailCode = mailCode;
-    data.expires = new Date().getTime() + 1000 * 60 * 5; // 5분
-    return data;
+    return {
+      isSuccess: true,
+      result: data.result,
+      mailCode: mailCode,
+    };
   } catch (error) {
     console.error('fail validate: ' + error);
     return { isSuccess: false, result: 'fail validate' };

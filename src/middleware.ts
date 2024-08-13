@@ -6,6 +6,8 @@ export async function middleware(req: NextRequest) {
   const token = await getToken({ req });
   const path = req.nextUrl.pathname;
 
+  console.log(token);
+
   if (token && path.startsWith('/auth/')) {
     // Skip the middleware for the login and signup pages
     return NextResponse.redirect(`${req.nextUrl.origin}/`);

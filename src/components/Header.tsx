@@ -4,11 +4,14 @@ import clsx from "clsx";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState, MouseEvent } from "react";
+import PrimaryButton from "./atoms/Button/PrimaryButton";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
   const session = useSession();
 	const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
 	const [isProfileActive, setIsProfileActive] = useState<boolean>(false);
+  const router = useRouter();
 
 	const handleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
@@ -28,15 +31,16 @@ export default function Header() {
     signOut({ callbackUrl: '/auth/login'});
   }
 
+  const moveToTest = () => {
+    router.push('/test');
+  }
+
   return (
     <div className="absolute top-0 w-full">
       <div className="flex justify-between items-center border-b border-gray-400 bg-white px-4 py-2 h-20 text-right transition-colors duration-500">
         <Link href="/" className="text-3xl font-bold text-blue-500 transition-colors duration-500">ChatForYou.io</Link>
         <div className="flex gap-4">
-          <Link
-            href="/test"
-            className='w-full border px-6 py-4 bg-blue-500 text-xl text-white rounded-full'
-          >테스트</Link>
+          <PrimaryButton onClick={moveToTest} label={"테스트"} />
           {
             false &&
             <label
