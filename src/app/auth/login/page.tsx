@@ -1,33 +1,48 @@
 'use client';
  
-import GoogleButton from "@/src/components/atoms/Button/GoogleButton";
-import KakaoButton from "@/src/components/atoms/Button/KakaoButton";
-import NaverButton from "@/src/components/atoms/Button/NaverButton";
-import LoginForm from "@/src/components/molecules/Form/LoginForm";
+import GoogleButton from "@/src/components/buttons/GoogleButton";
+import KakaoButton from "@/src/components/buttons/KakaoButton";
+import NaverButton from "@/src/components/buttons/NaverButton";
+import LoginForm from "@/src/components/forms/LoginForm";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
+  const router = useRouter();
+  
   const handleSubmit = async (username: string, password: string) => {
     // Base64 인코딩
     password = btoa(password);
 
-    const response = await signIn('credentials', { redirect: false, username, password });
-    
-    if (response && !response.ok) {
-      let errorMessage = '';
-      if (response.error === 'CredentialsSignin') {
-        errorMessage = '아이디 또는 비밀번호가 잘못되었습니다. 다시 확인해 주세요.';
-      } else if (response.error === 'OAuthSignin') {
-        errorMessage = '소셜 로그인에 실패했습니다. 다른 계정으로 시도해 보세요.';
+    try {
+      const response = await signIn('credentials', { redirect: false, username, password });
+      
+      if (response?.ok) {
+        router.push('/');
       } else {
-        errorMessage = '알 수 없는 오류로 로그인에 실패했습니다. 다시 시도해 주세요.';
+        handleSubmitError(response?.error);
       }
-
-      alert(errorMessage);
+    } catch (error) {
+      alert('알 수 없는 오류로 로그인에 실패했습니다. 다시 시도해 주세요.');
       return;
     }
-  }
+  };
+  
+  const handleSubmitError = (error: string | null | undefined) => {
+    let errorMessage = '알 수 없는 오류로 로그인에 실패했습니다. 다시 시도해 주세요.';
+
+    switch (error) {
+      case 'CredentialsSignin': 
+        errorMessage = '아이디 또는 비밀번호가 잘못되었습니다. 다시 확인해 주세요.';
+        break;
+      case 'OAuthSignin': 
+        errorMessage = '소셜 로그인에 실패했습니다. 다른 계정으로 시도해 보세요.';
+        break;
+    }
+
+    alert(errorMessage);
+  };
 
   const handleClick = (provider: string) => {
     signIn(provider, { callbackUrl: '/' });

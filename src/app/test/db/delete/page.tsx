@@ -1,11 +1,11 @@
 'use client';
 
-import PrimaryButton from '@/src/components/atoms/Button/PrimaryButton';
-import { deleteUser } from '@/src/lib/auth';
+import PrimaryButton from '@/src/components/buttons/PrimaryButton';
+import { userDelete } from '@/src/lib/auth';
 
 export default function Page() {
   const handleDelete = async () => {
-    deleteUser();
+    // userDelete();
   }
 
   return (
@@ -30,7 +30,7 @@ export default function Page() {
         <input type="text" name="nickName" className="w-full border px-6 py-4 text-xl" placeholder="닉네임" />
       </div>
       <div className="flex flex-col justify-center items-center gap-8 mt-8 w-full max-w-xl h-full">
-        <PrimaryButton onClick={handleDelete} label={"회원탈퇴"} />
+        <PrimaryButton type="button" onClick={handleDelete} label={"회원탈퇴"} />
       </div>
     </>
   );

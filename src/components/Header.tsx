@@ -4,7 +4,7 @@ import clsx from "clsx";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState, MouseEvent } from "react";
-import PrimaryButton from "./atoms/Button/PrimaryButton";
+import PrimaryButton from "@/src/components/buttons/PrimaryButton";
 import { useRouter } from "next/navigation";
 
 export default function Header() {
@@ -37,10 +37,10 @@ export default function Header() {
 
   return (
     <div className="absolute top-0 w-full">
-      <div className="flex justify-between items-center border-b border-gray-400 bg-white px-4 py-2 h-20 text-right transition-colors duration-500">
+      <div className="flex justify-between items-center bg-white px-4 py-2 h-20 text-right transition-colors duration-500">
         <Link href="/" className="text-3xl font-bold text-blue-500 transition-colors duration-500">ChatForYou.io</Link>
         <div className="flex gap-4">
-          <PrimaryButton onClick={moveToTest} label={"테스트"} />
+          <PrimaryButton type="button" onClick={moveToTest} label="테스트" />
           {
             false &&
             <label

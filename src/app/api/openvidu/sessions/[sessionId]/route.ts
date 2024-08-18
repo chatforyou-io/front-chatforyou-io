@@ -17,8 +17,6 @@ export async function GET(req: NextRequest, { params }: { params: { sessionId: s
       }
     })
       .then(response => response.json());
-    console.log('세션 조회');
-    console.log(data);
       
     return NextResponse.json(data, { status: 201 });
   } catch (error) {

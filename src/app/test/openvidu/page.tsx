@@ -4,8 +4,8 @@ import { Device, OpenVidu, Publisher, Session, StreamManager, Subscriber } from 
 import { FormEvent, useEffect, useRef, useState } from "react";
 import UserVideo from '@/src/components/openvidu/UserVideo';
 import { getToken } from '@/src/lib/openvidu';
-import PrimaryButton from '@/src/components/atoms/Button/PrimaryButton';
-import DimmedInput from '@/src/components/atoms/Input/DimmedInput';
+import PrimaryButton from '@/src/components/buttons/PrimaryButton';
+import DimmedInput from '@/src/components/inputs/DimmedInput';
 
 export default function Page() {
   const [mySessionId, setMySessionId] = useState('');
@@ -111,7 +111,7 @@ export default function Page() {
           <DimmedInput type="text" onChange={(e) => setMySessionId(e.target.value)} placeholder="제목" defaultValue="SessionA" />
           <DimmedInput type="text" onChange={(e) => setMyUsername(e.target.value)} placeholder="참가자 이름" defaultValue={"Participant" + Math.floor(Math.random() * 100)} />
           <DimmedInput type="text" onChange={(e) => setMaxUserCount(parseInt(e.target.value))} placeholder="최대 참가자 수" defaultValue='2' />
-          <PrimaryButton onClick={handleSubmit} label={"방 만들기"} />
+          <PrimaryButton type={'button'} onClick={handleSubmit} label={"방 만들기"} />
         </form>
         {session && (
           <UserVideo

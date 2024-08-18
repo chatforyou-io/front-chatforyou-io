@@ -1,11 +1,11 @@
 'use client';
 
-import GoogleButton from "@/src/components/atoms/Button/GoogleButton";
-import KakaoButton from "@/src/components/atoms/Button/KakaoButton";
-import NaverButton from "@/src/components/atoms/Button/NaverButton";
-import EmailForm from "@/src/components/molecules/Form/EmailForm";
-import ValidForm from "@/src/components/molecules/Form/ValidForm";
-import UserInfoForm from "@/src/components/molecules/Form/UserInfoForm";
+import GoogleButton from "@/src/components/buttons/GoogleButton";
+import KakaoButton from "@/src/components/buttons/KakaoButton";
+import NaverButton from "@/src/components/buttons/NaverButton";
+import EmailForm from "@/src/components/forms/EmailForm";
+import ValidForm from "@/src/components/forms/ValidForm";
+import UserInfoForm from "@/src/components/forms/UserInfoForm";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";

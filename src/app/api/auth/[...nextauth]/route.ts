@@ -31,12 +31,12 @@ const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         // 아이디와 비밀번호 입력 여부 체크
         if (!credentials || !credentials.username || !credentials.password) {
-          return null;
+          throw new Error('잘못된 자격 증명');
         }
 
         const data = await userInfo(credentials.username, credentials.password);
         if (!data || data.result !== 'success') {
-          return null;
+          throw new Error('잘못된 아이디와 비밀번호');
         }
 
         // 회원 조회 (User 객체 또는 null 반환)
@@ -79,7 +79,11 @@ const authOptions: NextAuthOptions = {
     },
     
   },
-  secret: process.env.NEXTAUTH_SECRET
+  secret: process.env.NEXTAUTH_SECRET,
+  session: {
+    maxAge: 60 * 60, // 1 hour
+    updateAge: 24 * 60 * 60, // 24 hours
+  }
 }
 
 const handler = NextAuth(authOptions);

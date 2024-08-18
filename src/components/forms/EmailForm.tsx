@@ -1,6 +1,6 @@
 import { FormEvent, useState } from 'react';
-import NormalInput from '@/src/components/atoms/Input/NormalInput';
-import DimmedButton from '@/src/components/atoms/Button/DimmedButton';
+import NormalInput from '@/src/components/inputs/NormalInput';
+import DimmedButton from '@/src/components/buttons/DimmedButton';
 import { userValidate } from '@/src/lib/auth';
 
 interface SignUpEmailFormProps {

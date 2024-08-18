@@ -1,11 +1,11 @@
 'use client';
 
-import PrimaryButton from '@/src/components/atoms/Button/PrimaryButton';
-import { updateUser } from '@/src/lib/auth';
+import PrimaryButton from '@/src/components/buttons/PrimaryButton';
+import { userUpdate } from '@/src/lib/auth';
 
 export default function Page() {
   const handleUpdate = async () => {
-    updateUser();
+    // userUpdate();
   }
   
   return (
@@ -30,7 +30,7 @@ export default function Page() {
         <input type="text" name="nickName" className="w-full border px-6 py-4 text-xl" placeholder="닉네임" />
       </div>
       <div className="flex flex-col justify-center items-center gap-8 mt-8 w-full max-w-xl h-full">
-        <PrimaryButton onClick={handleUpdate} label={"정보수정"} />
+        <PrimaryButton type="button" onClick={handleUpdate} label={"정보수정"} />
       </div>
     </>
   );

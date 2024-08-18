@@ -1,23 +1,50 @@
-import Articles from "@/src/components/Articles";
-import ChatRooms from "@/src/components/ChatRooms";
+"use client";
+
 import Header from "@/src/components/Header";
-import Link from "next/link";
+import ChatroomCard from "../components/cards/ChatroomCard";
+import NormalInput from "../components/inputs/NormalInput";
+import PrimaryButton from "../components/buttons/PrimaryButton";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
+  
+  const handleClick = () => {
+    router.push("/chatroom/write");
+  }
+
   return (
     <main className="flex flex-col items-center justify-center h-full bg-white transition-colors duration-500">
       <Header />
-      <div className="flex flex-col mt-20 p-4 w-full max-w-xl h-full">
-        <div className="flex flex-col my-8">
-          <Link href="/articles" className="px-4 text-2xl font-bold text-gray-700">게시글</Link>
-          <Articles />
+      <div className="flex gap-12 mt-20 p-6 w-full h-full bg-gray-200">
+        <div className="mt-8 px-3 py-6 w-60 h-full bg-white rounded">
+          <h3 className="font-semibold text-gray-800">Quantum Dynamics</h3>
         </div>
-        <div className="flex flex-col my-8">
-          <div className="flex justify-between items-center mb-4">
-            <Link href="/chatroom" className="px-4 text-2xl font-bold text-gray-700">채팅 목록</Link>
-            <Link href="/chatroom/write" className="border mt-8 px-6 py-4 bg-blue-500 text-xl text-white text-center rounded-full">방 만들기</Link>
+        <div className="mt-8 p-6 w-full h-full space-y-5 overflow-y-scroll">
+          <h1 className="text-4xl font-bold text-gray-800">Dashboard</h1>
+          <div className="flex justify-between">
+            <div className="flex mt-4 space-x-4">
+              <p>Room List</p>
+              <p>Overview</p>
+              <p>Search</p>
+              <p>Account</p>
+            </div>
+            <div className="flex gap-3">
+              <NormalInput type="text" name="keyword" placeholder="Search" />
+              <PrimaryButton type="button" onClick={handleClick} label="Create Room" />
+            </div>
           </div>
-          <ChatRooms />
+          <div className="grid grid-cols-3 gap-8 w-full h-full">
+            <ChatroomCard />
+            <ChatroomCard />
+            <ChatroomCard />
+            <ChatroomCard />
+            <ChatroomCard />
+            <ChatroomCard />
+            <ChatroomCard />
+            <ChatroomCard />
+            <ChatroomCard />
+          </div>
         </div>
       </div>
     </main>

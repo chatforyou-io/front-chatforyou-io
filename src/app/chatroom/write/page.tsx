@@ -1,6 +1,6 @@
 'use client';
 
-import SignUpChatroom from "@/src/components/molecules/Form/SignUpChatroom";
+import ChatroomCreateForm from "@/src/components/forms/ChatroomCreateForm";
 
 interface FormData {
   mySessionId: string;
@@ -9,18 +9,18 @@ interface FormData {
 }
 
 export default function Page() {
-  const getFormData = async (formData: FormData) => {
+  const handleSubmit = async (formData: FormData) => {
     console.log(formData);
   }
   
   return (
-    <>
-      <div className="flex flex-col items-center gap-4">
-        <h1 className="text-gray-700 text-[40px] font-semibold">방 만들기</h1>
+    <div className="flex justify-center items-center w-full h-full">
+      <div className="flex flex-col items-center p-12 w-[600px] bg-white rounded-3xl">
+        <h1 className="text-primary-normal text-4xl leading-9 font-semibold">New Room</h1>
+        <div className="mt-12 w-full">
+          <ChatroomCreateForm onSubmit={handleSubmit} />
+        </div>
       </div>
-      <div className="mt-12 mx-auto px-8 w-full">
-        <SignUpChatroom onSubmit={getFormData} />
-      </div>
-    </>
+    </div>
   );
 }
