@@ -19,6 +19,7 @@ export default function Page() {
       const response = await signIn('credentials', { redirect: false, username, password });
       
       if (response?.ok) {
+        console.log('로그인 성공');
         router.push('/');
       } else {
         handleSubmitError(response?.error);
