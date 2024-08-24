@@ -108,6 +108,7 @@ const userDelete = async (id: string) => {
 };
 
 const userInfo = async (id: string, pwd: string) => {
+  console.log('userInfo', id, pwd);
   try {
     const querysting = new URLSearchParams({ id, pwd }).toString();
     const data = await fetch(`${authHost}/user/info?${querysting}`, {
