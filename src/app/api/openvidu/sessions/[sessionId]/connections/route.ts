@@ -17,8 +17,6 @@ export async function POST(req: NextRequest, { params }: { params: { sessionId: 
       }
     })
       .then(response => response.json());
-    console.log('커넥션 생성');
-    console.log(data);
       
     return NextResponse.json(data, { status: 201 });
   } catch (error) {

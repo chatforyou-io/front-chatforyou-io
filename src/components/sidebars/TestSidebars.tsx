@@ -13,8 +13,8 @@ interface TestSidebarState {
   userInfo: { title: string; isActivated: boolean; };
   userCheckNickname: { title: string; isActivated: boolean; };
   userValidate: { title: string; isActivated: boolean; };
-  chatroomCreateSession: { title: string; isActivated: boolean; };
-  chatroomCreateToken: { title: string; isActivated: boolean; };
+  chatroomCreate: { title: string; isActivated: boolean; };
+  chatroomList: { title: string; isActivated: boolean; };
 }
 
 const TestSidebar: FC<TestSidebarProps> = ({ onChange }) => {
@@ -25,8 +25,8 @@ const TestSidebar: FC<TestSidebarProps> = ({ onChange }) => {
     userInfo: { title: "사용자 조회", isActivated: false },
     userCheckNickname: { title: "닉네임 중복", isActivated: false },
     userValidate: { title: "이메일 중복", isActivated: false },
-    chatroomCreateSession: { title: "세션 생성", isActivated: false },
-    chatroomCreateToken: { title: "토큰 생성", isActivated: false },
+    chatroomCreate: { title: "세션 생성", isActivated: false },
+    chatroomList: { title: "토큰 생성", isActivated: false },
   });
 
   const handleClick = (key: keyof TestSidebarState) => {
@@ -62,8 +62,8 @@ const TestSidebar: FC<TestSidebarProps> = ({ onChange }) => {
       <div className="space-y-6">
         <h3 className="">방 관련</h3>
         <div className="flex flex-col space-y-4">
-          <button onClick={() => handleClick('chatroomCreateSession')} className="text-left">세션 생성</button>
-          <button onClick={() => handleClick('chatroomCreateToken')} className="text-left">토큰 생성</button>
+          <button onClick={() => handleClick('chatroomCreate')} className="text-left">채팅방 생성</button>
+          <button onClick={() => handleClick('chatroomList')} className="text-left">채팅방 목록</button>
         </div>
       </div>
     </div>

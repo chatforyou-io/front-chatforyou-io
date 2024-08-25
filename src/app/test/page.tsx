@@ -2,7 +2,8 @@
 
 import TestSidebar from "@/src/components/sidebars/TestSidebars";
 import { userCheckNickname, userCreate, userDelete, userInfo, userUpdate, userValidate } from "@/src/lib/auth";
-import { act, FormEvent, useState } from "react";
+import { chatroomCreate, chatroomList } from "@/src/lib/chatroom";
+import { FormEvent, useState } from "react";
 
 interface TestSidebarState {
   userCreate: { title: string; isActivated: boolean; };
@@ -11,8 +12,8 @@ interface TestSidebarState {
   userInfo: { title: string; isActivated: boolean; };
   userCheckNickname: { title: string; isActivated: boolean; };
   userValidate: { title: string; isActivated: boolean; };
-  chatroomCreateSession: { title: string; isActivated: boolean; };
-  chatroomCreateToken: { title: string; isActivated: boolean; };
+  chatroomCreate: { title: string; isActivated: boolean; };
+  chatroomList: { title: string; isActivated: boolean; };
 }
 
 export default function Page() {
@@ -23,8 +24,8 @@ export default function Page() {
     userInfo: { title: "사용자 조회", isActivated: false },
     userCheckNickname: { title: "닉네임 중복", isActivated: false },
     userValidate: { title: "이메일 중복", isActivated: false },
-    chatroomCreateSession: { title: "세션 생성", isActivated: false },
-    chatroomCreateToken: { title: "토큰 생성", isActivated: false },
+    chatroomCreate: { title: "세션 생성", isActivated: false },
+    chatroomList: { title: "토큰 생성", isActivated: false },
   });
   
   const handleChange = (newState: TestSidebarState) => {
@@ -33,31 +34,57 @@ export default function Page() {
     }));
   };
 
-  const handleSubmit = async (e: FormEvent, actionName: string) => {
+  const handleUserSubmit = async (e: FormEvent<HTMLFormElement>, action: string) => {
     e.preventDefault();
 
-    const formData = new FormData(e.target as HTMLFormElement);
+    const form = e.currentTarget as HTMLFormElement;
+    const formData = new FormData(e.currentTarget as HTMLFormElement);
     const user = {
       id: formData.get('id') as string,
       pwd: formData.get('pwd') as string,
       confirmPwd: formData.get('confirmPwd') as string,
-      usePwd: formData.get('usePwd') as string,
-      nick_name: formData.get('nick_name') as string,
+      usePwd: true,
+      nickName: formData.get('nickName') as string,
       name: formData.get('name') as string,
     };
 
-    const userActions: {[key: string]: () => any} = {
-      'userCreate': async () => await userCreate(user),
-      'userUpdate': async () => await userUpdate(user),
-      'userDelete': async () => await userDelete(user.id),
-      'userInfo': async () => await userInfo(user.id, user.pwd),
-      'userCheckNickname': async () => await userCheckNickname(user.nick_name),
-      'userValidate': async () => await userValidate(user.id),
+    const actions: {[key: string]: (user: User) => any} = {
+      'userCreate': async (user: User) => await userCreate(user),
+      'userUpdate': async (user: User) => await userUpdate(user),
+      'userDelete': async (user: User) => await userDelete(user.id, user.pwd ?? ''),
+      'userInfo': async (user: User) => await userInfo(user.id, user.pwd ?? ''),
+      'userCheckNickname': async (user: User) => await userCheckNickname(user.nickName ?? ''),
+      'userValidate': async (user: User) => await userValidate(user.id),
     };
 
-    const response = await (userActions[actionName] || (() => { }))();
-    console.log(response);
-    formData.set('result', JSON.stringify(response));
+    const response = await (actions[action] || (() => {}))(user);
+    const resultTextarea = form.querySelector('textarea[name="result"]')!;
+    resultTextarea.innerHTML = JSON.stringify(response);
+  }
+
+  const handleChatroomSubmit = async (e: FormEvent<HTMLFormElement>, action: string) => {
+    e.preventDefault();
+
+    const form = e.currentTarget as HTMLFormElement;
+    const formData = new FormData(e.currentTarget as HTMLFormElement);
+    const chatroom = {
+      creator: formData.get('creator') as string,
+      name: formData.get('name') as string,
+      pwd: formData.get('pwd') as string,
+      usePwd: true,
+      usePrivate: false,
+      useRtc: true,
+      maxUserCount: formData.get('maxUserCount') as string,
+    };
+
+    const actions: {[key: string]: (chatroom: Chatroom) => any} = {
+      'chatroomCreate': async (chatroom: Chatroom) => await chatroomCreate(chatroom),
+      'chatroomList': async (chatroom: Chatroom) => await chatroomList(),
+    };
+
+    const response = await (actions[action] || (() => {}))(chatroom);
+    const resultTextarea = form.querySelector('textarea[name="result"]')!;
+    resultTextarea.innerHTML = JSON.stringify(response);
   }
 
   return (
@@ -68,14 +95,13 @@ export default function Page() {
           <div className="flex flex-col items-center gap-4">
             <h1 className="text-gray-700 text-[40px] font-semibold">사용자 생성</h1>
           </div>
-          <form onSubmit={(e) => handleSubmit(e, 'userCreate')} className="flex justify-center gap-8 w-full h-full">
+          <form onSubmit={(e) => handleUserSubmit(e, 'userCreate')} className="flex justify-center gap-8 w-full h-full">
             <div className="flex flex-col justify-between w-96 h-full">
               <div className="space-y-4">
                 <input type="text" name="id" placeholder="이메일" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
                 <input type="text" name="pwd" placeholder="비밀번호" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
                 <input type="text" name="confirmPwd" placeholder="비밀번호확인" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
-                <input type="text" name="usePwd" placeholder="비밀번호사용여부" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
-                <input type="text" name="nick_name" placeholder="닉네임" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
+                <input type="text" name="nickName" placeholder="닉네임" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
                 <input type="text" name="name" placeholder="이름" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
               </div>
               <button className="w-96 h-12 text-lg text-white bg-blue-400 rounded-lg">생성</button>
@@ -91,13 +117,13 @@ export default function Page() {
           <div className="flex flex-col items-center gap-4">
             <h1 className="text-gray-700 text-[40px] font-semibold">사용자 변경</h1>
           </div>
-          <form onSubmit={(e) => handleSubmit(e, 'userUpdate')} className="flex justify-center gap-8 w-full h-full">
+          <form onSubmit={(e) => handleUserSubmit(e, 'userUpdate')} className="flex justify-center gap-8 w-full h-full">
             <div className="flex flex-col justify-between w-96 h-full">
               <div className="space-y-4">
                 <input type="text" name="id" placeholder="이메일" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
                 <input type="text" name="pwd" placeholder="비밀번호" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
                 <input type="text" name="confirmPwd" placeholder="비밀번호확인" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
-                <input type="text" name="nick_name" placeholder="닉네임" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
+                <input type="text" name="nickName" placeholder="닉네임" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
                 <input type="text" name="name" placeholder="이름" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
               </div>
               <button className="w-96 h-12 text-lg text-white bg-blue-400 rounded-lg">변경</button>
@@ -113,7 +139,7 @@ export default function Page() {
           <div className="flex flex-col items-center gap-4">
             <h1 className="text-gray-700 text-[40px] font-semibold">사용자 삭제</h1>
           </div>
-          <form onSubmit={(e) => handleSubmit(e, 'userDelete')} className="flex justify-center gap-8 w-full h-full">
+          <form onSubmit={(e) => handleUserSubmit(e, 'userDelete')} className="flex justify-center gap-8 w-full h-full">
             <div className="flex flex-col justify-between w-96 h-full">
               <div className="space-y-4">
                 <input type="text" name="id" placeholder="이메일" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
@@ -132,7 +158,7 @@ export default function Page() {
           <div className="flex flex-col items-center gap-4">
             <h1 className="text-gray-700 text-[40px] font-semibold">사용자 조회</h1>
           </div>
-          <form onSubmit={(e) => handleSubmit(e, 'userInfo')} className="flex justify-center gap-8 w-full h-full">
+          <form onSubmit={(e) => handleUserSubmit(e, 'userInfo')} className="flex justify-center gap-8 w-full h-full">
             <div className="flex flex-col justify-between w-96 h-full">
               <div className="space-y-4">
                 <input type="text" name="id" placeholder="이메일" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
@@ -150,10 +176,10 @@ export default function Page() {
           <div className="flex flex-col items-center gap-4">
             <h1 className="text-gray-700 text-[40px] font-semibold">닉네임 중복</h1>
           </div>
-          <form onSubmit={(e) => handleSubmit(e, 'userCheckNickname')} className="flex justify-center gap-8 w-full h-full">
+          <form onSubmit={(e) => handleUserSubmit(e, 'userCheckNickname')} className="flex justify-center gap-8 w-full h-full">
             <div className="flex flex-col justify-between w-96 h-full">
               <div className="space-y-4">
-                <input type="text" name="nick_name" placeholder="닉네임" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
+                <input type="text" name="nickName" placeholder="닉네임" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
               </div>
               <button className="w-96 h-12 text-lg text-white bg-blue-400 rounded-lg">확인</button>
             </div>
@@ -168,7 +194,7 @@ export default function Page() {
           <div className="flex flex-col items-center gap-4">
             <h1 className="text-gray-700 text-[40px] font-semibold">이메일 중복</h1>
           </div>
-          <form onSubmit={(e) => handleSubmit(e, 'userValidate')} className="flex justify-center gap-8 w-full h-full">
+          <form onSubmit={(e) => handleUserSubmit(e, 'userValidate')} className="flex justify-center gap-8 w-full h-full">
             <div className="flex flex-col justify-between w-96 h-full">
               <div className="space-y-4">
                 <input type="text" name="id" placeholder="이메일" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
@@ -181,20 +207,18 @@ export default function Page() {
           </form>
         </div>
       )}
-      {state.chatroomCreateSession.isActivated && (
+      {state.chatroomCreate.isActivated && (
         <div className="flex flex-col p-12 w-full h-full space-y-12 bg-white rounded-xl">
           <div className="flex flex-col items-center gap-4">
             <h1 className="text-gray-700 text-[40px] font-semibold">세션 생성</h1>
           </div>
-          <form className="flex justify-center gap-8 w-full h-full">
+          <form onSubmit={(e) => handleChatroomSubmit(e, 'chatroomCreate')} className="flex justify-center gap-8 w-full h-full">
             <div className="flex flex-col justify-between w-96 h-full">
               <div className="space-y-4">
-                <input type="text" placeholder="이름" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
-                <input type="text" placeholder="생성자" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
-                <input type="text" placeholder="비밀번호설정여부" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
-                <input type="text" placeholder="비공개여부" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
-                <input type="text" placeholder="RTC사용여부" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
-                <input type="text" placeholder="최대인원" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
+                <input type="text" name="creator" placeholder="이름" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
+                <input type="text" name="name" placeholder="생성자" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
+                <input type="text" name="pwd" placeholder="비밀번호" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
+                <input type="text" name="maxUserCount" placeholder="최대인원" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
               </div>
               <button className="w-96 h-12 text-lg text-white bg-blue-400 rounded-lg">생성</button>
             </div>
@@ -204,21 +228,15 @@ export default function Page() {
           </form>
         </div>
       )}
-      {state.chatroomCreateToken.isActivated && (
+      {state.chatroomList.isActivated && (
         <div className="flex flex-col p-12 w-full h-full space-y-12 bg-white rounded-xl">
           <div className="flex flex-col items-center gap-4">
             <h1 className="text-gray-700 text-[40px] font-semibold">토큰 생성</h1>
           </div>
-          <form className="flex justify-center gap-8 w-full h-full">
+          <form onSubmit={(e) => handleChatroomSubmit(e, 'chatroomList')} className="flex justify-center gap-8 w-full h-full">
             <div className="flex flex-col justify-between w-96 h-full">
               <div className="space-y-4">
-                <input type="text" placeholder="이름" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
-                <input type="text" placeholder="생성자" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
-                <input type="text" placeholder="비밀번호설정여부" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
-                <input type="text" placeholder="비공개여부" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
-                <input type="text" placeholder="RTC사용여부" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
-                <input type="text" placeholder="현재인원" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
-                <input type="text" placeholder="최대인원" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
+                No Input
               </div>
               <button className="w-96 h-12 text-lg text-white bg-blue-400 rounded-lg">생성</button>
             </div>
