@@ -2,21 +2,22 @@ import Image from 'next/image';
 import React from 'react';
 
 interface ChatroomCardProps {
+  chatroom: Chatroom;
 }
 
-const ChatroomCard: React.FC<ChatroomCardProps> = ({ }) => {
+const ChatroomCard: React.FC<ChatroomCardProps> = ({ chatroom }) => {
   return (
     <div className="px-6 bg-white rounded-xl">
       <div className="flex gap-3 py-6">
         <Image src="/images/icon-exclamation-circle.svg" alt="room" width={40} height={40} />
         <div>
-          <h3 className="font-semibold text-gray-800">Username</h3>
-          <p className="text-sm text-gray-500">user@mail.com</p>
+          <h3 className="font-semibold text-gray-800">{chatroom.creator}</h3>
+          <p className="text-sm text-gray-500">{chatroom.name}</p>
         </div>
       </div>
       <div className="flex gap-3 border-t py-3">
         <Image src="/images/icon-exclamation-circle.svg" alt="room" width={20} height={20} />
-        <p className="text-sm text-gray-500">Room Name</p>
+        <p className="text-sm text-gray-500">{chatroom.name}</p>
       </div>
       <div className="flex gap-3 p-3">
         <p className="text-sm text-gray-500">설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 설명 </p>
@@ -24,10 +25,10 @@ const ChatroomCard: React.FC<ChatroomCardProps> = ({ }) => {
       <div className="flex justify-between gap-3 border-t py-6">
         <div className="flex gap-3">
           <Image src="/images/icon-exclamation-circle.svg" alt="room" width={20} height={20} />
-          <p className="text-sm text-gray-500">10 / 10</p>
+          <p className="text-sm text-gray-500">10 / {chatroom.maxUserCount}</p>
         </div>
         <div className="flex gap-3">
-          <p className="text-sm text-gray-500">Room Name</p>
+          <p className="text-sm text-gray-500">{chatroom.name}</p>
           <Image src="/images/icon-exclamation-circle.svg" alt="room" width={20} height={20} />
           </div>
       </div>
