@@ -10,6 +10,7 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { userCreate } from "@/src/lib/auth";
 
 export default function Page() {
   const [step, setStep] = useState<number>(1);
@@ -33,36 +34,12 @@ export default function Page() {
   }
 
   const handleSubmitUserInfo = async (name: string, pwd: string, confirmPwd: string) => {
-    const user: User = {
-      idx: 0,
-      name: name,
-      id: id,
-      pwd: btoa(pwd),
-      confirmPwd: btoa(confirmPwd),
-      use_pwd: true,
-      nick_name: '',
-      create_date: ''
-    };
+    const user: User = { id, name, pwd, confirmPwd, usePwd: true};
     
     try {
-      const response = await fetch('/api/user/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(user),
-      });
-  
-      if (!response.ok) {
-        // HTTP 상태 코드가 2xx가 아닌 경우
-        throw new Error('네트워크 응답이 올바르지 않습니다.');
-      }
-  
-      const data = await response.json();
-  
+      const data = await userCreate(user);  
       if (!data.isSuccess) {
-        alert('가입에 실패하였습니다.');
-        return;
+        throw new Error();
       }
   
       alert('가입에 성공하였습니다.');

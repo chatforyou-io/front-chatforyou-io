@@ -7,6 +7,13 @@ const authToken = btoa(authUsername + ':' + authPassword);
 
 const userCreate = async (user: User) => {
   try {
+    if (!user.pwd || !user.confirmPwd) {
+      throw new Error('비밀번호를 입력해주세요.');
+    }
+
+    user.pwd = btoa(user.pwd);
+    user.confirmPwd = btoa(user.confirmPwd);
+
     const data = await fetch(`${authHost}/user/create`, {
       method: 'POST',
       headers: {
@@ -37,7 +44,7 @@ const userCreate = async (user: User) => {
     data.isSuccess = true;
     return data;
   } catch (error) {
-    console.error('fail validate: ' + error);
+    console.error(error);
     return { isSuccess: false, result: 'fail create' };
   }
 };
@@ -74,12 +81,12 @@ const userUpdate = async (user: User) => {
     data.isSuccess = true;
     return data;
   } catch (error) {
-    console.error('fail validate: ' + error);
+    console.error(error);
     return { isSuccess: false, result: 'fail update' };
   }
 };
 
-const userDelete = async (id: string) => {
+const userDelete = async (id: string, pwd: string) => {
   try {
     const data = await fetch(`${authHost}/user/delete?id=${id}`, {
       method: 'DELETE',
@@ -87,6 +94,7 @@ const userDelete = async (id: string) => {
         'Content-Type': 'application/json',
         'Authorization': `Basic ${authToken}`,
       },
+      body: JSON.stringify({ id, pwd: btoa(pwd) }),
     }).then(response => {
       if (!response.ok) {
         throw new Error('서버와의 통신 중 오류가 발생했습니다.');
@@ -102,15 +110,15 @@ const userDelete = async (id: string) => {
     data.isSuccess = true;
     return data;
   } catch (error) {
-    console.error('fail validate: ' + error);
+    console.error(error);
     return { isSuccess: false, result: 'fail delete user' };
   }
 };
 
 const userInfo = async (id: string, pwd: string) => {
-  console.log('userInfo', id, pwd);
+
   try {
-    const querysting = new URLSearchParams({ id, pwd }).toString();
+    const querysting = new URLSearchParams({ id, pwd: btoa(pwd) }).toString();
     const data = await fetch(`${authHost}/user/info?${querysting}`, {
       method: 'GET',
       headers: {
@@ -139,7 +147,7 @@ const userInfo = async (id: string, pwd: string) => {
     data.isSuccess = true;
     return data;
   } catch (error) {
-    console.error('fail info: ' + error);
+    console.error(error);
     return { isSuccess: false, result: 'fail info' };
   }
 };
@@ -168,8 +176,8 @@ const userCheckNickname = async (nickname: string) => {
     data.isSuccess = true;
     return data;
   } catch (error) {
-    console.error('fail validate: ' + error);
-    return { isSuccess: false, result: 'fail validate' };
+    console.error(error);
+    return { isSuccess: false, result: 'fail check nickname' };
   }
 };
 
@@ -213,7 +221,7 @@ const userValidate = async (email: string) => {
       mailCode: mailCode,
     };
   } catch (error) {
-    console.error('fail validate: ' + error);
+    console.error(error);
     return { isSuccess: false, result: 'fail validate' };
   }
 };

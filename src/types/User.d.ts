@@ -3,8 +3,8 @@ interface User {
   id: string,
   pwd?: string,
   confirmPwd?: string,
-  use_pwd?: boolean,
+  usePwd?: boolean,
   name?: string,
-  nick_name?: string,
+  nickName?: string,
   create_date?: date,
 }
