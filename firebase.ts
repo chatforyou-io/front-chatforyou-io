@@ -65,7 +65,7 @@ export const getCredentialsUser = async (username: string, password: string) => 
       provider: doc.data().provider,
       id: doc.id,
       name: doc.data().name,
-      username: doc.data().username
+      nickName: doc.data().username
     };
     return user;
   } catch (error) {
@@ -95,7 +95,7 @@ export const getOAuthUser = async (providerName: string, providerAccountId: stri
       provider: doc.data().provider,
       id: doc.id,
       name: doc.data().name,
-      username: doc.data().username
+      nickName: doc.data().username
     };
     return user;
   } catch (error) {
