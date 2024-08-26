@@ -23,9 +23,9 @@ export default function Page() {
       if (!response.ok) {
         throw new Error(response.error || 'Unknown error');
       }
-      
+
       // 로그인 성공 시 홈페이지로 리다이렉트
-      router.replace('/');
+      router.push('/');
       
       // 페이지 데이터 새로고침
       router.refresh();
