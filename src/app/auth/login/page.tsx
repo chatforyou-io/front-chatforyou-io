@@ -17,19 +17,21 @@ export default function Page() {
 
     try {
       const response = await signIn('credentials', { redirect: false, username, password });
-      
-      if (response?.ok) {
-        router.push('/');
-      } else {
-        handleSubmitError(response?.error);
+      if (!response) {
+        throw new Error('Unknown error');
       }
+      if (!response.ok) {
+        throw new Error(response.error || 'Unknown error');
+      }
+
+      router.refresh();
     } catch (error) {
-      alert('알 수 없는 오류로 로그인에 실패했습니다. 다시 시도해 주세요.');
+      handleSubmitError(error?.toString() || 'Unknown error');
       return;
     }
   };
   
-  const handleSubmitError = (error: string | null | undefined) => {
+  const handleSubmitError = (error: string) => {
     let errorMessage = '알 수 없는 오류로 로그인에 실패했습니다. 다시 시도해 주세요.';
 
     switch (error) {
