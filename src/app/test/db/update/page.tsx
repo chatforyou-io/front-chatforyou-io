@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import PrimaryButton from '@/src/components/buttons/PrimaryButton';
 import { userUpdate } from '@/src/lib/auth';

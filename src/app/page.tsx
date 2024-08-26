@@ -1,12 +1,12 @@
 "use client";
 
-import Header from "@/src/components/Header";
 import ChatroomCard from "@/src/components/cards/ChatroomCard";
 import NormalInput from "@/src/components/inputs/NormalInput";
 import PrimaryButton from "@/src/components/buttons/PrimaryButton";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { chatroomList } from "@/src/lib/chatroom";
+import Header from "@/src/components/Header";
 
 export default function Home() {
   const router = useRouter();
@@ -30,6 +30,7 @@ export default function Home() {
   }, []);
 
   return (
+
     <main className="h-full bg-white">
       <Header />
       <div className="flex gap-12 pt-24 pb-4 px-4 h-full bg-gray-200">

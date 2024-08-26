@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import ChatRoom from "@/src/components/ChatRoom";
 import Header from "@/src/components/Header";
@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function Page() {
   return (
-    <main className="flex flex-col items-center justify-center h-full bg-white transition-colors duration-500">
+    <main className="flex flex-col items-center justify-center h-full bg-white">
       <Header />
       <div className="flex flex-col mt-20 p-4 w-full max-w-xl h-full">
         <div className="w-full h-full">

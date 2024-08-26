@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { Device, OpenVidu, Publisher, Session, StreamManager, Subscriber } from 'openvidu-browser';
 import { FormEvent, useEffect, useRef, useState } from "react";

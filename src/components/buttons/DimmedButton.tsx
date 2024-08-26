@@ -2,7 +2,7 @@ import React from 'react';
 
 interface DimmedButtonProps {
   type: "button" | "submit" | "reset";
-  onClick: () => void;
+  onClick?: () => void;
   label: string;
 }
 

@@ -3,6 +3,7 @@ import PrimaryButton from '@/src/components/buttons/PrimaryButton';
 import DimmedInput from '@/src/components/inputs/DimmedInput';
 import DimmedButton from '../buttons/DimmedButton';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 interface FormData {
   mySessionId: string;
@@ -30,7 +31,11 @@ export default function ChatroomCreateForm({ onSubmit }: ChatroomCreateFormProps
   }
 
   const handleClick = () => {
+    // 메인 페이지로 리다이렉트
     router.push('/');
+      
+    // 페이지 데이터 새로고침
+    router.refresh();
   }
 
   return (
@@ -41,8 +46,8 @@ export default function ChatroomCreateForm({ onSubmit }: ChatroomCreateFormProps
         <DimmedInput type='text' onChange={(e) => setMaxUserCount(parseInt(e.target.value))} placeholder='접속인원' defaultValue='2' />
       </div>
       <div className="flex gap-9">
-        <DimmedButton type="button" label='취소' onClick={handleClick} />
-        <PrimaryButton type="submit" label='방 만들기' />
+        <Link href="/" className="w-full p-[17px] h-[60px] border bg-gray-100 text-xl text-gray-700 placeholder-gray-700 leading-5 text-center rounded-full">취소</Link>
+        <Link href="/chatroom/view" className="w-full p-[17px] h-[60px] border bg-blue-500 text-xl leading-5 text-center text-white rounded-full">방 만들기</Link>
       </div>
     </form>
   );
