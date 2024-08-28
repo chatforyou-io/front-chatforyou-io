@@ -6,5 +6,5 @@ interface User {
   usePwd?: boolean,
   name?: string,
   nickName?: string,
-  create_date?: date,
+  create_date?: Date,
 }
