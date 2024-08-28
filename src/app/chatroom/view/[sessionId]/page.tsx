@@ -1,18 +1,36 @@
 "use client";
 
 import DimmedButton from "@/src/components/buttons/DimmedButton";
+import { chatroomInfo } from "@/src/lib/chatroom";
 import Image from "next/image";
+import { useEffect } from "react";
 
-interface FormData {
-  mySessionId: string;
-  myUsername: string;
-  maxUserCount: number;
+interface PageProps {
+  params: {
+    sessionId: string;
+  };
 }
 
-export default function Page() {
-  const handleSubmit = async (formData: FormData) => {
-    console.log(formData);
-  }
+export default function Page({ params }: PageProps) {
+  const { sessionId } = params;
+
+  useEffect(() => {
+    const getChatroomInfo = async () => {
+      try {
+        const data = await chatroomInfo(sessionId);
+        if (!data.isSuccess) {
+          throw new Error();
+        }
+  
+        const roomData = data.roomData;
+        console.log('roomData:', roomData);
+      } catch (error) {
+        console.error('채팅방 정보 조회 중 오류 발생:', error);
+        alert('채팅방 정보 조회 중 문제가 발생하였습니다. 나중에 다시 시도해주세요.');
+      }
+    }
+    getChatroomInfo();
+  }, [sessionId]);
   
   return (
     <div className="flex flex-col justify-center items-center w-full h-full">

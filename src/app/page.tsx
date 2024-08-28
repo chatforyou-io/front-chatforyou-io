@@ -12,14 +12,14 @@ export default function Home() {
   const router = useRouter();
   
   const handleClick = () => {
-    router.push("/chatroom/write");
+    router.push("/chatroom/create");
   }
   const [chatrooms, setChatrooms] = useState<Chatroom[]>([]);
 
   const fetchChatrooms = async () => {
     try {
       const response = await chatroomList();
-      setChatrooms(response.result);
+      setChatrooms(response.roomList);
     } catch (error) {
       console.error("Failed to fetch chatrooms:", error);
     }
@@ -52,9 +52,10 @@ export default function Home() {
             </div>
           </div>
           <div className="grid grid-cols-3 gap-8 w-full h-full">
-            {chatrooms?.map((chatroom, index) => (
+            {chatrooms && chatrooms.map((chatroom, index) => {
+              return (
               <ChatroomCard key={index} chatroom={chatroom} />
-            ))}
+            )})}
           </div>
         </div>
       </div>
