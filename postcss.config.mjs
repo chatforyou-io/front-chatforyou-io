@@ -2,7 +2,7 @@
 const config = {
   plugins: {
     tailwindcss: {},
-    'postcss-rem-to-pixel': {
+    'postcss-rem-to-responsive-pixel': {
       rootValue: 16, // 기본 폰트 크기 설정
       propList: ['*'], // 변환할 CSS 속성 목록
     },
