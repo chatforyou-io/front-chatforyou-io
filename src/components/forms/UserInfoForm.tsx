@@ -6,7 +6,7 @@ interface SignUpUserInfoFormProps {
   onSubmit: (name: string, pwd: string, confirmPwd: string) => void;
 }
 
-const SignUpUserInfoForm: React.FC<SignUpUserInfoFormProps> = ({ onSubmit }) => {
+export default function SignUpUserInfoForm({ onSubmit }: SignUpUserInfoFormProps) {
   const [nameError, setNameError] = useState<boolean>(false);
   const [nameErrorMsg, setNameErrorMsg] = useState<string>('');
   const [pwdError, setPwdError] = useState<boolean>(false);
@@ -88,6 +88,4 @@ const SignUpUserInfoForm: React.FC<SignUpUserInfoFormProps> = ({ onSubmit }) => 
       <DimmedButton type={'submit'} onClick={() => {}} label={'계속'} />
     </form>
   );
-};
-
-export default SignUpUserInfoForm;
+}

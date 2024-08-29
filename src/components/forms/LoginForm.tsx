@@ -1,17 +1,17 @@
 import { FormEvent, useState } from 'react';
 import PrimaryButton from '@/src/components/buttons/PrimaryButton';
 import NormalInput from '@/src/components/inputs/NormalInput';
+import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 
-interface LoginFormProps {
-  onSubmit: (username: string, password: string) => void;
-}
-
-const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
+export default function LoginForm() {
   const [usernameError, setUsernameError] = useState<boolean>(false);
   const [usernameErrorMsg, setUSernameErrorMsg] = useState<string>('');
   const [passwordError, setPasswordError] = useState<boolean>(false);
   const [passwordErrorMsg, setPasswordErrorMsg] = useState<string>('');
-
+  const [loginError, setLoginError] = useState<boolean>(false);
+  const [loginErrorMsg, setLoginErrorMsg] = useState<string>('');
+  const router = useRouter();
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -66,8 +66,43 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
     // Error 초기화
     setPasswordError(false);
     setPasswordErrorMsg('');
+    setLoginError(false);
+    setLoginErrorMsg('');
 
-    onSubmit(username, password);
+    try {
+      const response = await signIn('credentials', { redirect: false, username, password: btoa(password) });
+      if (!response) {
+        throw new Error('Unknown error');
+      }
+      if (!response.ok) {
+        throw new Error(response.error || 'Unknown error');
+      }
+
+      // 로그인 성공 시 홈페이지로 리다이렉트
+      router.push('/');
+      
+      // 페이지 데이터 새로고침
+      router.refresh();
+    } catch (error) {
+      handleSubmitError(error?.toString() || 'Unknown error');
+      return;
+    }
+  };
+  
+  const handleSubmitError = (error: string) => {
+    let errorMessage = '알 수 없는 오류로 로그인에 실패했습니다. 다시 시도해 주세요.';
+
+    switch (error) {
+      case 'CredentialsSignin': 
+        errorMessage = '아이디 또는 비밀번호가 잘못되었습니다. 다시 확인해 주세요.';
+        break;
+      case 'OAuthSignin': 
+        errorMessage = '소셜 로그인에 실패했습니다. 다른 계정으로 시도해 보세요.';
+        break;
+    }
+
+    setLoginError(true);
+    setLoginErrorMsg(errorMessage);
   };
 
   return (
@@ -81,9 +116,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
       <div className="space-y-5">
         <p className="text-blue-500 text-xl font-semibold">비밀번호를 잊으셨나요?</p>
         <PrimaryButton type="submit" data-label="로그인" label="로그인" />
+        { loginError && <p className="text-error text-[17px]">{loginErrorMsg}</p> }
       </div>
     </form>
   );
-};
-
-export default LoginForm;
+}

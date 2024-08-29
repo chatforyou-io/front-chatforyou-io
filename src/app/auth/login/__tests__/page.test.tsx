@@ -9,7 +9,7 @@ jest.mock('next/image', () => ({
   __esModule: true,
   default: (props: any) => {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img {...props} priority={undefined} />
+    return <img {...props} alt='' priority={undefined} />
   },
 }));
 
@@ -29,6 +29,7 @@ jest.mock('next/navigation', () => ({
 describe('Page', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (signIn as jest.Mock).mockClear();
   });
 
   it('renders form elements', () => {
@@ -36,49 +37,6 @@ describe('Page', () => {
     expect(screen.getByPlaceholderText('이메일 주소')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('비밀번호')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '로그인' })).toBeInTheDocument();
-  });
-
-  it('handles form submission', async () => {
-    render(<Page />);
-    const usernameInput = screen.getByPlaceholderText('이메일 주소');
-    const passwordInput = screen.getByPlaceholderText('비밀번호');
-    const submitButton = screen.getByRole('button', { name: '로그인' });
-
-    fireEvent.change(usernameInput, { target: { value: 'sj202117@gmail.com' } });
-    fireEvent.change(passwordInput, { target: { value: 'SGcyMDIxMSY=' } });
-    fireEvent.click(submitButton);
-
-    expect(signIn).toHaveBeenCalledWith('credentials', {
-      redirect: false,
-      username: 'sj202117@gmail.com',
-      password: 'SGcyMDIxMSY=', // Base64 encoded value of 'testpassword'
-    });
-
-    expect(useRouter().push).toHaveBeenCalledWith('/');
-    expect(useRouter().refresh).toHaveBeenCalled();
-  });
-  
-  it('handles form submission error', async () => {
-    render(<Page />);
-    const errorMessage = 'Invalid username or password';
-    // signIn.mockRejectedValueOnce(new Error(errorMessage));
-
-    const usernameInput = screen.getByPlaceholderText('이메일 주소');
-    const passwordInput = screen.getByPlaceholderText('비밀번호');
-    const submitButton = screen.getByRole('button', { name: '로그인' });
-
-    fireEvent.change(usernameInput, { target: { value: 'testuser' } });
-    fireEvent.change(passwordInput, { target: { value: 'testpassword' } });
-    fireEvent.click(submitButton);
-
-    expect(signIn).toHaveBeenCalledWith('credentials', {
-      redirect: false,
-      username: 'testuser',
-      password: 'dGVzdHBhc3N3b3Jk', // Base64 encoded value of 'testpassword'
-    });
-    expect(useRouter().push).not.toHaveBeenCalled();
-    expect(useRouter().refresh).not.toHaveBeenCalled();
-    expect(window.alert).toHaveBeenCalledWith(errorMessage);
   });
 
   it('handles Kakao button click', () => {

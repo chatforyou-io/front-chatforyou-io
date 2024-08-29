@@ -7,7 +7,7 @@ interface SignUpEmailFormProps {
   onSubmit: (id: string, mailCode: string) => void;
 }
 
-const SignUpEmailForm: React.FC<SignUpEmailFormProps> = ({ onSubmit }) => {
+export default function SignUpEmailForm({ onSubmit }: SignUpEmailFormProps) {
   const [error, setError] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
 
@@ -60,6 +60,4 @@ const SignUpEmailForm: React.FC<SignUpEmailFormProps> = ({ onSubmit }) => {
       <DimmedButton type={'submit'} onClick={() => {}} label={'계속'} />
     </form>
   );
-};
-
-export default SignUpEmailForm;
+}
