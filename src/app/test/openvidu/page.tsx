@@ -8,9 +8,6 @@ import PrimaryButton from '@/src/components/buttons/PrimaryButton';
 import DimmedInput from '@/src/components/inputs/DimmedInput';
 
 export default function Page() {
-  const [mySessionId, setMySessionId] = useState('');
-  const [myUsername, setMyUsername] = useState('');
-  const [maxUserCount, setMaxUserCount] = useState(2);
   const [ov, setOv] = useState<OpenVidu | undefined>(undefined);
   const [session, setSession] = useState<Session | undefined>(undefined);
   const [currentVideoDevice, setCurrentVideoDevice] = useState<Device | undefined>(undefined);
@@ -57,6 +54,11 @@ export default function Page() {
     session.on('exception', (exception: any) => {
       console.warn(exception);
     });
+
+    const formData = new FormData();
+    const mySessionId = formData.get('mySessionId') as string || '';
+    const myUsername = formData.get('myUsername') as string || '';
+    const maxUserCount = parseInt(formData.get('maxUserCount') as string) || 0;
 
     // --- 4) Connect to the session with a valid user token ---
     // Get a token from the OpenVidu deployment
@@ -108,9 +110,9 @@ export default function Page() {
       </div>
       <div className="mt-12 mx-auto px-8"> 
         <form className="w-full max-w-md">
-          <DimmedInput type="text" onChange={(e) => setMySessionId(e.target.value)} placeholder="제목" defaultValue="SessionA" />
-          <DimmedInput type="text" onChange={(e) => setMyUsername(e.target.value)} placeholder="참가자 이름" defaultValue={"Participant" + Math.floor(Math.random() * 100)} />
-          <DimmedInput type="text" onChange={(e) => setMaxUserCount(parseInt(e.target.value))} placeholder="최대 참가자 수" defaultValue='2' />
+          <DimmedInput type="text" name="mySessionId" placeholder="제목" defaultValue="SessionA" />
+          <DimmedInput type="text" name="myUsername" placeholder="참가자 이름" defaultValue={"Participant" + Math.floor(Math.random() * 100)} />
+          <DimmedInput type="text" name="maxUserCount" placeholder="최대 참가자 수" defaultValue='2' />
           <PrimaryButton type={'button'} onClick={handleSubmit} label={"방 만들기"} />
         </form>
         {session && (

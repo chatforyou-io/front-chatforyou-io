@@ -45,7 +45,7 @@ export default function Page() {
       confirmPwd: formData.get('confirmPwd') as string,
       usePwd: true,
       nickName: formData.get('nickName') as string,
-      name: formData.get('name') as string,
+      roomName: formData.get('name') as string,
     };
 
     const actions: {[key: string]: (user: User) => any} = {
@@ -69,12 +69,12 @@ export default function Page() {
     const formData = new FormData(e.currentTarget as HTMLFormElement);
     const chatroom = {
       creator: formData.get('creator') as string,
-      name: formData.get('name') as string,
+      roomName: formData.get('roomName') as string,
       pwd: formData.get('pwd') as string,
       usePwd: true,
       usePrivate: false,
       useRtc: true,
-      maxUserCount: formData.get('maxUserCount') as string,
+      maxUserCount: parseInt(formData.get('maxUserCount') as string) || 0,
     };
 
     const actions: {[key: string]: (chatroom: Chatroom) => any} = {
@@ -102,7 +102,7 @@ export default function Page() {
                 <input type="text" name="pwd" placeholder="비밀번호" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
                 <input type="text" name="confirmPwd" placeholder="비밀번호확인" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
                 <input type="text" name="nickName" placeholder="닉네임" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
-                <input type="text" name="name" placeholder="이름" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
+                <input type="text" name="roomName" placeholder="이름" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
               </div>
               <button className="w-96 h-12 text-lg text-white bg-blue-400 rounded-lg">생성</button>
             </div>
