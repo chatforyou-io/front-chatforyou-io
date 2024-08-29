@@ -1,4 +1,3 @@
-import { SignInResponse } from 'next-auth/react';
 import Image from 'next/image';
 import React from 'react';
 
@@ -10,6 +9,7 @@ const KakaoButton: React.FC<KakaoButtonProps> = ({ onClick }) => {
   return (
     <button
       onClick={onClick}
+      aria-label="Kakao 로그인"
       className="flex justify-center items-center w-16 h-16 bg-yellow-400 shadow rounded-2xl"
     >
       <Image
@@ -17,6 +17,7 @@ const KakaoButton: React.FC<KakaoButtonProps> = ({ onClick }) => {
         alt="kakao"
         width={36}
         height={36}
+        priority
       />
     </button>
   );

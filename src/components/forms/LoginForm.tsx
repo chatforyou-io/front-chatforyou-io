@@ -42,26 +42,26 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
     const numberReg = /[0-9]/;
     const alphabetsReg = /[a-zA-Z]/;
     const specialCharReg = /[~!@#$%^&*()_+|<>?:{}]/;
-    // if (password.length < 8) {
-    //   setPasswordError(true);
-    //   setPasswordErrorMsg('비밀번호는 8자 이상이어야 합니다.');
-    //   return;
-    // }
-    // if (!numberReg.test(password)) {
-    //   setPasswordError(true);
-    //   setPasswordErrorMsg('비밀번호는 숫자를 포함해야 합니다.');
-    //   return;
-    // }
-    // if (!alphabetsReg.test(password)) {
-    //   setPasswordError(true);
-    //   setPasswordErrorMsg('비밀번호는 영문자를 포함해야 합니다.');
-    //   return;
-    // }
-    // if (!specialCharReg.test(password)) {
-    //   setPasswordError(true);
-    //   setPasswordErrorMsg('비밀번호는 특수문자를 포함해야 합니다.');
-    //   return;
-    // }
+    if (password.length < 8) {
+      setPasswordError(true);
+      setPasswordErrorMsg('비밀번호는 8자 이상이어야 합니다.');
+      return;
+    }
+    if (!numberReg.test(password)) {
+      setPasswordError(true);
+      setPasswordErrorMsg('비밀번호는 숫자를 포함해야 합니다.');
+      return;
+    }
+    if (!alphabetsReg.test(password)) {
+      setPasswordError(true);
+      setPasswordErrorMsg('비밀번호는 영문자를 포함해야 합니다.');
+      return;
+    }
+    if (!specialCharReg.test(password)) {
+      setPasswordError(true);
+      setPasswordErrorMsg('비밀번호는 특수문자를 포함해야 합니다.');
+      return;
+    }
 
     // Error 초기화
     setPasswordError(false);
@@ -73,14 +73,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
   return (
     <form className="space-y-10" onSubmit={handleSubmit}>
       <div className='space-y-[7px]'>
-        <NormalInput type="text" name="username" placeholder="이메일 주소" defaultValue="" />
+        <NormalInput type="text" name="username" placeholder="이메일 주소" />
         { usernameError && <p className="text-error text-[17px]">{usernameErrorMsg}</p> }
-        <NormalInput type="password" name="password" placeholder="비밀번호" defaultValue="" />
+        <NormalInput type="password" name="password" placeholder="비밀번호" />
         { passwordError && <p className="text-error text-[17px]">{passwordErrorMsg}</p> }
       </div>
       <div className="space-y-5">
         <p className="text-blue-500 text-xl font-semibold">비밀번호를 잊으셨나요?</p>
-        <PrimaryButton type="submit" label="로그인" />
+        <PrimaryButton type="submit" data-label="로그인" label="로그인" />
       </div>
     </form>
   );

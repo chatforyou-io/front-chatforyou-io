@@ -9,6 +9,7 @@ const NaverButton: React.FC<NaverButtonProps> = ({ onClick }) => {
   return (
     <button
       onClick={onClick}
+      aria-label="Naver 로그인"
       className="flex justify-center items-center w-16 h-16 bg-green-600 shadow rounded-2xl"
     >
       <Image
@@ -16,6 +17,7 @@ const NaverButton: React.FC<NaverButtonProps> = ({ onClick }) => {
         alt="naver"
         width={32}
         height={32}
+        priority
       />
     </button>
   );

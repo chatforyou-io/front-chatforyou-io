@@ -9,6 +9,7 @@ const GoogleButton: React.FC<GoogleButtonProps> = ({ onClick }) => {
   return (
     <button
       onClick={onClick}
+      aria-label="Google 로그인"
       className="flex justify-center items-center w-16 h-16 bg-white shadow rounded-2xl"
     >
       <Image
@@ -16,6 +17,7 @@ const GoogleButton: React.FC<GoogleButtonProps> = ({ onClick }) => {
         alt="google"
         width={40}
         height={40}
+        priority
       />
     </button>
   );

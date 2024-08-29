@@ -11,10 +11,9 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
-    "axios": "^1.7.2",
     "clsx": "^2.1.1",
     "firebase": "^10.12.1",
-    "next": "14.2.3",
+    "next": "14.2.7",
     "next-auth": "^4.24.7",
     "openvidu-browser": "2.30.0",
     "react": "^18",
@@ -28,7 +27,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
-    "eslint-config-next": "14.2.3",
+    "eslint-config-next": "14.2.7",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8",
