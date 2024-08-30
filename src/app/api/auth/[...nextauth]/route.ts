@@ -4,7 +4,7 @@ import KakaoProvider from 'next-auth/providers/kakao'
 import GoogleProvider from 'next-auth/providers/google'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { addOAuthUser, getOAuthUser, getCredentialsUser } from '@/firebase'
-import { userInfo } from '@/src/lib/auth'
+import { userInfo } from '@/src/libs/auth'
 
 const authOptions: NextAuthOptions = {
   providers: [

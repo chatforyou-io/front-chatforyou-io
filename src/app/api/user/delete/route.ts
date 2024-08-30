@@ -1,4 +1,4 @@
-import { userDelete } from '@/src/lib/auth';
+import { userDelete } from '@/src/libs/auth';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 

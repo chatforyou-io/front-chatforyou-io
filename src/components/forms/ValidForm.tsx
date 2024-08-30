@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useState } from 'react';
 import NormalInput from '@/src/components/inputs/NormalInput';
 import DimmedButton from '@/src/components/buttons/DimmedButton';
-import { userValidate } from '@/src/lib/auth';
+import { userValidate } from '@/src/libs/auth';
 
 interface SignUpEmailValidFormProps {
   validCode: string;

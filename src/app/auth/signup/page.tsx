@@ -10,7 +10,7 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { userCreate } from "@/src/lib/auth";
+import { userCreate } from "@/src/libs/auth";
 
 export default function Page() {
   const [step, setStep] = useState<number>(1);

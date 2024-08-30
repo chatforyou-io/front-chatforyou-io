@@ -1,7 +1,7 @@
 "use client";
 
 import PrimaryButton from '@/src/components/buttons/PrimaryButton';
-import { userUpdate } from '@/src/lib/auth';
+import { userUpdate } from '@/src/libs/auth';
 
 export default function Page() {
   const handleUpdate = async () => {

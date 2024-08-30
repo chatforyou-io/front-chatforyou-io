@@ -1,10 +1,10 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { Publisher, Subscriber } from 'openvidu-browser';
+import { Publisher, StreamManager, Subscriber } from 'openvidu-browser';
 import Video from '@/src/components/openvidu/VideoCall';
 
 interface SessionProps {
-	subscribers: Subscriber[];
+	subscribers: StreamManager[];
 	publisher: Publisher;
 }
 

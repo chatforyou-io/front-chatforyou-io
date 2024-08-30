@@ -5,7 +5,7 @@ import NormalInput from "@/src/components/inputs/NormalInput";
 import PrimaryButton from "@/src/components/buttons/PrimaryButton";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { chatroomList } from "@/src/lib/chatroom";
+import { chatroomList } from "@/src/libs/chatroom";
 import Header from "@/src/components/Header";
 
 export default function Home() {

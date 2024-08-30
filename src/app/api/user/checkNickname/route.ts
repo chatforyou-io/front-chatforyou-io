@@ -1,4 +1,4 @@
-import { userCheckNickname } from '@/src/lib/auth';
+import { userCheckNickname } from '@/src/libs/auth';
 import { NextResponse } from 'next/server';
 
 export async function GET(req: Request) {

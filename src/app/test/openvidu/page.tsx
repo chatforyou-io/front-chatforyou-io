@@ -3,7 +3,7 @@
 import { Device, OpenVidu, Publisher, Session, StreamManager, Subscriber } from 'openvidu-browser';
 import { FormEvent, useEffect, useRef, useState } from "react";
 import UserVideo from '@/src/components/openvidu/UserVideo';
-import { getToken } from '@/src/lib/openvidu';
+import { getToken } from '@/src/libs/openvidu';
 import PrimaryButton from '@/src/components/buttons/PrimaryButton';
 import DimmedInput from '@/src/components/inputs/DimmedInput';
 

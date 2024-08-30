@@ -1,4 +1,4 @@
-import { userValidate } from '@/src/lib/auth';
+import { userValidate } from '@/src/libs/auth';
 import { NextResponse } from 'next/server';
 
 export async function GET(req: Request) {

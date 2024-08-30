@@ -1,8 +1,8 @@
 "use client";
 
 import TestSidebar from "@/src/components/sidebars/TestSidebars";
-import { userCheckNickname, userCreate, userDelete, userInfo, userUpdate, userValidate } from "@/src/lib/auth";
-import { chatroomCreate, chatroomList } from "@/src/lib/chatroom";
+import { userCheckNickname, userCreate, userDelete, userInfo, userUpdate, userValidate } from "@/src/libs/auth";
+import { chatroomCreate, chatroomList } from "@/src/libs/chatroom";
 import { FormEvent, useState } from "react";
 
 interface TestSidebarState {

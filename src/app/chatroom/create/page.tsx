@@ -1,7 +1,7 @@
 "use client";
 
 import ChatroomCreateForm from "@/src/components/forms/ChatroomCreateForm";
-import { chatroomCreate } from "@/src/lib/chatroom";
+import { chatroomCreate } from "@/src/libs/chatroom";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";

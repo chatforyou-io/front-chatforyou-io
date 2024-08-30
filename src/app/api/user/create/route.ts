@@ -1,4 +1,4 @@
-import { userCreate } from '@/src/lib/auth';
+import { userCreate } from '@/src/libs/auth';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 

@@ -1,4 +1,4 @@
-import { userUpdate } from '@/src/lib/auth';
+import { userUpdate } from '@/src/libs/auth';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 

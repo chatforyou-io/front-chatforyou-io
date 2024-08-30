@@ -1,7 +1,7 @@
 "use client";
 
 import PrimaryButton from '@/src/components/buttons/PrimaryButton';
-import { userDelete } from '@/src/lib/auth';
+import { userDelete } from '@/src/libs/auth';
 
 export default function Page() {
   const handleDelete = async () => {
