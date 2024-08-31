@@ -68,9 +68,9 @@ export default function Page({ params }: PageProps) {
       if (!ov || !session) return;
 
       try {
-        session.connect(await createToken(sessionId), { clientData: sessionId });
+        await session.connect(await createToken(sessionId), { clientData: sessionId });
 
-        const stream = await ov.initPublisher(undefined, {
+        const stream = ov.initPublisher(undefined, {
           audioSource: undefined,
           videoSource: undefined,
           publishAudio: true,
