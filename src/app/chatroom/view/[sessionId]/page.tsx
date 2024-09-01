@@ -45,11 +45,13 @@ export default function Page({ params }: PageProps) {
       const session = ov.initSession();
 
       session.on("streamCreated", (event) => {
+        console.log("새로운 스트림이 생성되었습니다:", event.stream);
         const subscriber = session.subscribe(event.stream, undefined);
         setSubscribers(subscribers => [...subscribers, subscriber]);
       });
   
       session.on("streamDestroyed", (event) => {
+        console.log("스트림이 삭제되었습니다:", event.stream);
         setSubscribers(subscribers => subscribers.filter((subscriber) => subscriber.stream !== event.stream));
       });
   
@@ -65,7 +67,7 @@ export default function Page({ params }: PageProps) {
 
   useEffect(() => {
     const joinSession = async () => {
-      if (!ov || !session) return;
+      if (!sessionId || !ov || !session) return;
 
       try {
         await session.connect(await createToken(sessionId), { clientData: sessionId });
@@ -89,6 +91,27 @@ export default function Page({ params }: PageProps) {
     };
     joinSession();
   }, [ov, session]);
+
+  useEffect(() => {
+    const beforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+
+      if (session) {
+        session.disconnect();
+        setSession(undefined);
+      }
+
+      setOv(undefined);
+      setStream(undefined);
+      setSubscribers([]);
+    };
+
+    window.addEventListener("beforeunload", beforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", beforeUnload);
+    };
+  }, []);
   
   return (
     <div className="flex flex-col justify-center items-center w-full h-full">

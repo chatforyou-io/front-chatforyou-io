@@ -22,6 +22,17 @@ const createSession = async (sessionId: string) => {
   return data.id; // The sessionId
 }
 
+const joinSession = async (sessionId: string, userIdx: number) => {
+  const data = await fetch(OPENVIDU_HOST + '/chatroom/join/' + sessionId + '?user_idx=' + userIdx, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Basic ' + OPENVIDU_CREDENTIALS,
+    },
+  }).then((response) => response.json());
+  return data.token; // The token
+}
+
 const createToken = async (sessionId: string) => {
   const data = await fetch(OPENVIDU_HOST + '/openvidu/api/sessions/' + sessionId + '/connection', {
     method: 'POST',
