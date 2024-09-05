@@ -41,7 +41,6 @@ const createToken = async (sessionId: string) => {
       'Authorization': 'Basic ' + OPENVIDU_CREDENTIALS,
     },
   }).then((response) => response.json());
-  console.log(data.token);
   return data.token; // The token
 }
 
