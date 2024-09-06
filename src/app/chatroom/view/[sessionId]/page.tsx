@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import UserVideo from "@/src/components/openvidu/UserVideo";
 import { useOpenvidu } from "@/src/webhooks/useOpenvidu";
+import { useSession } from "next-auth/react";
 interface PageProps {
   params: {
     sessionId: string;
@@ -14,7 +15,8 @@ interface PageProps {
 
 export default function Page({ params }: PageProps) {
   const { sessionId } = params;
-  const { session, publisher, subscribers, joinSession, leaveSession } = useOpenvidu({ sessionId: sessionId });
+  const { data: userSession, status } = useSession();
+  const { session, publisher, subscribers, joinSession, leaveSession } = useOpenvidu({ sessionId: sessionId, userIdx: userSession?.user.idx });
   const [chatroom, setChatroom] = useState<Chatroom | undefined>(undefined);
 
   useEffect(() => {
@@ -32,7 +34,9 @@ export default function Page({ params }: PageProps) {
       }
     }
     getChatroomInfo();
+  }, [sessionId]);
 
+  useEffect(() => {
     if (sessionId) joinSession();
     return () => leaveSession();
   }, [sessionId, joinSession, leaveSession]);

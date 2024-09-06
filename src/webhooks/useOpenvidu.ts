@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { OpenVidu, Session, Publisher, Subscriber } from 'openvidu-browser';
-import { createToken } from '@/src/libs/openvidu';
+import { requestToken } from '@/src/libs/openvidu';
 
 interface UseOpenViduProps {
   sessionId: string;
+  userIdx: number;
 }
 
 interface UseOpenViduReturn {
@@ -14,22 +15,19 @@ interface UseOpenViduReturn {
   leaveSession: () => void;
 }
 
-export const useOpenvidu = ({ sessionId }: UseOpenViduProps): UseOpenViduReturn => {
+export const useOpenvidu = ({ sessionId, userIdx }: UseOpenViduProps): UseOpenViduReturn => {
   const [session, setSession] = useState<Session>();
-  const [token, setToken] = useState<string>();
   const [publisher, setPublisher] = useState<Publisher>();
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
 
   const getToken = useCallback(async () => {
-    return await createToken(sessionId);
-  }, [sessionId]);
+    return await requestToken(sessionId, userIdx);
+  }, [sessionId, userIdx]);
 
   const joinSession = useCallback(async () => {
     try {
       const token = await getToken();
       console.log(token);
-      setToken(token);
-
       const ov = new OpenVidu();
       const session = ov.initSession();
 
@@ -64,7 +62,7 @@ export const useOpenvidu = ({ sessionId }: UseOpenViduProps): UseOpenViduReturn 
     } catch (error) {
       console.error('Error joining session:', error);
     }
-  }, [sessionId, getToken]);
+  }, [getToken]);
 
   const leaveSession = useCallback(() => {
     if (session) {
