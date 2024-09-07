@@ -23,7 +23,7 @@ const createSession = async (sessionId: string) => {
 }
 
 const joinSession = async (sessionId: string, userIdx: number) => {
-  const data = await fetch(OPENVIDU_HOST + '/chatroom/join/' + sessionId + '?user_idx=' + userIdx, {
+  const data = await fetch(OPENVIDU_HOST + '/chatforyouio/chatroom/join/' + sessionId + '?user_idx=' + userIdx, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
