@@ -13,7 +13,7 @@ const chatroomCreate = async (chatroom: Chatroom) => {
 
     chatroom.pwd = btoa(chatroom.pwd);
     
-    const data = await fetch(`${authHost}/chatroom/create`, {
+    console.log(chatroom);    const data = await fetch(`${authHost}/chatroom/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
