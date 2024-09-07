@@ -3,11 +3,13 @@
 import { Device, OpenVidu, Publisher, Session, StreamManager, Subscriber } from 'openvidu-browser';
 import { FormEvent, useEffect, useRef, useState } from "react";
 import UserVideo from '@/src/components/openvidu/UserVideo';
-import { getToken } from '@/src/libs/openvidu';
+import { requestToken } from '@/src/libs/openvidu';
 import PrimaryButton from '@/src/components/buttons/PrimaryButton';
 import DimmedInput from '@/src/components/inputs/DimmedInput';
+import { useSession } from 'next-auth/react';
 
 export default function Page() {
+  const { data: userSession, status } = useSession();
   const [ov, setOv] = useState<OpenVidu | undefined>(undefined);
   const [session, setSession] = useState<Session | undefined>(undefined);
   const [currentVideoDevice, setCurrentVideoDevice] = useState<Device | undefined>(undefined);
@@ -62,7 +64,7 @@ export default function Page() {
 
     // --- 4) Connect to the session with a valid user token ---
     // Get a token from the OpenVidu deployment
-    getToken(mySessionId).then((token) => {      
+    requestToken(mySessionId, userSession?.user.idx).then((token) => {      
       console.log(token);
       // First param is the token got from the OpenVidu deployment. Second param can be retrieved by every user on event
       // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
