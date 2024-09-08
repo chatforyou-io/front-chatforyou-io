@@ -4,7 +4,6 @@ import ChatroomCreateForm from "@/src/components/forms/ChatroomCreateForm";
 import { chatroomCreate } from "@/src/libs/chatroom";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 export default function Page() {
   const { data: session, status } = useSession();
@@ -28,12 +27,6 @@ export default function Page() {
       alert('방 생성 중 문제가 발생하였습니다. 나중에 다시 시도해주세요.');
     }
   }
-
-  useEffect(() => {
-    if (!session) {
-      router.push('/auth/login');
-    }
-  }, [status]);
   
   return (
     <div className="flex flex-col justify-center items-center w-full h-full">

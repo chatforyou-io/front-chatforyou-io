@@ -2,11 +2,11 @@
 
 import DimmedButton from "@/src/components/buttons/DimmedButton";
 import { chatroomInfo } from "@/src/libs/chatroom";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { OpenVidu, Publisher, Session, StreamManager } from "openvidu-browser";
-import { use, useEffect, useState } from "react";
-import { createToken } from "@/src/libs/openvidu";
-import UserVideo from "@/src/components/openvidu/UserVideo";
+import { useSession } from "next-auth/react";
+import { useOpenvidu } from "@/src/app/webhooks/useOpenvidu";
+import Video from '@/src/components/openvidu/VideoCall';
 
 interface PageProps {
   params: {
@@ -16,11 +16,9 @@ interface PageProps {
 
 export default function Page({ params }: PageProps) {
   const { sessionId } = params;
+  const { data: userSession, status } = useSession();
+  const { session, publisher, subscribers, joinSession, leaveSession } = useOpenvidu({ sessionId, userIdx: userSession?.user.idx });
   const [chatroom, setChatroom] = useState<Chatroom | undefined>(undefined);
-  const [ov, setOv] = useState<OpenVidu | undefined>(undefined);
-  const [session, setSession] = useState<Session | undefined>(undefined);
-  const [stream, setStream] = useState<Publisher | undefined>(undefined);
-  const [subscribers, setSubscribers] = useState<StreamManager[]>([]);
 
   useEffect(() => {
     const getChatroomInfo = async () => {
@@ -29,10 +27,8 @@ export default function Page({ params }: PageProps) {
         if (!data.isSuccess) {
           throw new Error();
         }
-  
         setChatroom(data.roomData);
       } catch (error) {
-        console.error('채팅방 정보 조회 중 오류 발생:', error);
         alert('채팅방 정보 조회 중 문제가 발생하였습니다. 나중에 다시 시도해주세요.');
       }
     }
@@ -40,78 +36,17 @@ export default function Page({ params }: PageProps) {
   }, [sessionId]);
 
   useEffect(() => {
-    async function joinSession() {
-      const ov = new OpenVidu();
-      const session = ov.initSession();
-
-      session.on("streamCreated", (event) => {
-        console.log("새로운 스트림이 생성되었습니다:", event.stream);
-        const subscriber = session.subscribe(event.stream, undefined);
-        setSubscribers(subscribers => [...subscribers, subscriber]);
-      });
-  
-      session.on("streamDestroyed", (event) => {
-        console.log("스트림이 삭제되었습니다:", event.stream);
-        setSubscribers(subscribers => subscribers.filter((subscriber) => subscriber.stream !== event.stream));
-      });
-  
-      session.on('exception', (exception: any) => {
-        console.warn(exception);
-      });
-
-      setOv(ov);
-      setSession(session);
-    };
-    joinSession();
-  }, [chatroom]);
-
-  useEffect(() => {
-    const joinSession = async () => {
-      if (!sessionId || !ov || !session) return;
-
-      try {
-        await session.connect(await createToken(sessionId), { clientData: sessionId });
-
-        const stream = ov.initPublisher(undefined, {
-          audioSource: undefined,
-          videoSource: undefined,
-          publishAudio: true,
-          publishVideo: true,
-          resolution: '640x480',
-          frameRate: 30,
-          insertMode: 'APPEND',
-        });
-        setStream(stream);
-
-        session.publish(stream);
-      } catch (error) {
-        console.error('세션 연결 중 오류 발생:', error);
-        alert('세션 연결 중 문제가 발생하였습니다. 나중에 다시 시도해주세요.');
-      }
-    };
-    joinSession();
-  }, [ov, session]);
-
-  useEffect(() => {
-    const beforeUnload = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
-
-      if (session) {
-        session.disconnect();
-        setSession(undefined);
-      }
-
-      setOv(undefined);
-      setStream(undefined);
-      setSubscribers([]);
-    };
-
-    window.addEventListener("beforeunload", beforeUnload);
-
+    if (status === 'authenticated' && userSession?.user?.idx) {
+      joinSession();
+    }
     return () => {
-      window.removeEventListener("beforeunload", beforeUnload);
+      leaveSession();
     };
-  }, []);
+  }, [status, userSession?.user?.idx, joinSession, leaveSession]);
+  
+  useEffect(() => {
+    console.log({session, publisher, subscribers});
+  }, [session, publisher, subscribers]);
   
   return (
     <div className="flex flex-col justify-center items-center w-full h-full">
@@ -133,15 +68,13 @@ export default function Page({ params }: PageProps) {
             <p className="text-sm text-gray-500">4명</p>
           </div>
         </div>
-        <div className="flex w-full space-x-4">
-          <div className="w-full h-20 bg-gray-200 rounded-xl">
-            {session && stream && (
-              <UserVideo
-                publisher={stream}
-                subscribers={subscribers}
-              />
-            )}
-          </div>
+        <div className="flex w-full space-x-4 bg-gray-200 rounded-xl">
+          {session && publisher && (
+            <Video streamManager={publisher} />
+          )}
+          {subscribers.map(subscriber => (
+              <Video key={subscriber.id} streamManager={subscriber} />
+          ))}
         </div>
         <div className="flex w-full space-x-4">
           <div className="w-full h-20 bg-gray-200 rounded-xl">
@@ -155,13 +88,13 @@ export default function Page({ params }: PageProps) {
           </div>
         </div>
         <div className="flex w-full space-x-4">
-          <DimmedButton type="button" onClick={() => {}} label="채팅" />
-          <DimmedButton type="button" onClick={() => {}} label="채팅" />
-          <DimmedButton type="button" onClick={() => {}} label="채팅" />
-          <DimmedButton type="button" onClick={() => {}} label="채팅" />
-          <DimmedButton type="button" onClick={() => {}} label="채팅" />
-          <DimmedButton type="button" onClick={() => {}} label="채팅" />
-          <DimmedButton type="button" onClick={() => {}} label="채팅" />
+          <DimmedButton type="button" label="채팅" />
+          <DimmedButton type="button" label="채팅" />
+          <DimmedButton type="button" label="채팅" />
+          <DimmedButton type="button" label="채팅" />
+          <DimmedButton type="button" label="채팅" />
+          <DimmedButton type="button" label="채팅" />
+          <DimmedButton type="button" label="채팅" />
         </div>
       </div>
     </div>
