@@ -5,7 +5,7 @@ import { chatroomInfo } from "@/src/libs/chatroom";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { useOpenvidu } from "@/src/app/webhooks/useOpenvidu";
+import { useOpenvidu } from "@/src/webhooks/useOpenvidu";
 import Video from '@/src/components/openvidu/VideoCall';
 
 interface PageProps {
@@ -21,6 +21,15 @@ export default function Page({ params }: PageProps) {
   const [chatroom, setChatroom] = useState<Chatroom | undefined>(undefined);
 
   useEffect(() => {
+    if (status === 'authenticated' && userSession?.user?.idx) {
+      joinSession();
+    }
+    return () => {
+      leaveSession();
+    };
+  }, [status, userSession?.user?.idx, joinSession, leaveSession]);
+
+  useEffect(() => {
     const getChatroomInfo = async () => {
       try {
         const data = await chatroomInfo(sessionId);
@@ -34,19 +43,6 @@ export default function Page({ params }: PageProps) {
     }
     getChatroomInfo();
   }, [sessionId]);
-
-  useEffect(() => {
-    if (status === 'authenticated' && userSession?.user?.idx) {
-      joinSession();
-    }
-    return () => {
-      leaveSession();
-    };
-  }, [status, userSession?.user?.idx, joinSession, leaveSession]);
-  
-  useEffect(() => {
-    console.log({session, publisher, subscribers});
-  }, [session, publisher, subscribers]);
   
   return (
     <div className="flex flex-col justify-center items-center w-full h-full">
