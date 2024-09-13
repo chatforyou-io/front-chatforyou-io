@@ -7,7 +7,7 @@ import Image from "next/image";
 import { useSession } from "next-auth/react";
 import Video from '@/src/components/openvidu/VideoCall';
 import { useRouter } from "next/navigation";
-import { requestToken } from "@/src/libs/openvidu";
+import { createToken, requestToken } from "@/src/libs/openvidu";
 import { OpenVidu, Publisher, Session, StreamManager } from "openvidu-browser";
 
 interface PageProps {
@@ -43,17 +43,12 @@ export default function Page({ params }: PageProps) {
 
   // 토큰 가져오기
   useEffect(() => {
-    if (!userSession?.user.idx) {
-      router.push('/');
-      return;
-    }
-
     const getToken = async () => {
-      const token = await requestToken(sessionId, userSession?.user.idx);
+      const token = await createToken(sessionId);
       setToken(token);
     }
     getToken();
-  }, [router, sessionId, userSession?.user.idx]);
+  }, [sessionId]);
 
   useEffect(() => {
     if (!token || !userSession?.user.name) {
