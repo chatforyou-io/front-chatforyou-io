@@ -43,9 +43,6 @@ export default function Page({ params }: PageProps) {
 
   // 토큰 가져오기
   useEffect(() => {
-    console.log(sessionId);
-    console.log(userSession?.user.idx);
-
     if (!userSession?.user.idx) {
       router.push('/');
       return;
@@ -68,14 +65,17 @@ export default function Page({ params }: PageProps) {
       const session = ov.initSession();
 
       session.on('streamCreated', (event) => {
+        console.log('%cstreamCreated', 'color: blue;');
         const subscriber = session.subscribe(event.stream, undefined);
         setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
       });
 
       session.on('streamDestroyed', (event) => {
+        console.log('%cstreamDestroyed', 'color: red;');
         setSubscribers((prevSubscribers) => prevSubscribers.filter((subscriber) => subscriber !== event.stream.streamManager));
       });
 
+      console.log('%cconnect', 'color: blue;');
       await session.connect(token, { clientData: userSession?.user.name });
 
       const publisher = ov.initPublisher(undefined, {
@@ -88,6 +88,7 @@ export default function Page({ params }: PageProps) {
         insertMode: 'APPEND',
       });
 
+      console.log('%cpublish', 'color: green;');
       await session.publish(publisher);
 
       var devices = await ov.getDevices();
@@ -100,6 +101,23 @@ export default function Page({ params }: PageProps) {
     }
     joinSession();
   }, [token, userSession?.user.name]);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+
+      if (session) {
+        console.log('%cdisconnect', 'color: red;');
+        session.disconnect();
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [session]);
   
   return (
     <div className="flex flex-col justify-center items-center w-full h-full">
