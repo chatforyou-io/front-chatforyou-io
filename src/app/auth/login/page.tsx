@@ -8,6 +8,8 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 
 export default function Page() {
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+
   const handleClick = (provider: string) => {
     signIn(provider, { callbackUrl: '/' });
   }
@@ -19,7 +21,7 @@ export default function Page() {
           <h1 className="text-gray-700 text-[40px] font-semibold">로그인</h1>
           <div className="flex gap-2">
             <h3 className="text-gray-700 text-xl">계정이 없으신가요?</h3>
-            <Link href="/chatforyouio/front/auth/signup" className="text-blue-500 text-xl font-semibold">가입하기</Link>
+            <Link href={`${basePath}/auth/signup`} className="text-blue-500 text-xl font-semibold">가입하기</Link>
           </div>
         </div>
         <div className="mt-12 w-full">

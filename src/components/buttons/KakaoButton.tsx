@@ -6,6 +6,8 @@ interface KakaoButtonProps {
 }
 
 const KakaoButton: React.FC<KakaoButtonProps> = ({ onClick }) => {
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+  
   return (
     <button
       onClick={onClick}
@@ -13,7 +15,7 @@ const KakaoButton: React.FC<KakaoButtonProps> = ({ onClick }) => {
       className="flex justify-center items-center w-16 h-16 bg-yellow-400 shadow rounded-2xl"
     >
       <Image
-        src="/chatforyouio/front/images/icon-kakao.svg"
+        src={`${basePath}/images/icon-kakao.svg`}
         alt="kakao"
         width={36}
         height={36}

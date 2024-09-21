@@ -13,6 +13,8 @@ import { useRouter } from "next/navigation";
 import { userCreate } from "@/src/libs/auth";
 
 export default function Page() {
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+  
   const [step, setStep] = useState<number>(1);
   const [id, setId] = useState<string>('');
   const [validCode, setValidCode] = useState<string>('');
@@ -81,7 +83,7 @@ export default function Page() {
         </div>
         <div className='flex justify-center gap-4 mt-6 w-full'>
           <p className="text-xl">이미 계정이 있습니까?</p>
-          <Link href="/chatforyouio/front/" className="text-blue-500 text-xl">로그인</Link>
+          <Link href={`${basePath}/`} className="text-blue-500 text-xl">로그인</Link>
         </div>
       </div>
     </div>

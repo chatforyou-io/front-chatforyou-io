@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { OpenVidu, Session, Publisher, Subscriber } from 'openvidu-browser';
 import { requestToken } from '@/src/libs/openvidu';
 
@@ -20,14 +20,22 @@ export const useOpenvidu = ({ sessionId, userIdx }: UseOpenViduProps): UseOpenVi
   const [publisher, setPublisher] = useState<Publisher>();
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
 
+  const getToken = useCallback(async () => {
+    return await requestToken(sessionId, userIdx);
+  }, [sessionId, userIdx]);
+
   const joinSession = useCallback(async () => {
     try {
       if (!sessionId || !userIdx) {
         throw new Error('sessionId and userIdx must be provided');
       }
 
-      const token = await requestToken(sessionId, userIdx);
-
+      const token = await getToken();
+      
+      if (!token) {
+        throw new Error('Token is empty');
+      }
+      
       const ov = new OpenVidu();
       const session = ov.initSession();
 
@@ -59,16 +67,18 @@ export const useOpenvidu = ({ sessionId, userIdx }: UseOpenViduProps): UseOpenVi
     } catch (error) {
       console.error('Error joining session:', error);
     }
-  }, [sessionId, userIdx]);
+  }, [sessionId, userIdx, getToken]);
 
   const leaveSession = useCallback(() => {
-    if (session) {
-      session.disconnect();
-      setSession(undefined);
-      setPublisher(undefined);
-      setSubscribers([]);
-    }
-  }, [session]);
+    setSession((currentSession) => {
+      if (currentSession) {
+        currentSession.disconnect();
+      }
+      return undefined;
+    });
+    setPublisher(undefined);
+    setSubscribers([]);
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -76,11 +86,11 @@ export const useOpenvidu = ({ sessionId, userIdx }: UseOpenViduProps): UseOpenVi
     };
   }, [leaveSession]);
 
-  return {
+  return useMemo(() => ({
     session,
     publisher,
     subscribers,
     joinSession,
     leaveSession,
-  };
+  }), [session, publisher, subscribers, joinSession, leaveSession]);
 };

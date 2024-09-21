@@ -7,10 +7,12 @@ interface ChatroomCardProps {
 }
 
 const ChatroomCard: React.FC<ChatroomCardProps> = ({ chatroom }) => {
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+
   return (
     <Link href={`/chatroom/view/${chatroom.sessionId}`} className="px-4 py-6 w-80 h-72 space-y-4 bg-white rounded-xl">
       <div className="flex gap-4">
-        <Image src="/chatforyouio/front/images/icon-exclamation-circle.svg" alt="room" width={20} height={20} />
+        <Image src={`${basePath}/images/icon-exclamation-circle.svg`} alt="room" width={20} height={20} />
         <p className="text-sm text-gray-500">{chatroom.roomName}</p>
       </div>
       <div className="flex gap-4 px-3">
@@ -18,24 +20,24 @@ const ChatroomCard: React.FC<ChatroomCardProps> = ({ chatroom }) => {
       </div>
       <div className="flex justify-between gap-4 border-t pt-6">
         <div className="flex gap-4">
-          <Image src="/chatforyouio/front/images/icon-exclamation-circle.svg" alt="room" width={20} height={20} />
+          <Image src={`${basePath}/images/icon-exclamation-circle.svg`} alt="room" width={20} height={20} />
           <p className="text-sm text-gray-500">10 / {chatroom.maxUserCount}</p>
         </div>
         <div className="flex gap-4">
           <p className="text-sm text-gray-500">{chatroom.roomName}</p>
-          <Image src="/chatforyouio/front/images/icon-exclamation-circle.svg" alt="room" width={20} height={20} />
+          <Image src={`${basePath}/images/icon-exclamation-circle.svg`} alt="room" width={20} height={20} />
         </div>
       </div>
       <div className="flex justify-between gap-4 border-t pt-6">
         <div className='flex gap-2'>
-          <Image src="/chatforyouio/front/images/icon-exclamation-circle.svg" alt="room" width={40} height={40} />
+          <Image src={`${basePath}/images/icon-exclamation-circle.svg`} alt="room" width={40} height={40} />
           <div>
             <h3 className="font-semibold text-gray-800">Username</h3>
             <p className="text-sm text-gray-500">user@mail.com</p>
           </div>
         </div>
         <div className='flex gap-4'>
-          <Image src="/chatforyouio/front/images/icon-exclamation-circle.svg" alt="room" width={40} height={40} />
+          <Image src={`${basePath}/images/icon-exclamation-circle.svg`} alt="room" width={40} height={40} />
         </div>
       </div>
     </Link>
