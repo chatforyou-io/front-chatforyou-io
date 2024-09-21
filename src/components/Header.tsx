@@ -22,7 +22,7 @@ export default function Header() {
         {(session && session.data ) && (
           <div className="flex gap-4">
             <button onClick={handleProfile}>
-              <Image src="/images/icon-user.svg" alt="room" width={36} height={36} className="border-2 border-black rounded-full" />
+              <Image src="/front/images/icon-user.svg" alt="room" width={36} height={36} className="border-2 border-black rounded-full" />
             </button>
           </div>
         )}

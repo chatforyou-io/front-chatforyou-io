@@ -119,7 +119,7 @@ export default function Page({ params }: PageProps) {
       <div className="flex flex-col items-center p-4 w-full max-w-xl space-y-4 bg-white rounded-3xl">
         <div className="flex w-full space-x-4">
           <div className="flex justiffy-center items-center">
-            <Image src="/images/icon-user.svg" alt="room" width={48} height={48} className="border-2 border-black rounded-full" />
+            <Image src="/front/images/icon-user.svg" alt="room" width={48} height={48} className="border-2 border-black rounded-full" />
           </div>
           <div className="flex flex-col items-center space-y-4">
             <h3 className="font-semibold text-xl text-gray-800">{chatroom?.roomName}</h3>
