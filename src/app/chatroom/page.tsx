@@ -14,7 +14,7 @@ export default function Page() {
         </div>
         <div className="flex justify-end w-full h-8">
           <Link
-            href="/"
+            href="/chatforyouio/front/"
             className="flex gap-2 items-center h-8 text-gray-900 font-bold"
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">

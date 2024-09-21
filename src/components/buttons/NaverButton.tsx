@@ -13,7 +13,7 @@ const NaverButton: React.FC<NaverButtonProps> = ({ onClick }) => {
       className="flex justify-center items-center w-16 h-16 bg-green-600 shadow rounded-2xl"
     >
       <Image
-        src="/front/images/icon-naver.svg"
+        src="/chatforyouio/front/images/icon-naver.svg"
         alt="naver"
         width={32}
         height={32}

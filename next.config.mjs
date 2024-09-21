@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  basePath: '/front',
-  assetPrefix: '/front/',
+  basePath: '/chatforyouio/front/',
+  assetPrefix: '/chatforyouio/front/',
 };
 
 export default nextConfig;

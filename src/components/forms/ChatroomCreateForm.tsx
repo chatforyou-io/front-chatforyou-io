@@ -58,7 +58,7 @@ export default function ChatroomCreateForm({ onSubmit }: ChatroomCreateFormProps
         </div>
       </div>
       <div className="flex gap-9">
-        <Link href="/" className="w-full p-[17px] h-[60px] border bg-gray-100 text-xl text-gray-700 placeholder-gray-700 leading-5 text-center rounded-full">취소</Link>
+        <Link href="/chatforyouio/front/" className="w-full p-[17px] h-[60px] border bg-gray-100 text-xl text-gray-700 placeholder-gray-700 leading-5 text-center rounded-full">취소</Link>
         <PrimaryButton type="submit" label="방 만들기" />
       </div>
     </form>

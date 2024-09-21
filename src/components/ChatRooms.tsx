@@ -22,7 +22,7 @@ export default function Articles() {
   return (
     <div className="p-4">
       {chatrooms.map((chatroom, index) => (
-        <Link key={index} href="/" className="border-b border-gray-400 py-2">
+        <Link key={index} href="/chatforyouio/front/" className="border-b border-gray-400 py-2">
           <h2 className="text-lg font-bold text-gray-700">{chatroom.title}</h2>
           <p className="text-gray-600">{chatroom.content}</p>
         </Link>
