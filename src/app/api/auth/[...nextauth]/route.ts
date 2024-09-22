@@ -6,6 +6,8 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 import { addOAuthUser, getOAuthUser, getCredentialsUser } from '@/firebase'
 import { userInfo } from '@/src/libs/auth'
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+
 const authOptions: NextAuthOptions = {
   providers: [
     KakaoProvider({
@@ -91,7 +93,7 @@ const authOptions: NextAuthOptions = {
   session: {
     maxAge: 60 * 60, // 1 hour
     updateAge: 24 * 60 * 60, // 24 hours
-  }
+  },
 }
 
 const handler = NextAuth(authOptions);
