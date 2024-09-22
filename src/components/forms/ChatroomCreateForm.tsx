@@ -9,7 +9,7 @@ interface ChatroomCreateFormProps {
 
 export default function ChatroomCreateForm({ onSubmit }: ChatroomCreateFormProps) {  
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-  
+
   const [error, setError] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
 
@@ -60,7 +60,7 @@ export default function ChatroomCreateForm({ onSubmit }: ChatroomCreateFormProps
         </div>
       </div>
       <div className="flex gap-9">
-        <Link href={`${basePath}/`} className="w-full p-[17px] h-[60px] border bg-gray-100 text-xl text-gray-700 placeholder-gray-700 leading-5 text-center rounded-full">취소</Link>
+        <Link href="/" className="w-full p-[17px] h-[60px] border bg-gray-100 text-xl text-gray-700 placeholder-gray-700 leading-5 text-center rounded-full">취소</Link>
         <PrimaryButton type="submit" label="방 만들기" />
       </div>
     </form>

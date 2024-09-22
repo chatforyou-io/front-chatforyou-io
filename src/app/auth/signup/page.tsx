@@ -83,7 +83,7 @@ export default function Page() {
         </div>
         <div className='flex justify-center gap-4 mt-6 w-full'>
           <p className="text-xl">이미 계정이 있습니까?</p>
-          <Link href={`${basePath}/`} className="text-blue-500 text-xl">로그인</Link>
+          <Link href="/" className="text-blue-500 text-xl">로그인</Link>
         </div>
       </div>
     </div>
