@@ -11,7 +11,7 @@ export default function Page() {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
   const handleClick = (provider: string) => {
-    signIn(provider, { callbackUrl: '/' });
+    signIn(provider, { callbackUrl: `${basePath}/` });
   }
 
   return (

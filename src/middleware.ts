@@ -3,17 +3,26 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export async function middleware(req: NextRequest) {
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+
   const token = await getToken({ req });
   const path = req.nextUrl.pathname;
+  const origin = req.nextUrl.origin;
 
-  if (token && path.startsWith('/auth/')) {
+  console.log('path:', path);
+  console.log('origin:', origin);
+  console.log('redirect:', `${origin}${basePath}/`);
+
+  console.log(token);
+
+  if (token && path.startsWith(`/auth/`)) {
     // Skip the middleware for the login and signup pages
-    //return NextResponse.redirect(`${req.nextUrl.origin}/`);
+    return NextResponse.redirect(`${origin}${basePath}/`);
   }
   
-  if (!token && !path.startsWith('/auth/')) {
+  if (!token && !path.startsWith(`/auth/`)) {
     // Redirect to the login page if the user is not authenticated
-    //return NextResponse.redirect(`${req.nextUrl.origin}/auth/login`);
+    return NextResponse.redirect(`${origin}${basePath}/auth/login`);
   }
 	
   // If authenticated, proceed to the originally requested path
@@ -31,6 +40,7 @@ export const config = {
       * - Favicon file (/favicon.ico)
       * - Public images (/images/...)
      */
+    '/chatforyouio/front',
     '/((?!api|_next/static|_next/image|favicon.ico|images).*)',
   ],
 };

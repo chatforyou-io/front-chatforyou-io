@@ -7,8 +7,12 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { chatroomList } from "@/src/libs/chatroom";
 import Header from "@/src/components/Header";
+import { useSession } from "next-auth/react";
 
 export default function Home() {
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+  
+  const {data: session, status} = useSession();
   const router = useRouter();
   
   const handleClick = () => {
@@ -26,8 +30,12 @@ export default function Home() {
   };
 
   useEffect(() => {
+    if (status !== "authenticated") {
+      router.push(`${basePath}/auth/login`);
+    }
+
     fetchChatrooms();
-  }, []);
+  }, [basePath, router, status]);
 
   return (
 

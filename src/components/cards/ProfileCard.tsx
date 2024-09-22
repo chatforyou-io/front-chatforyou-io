@@ -7,12 +7,12 @@ interface ProfileCardProps {
 
 const ProfileCard: React.FC<ProfileCardProps> = () => {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-  
+
   const session = useSession();
 
   function handleSignOut(event: MouseEvent<HTMLButtonElement>): void {
     event.preventDefault();
-    signOut({ callbackUrl: '/auth/login'});
+    signOut({ callbackUrl: `${basePath}/auth/login` });
   }
   
   return (
