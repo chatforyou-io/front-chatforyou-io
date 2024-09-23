@@ -81,5 +81,30 @@ const chatroomInfo = async (sessionId: string) => {
   }
 };
 
+const chatroomToken = async (sessionId: string, userIdx: number) => {
+  try {
+    const data = await fetch(`${authHost}/chatroom/join/${sessionId}?user_idx=${userIdx}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${authToken}`,
+      },
+    }).then(response => {
+      if (!response.ok) {
+        throw new Error('서버와의 통신 중 오류가 발생했습니다.');
+      }
+      return response.json();
+    });
+    
+    if (data.result === 'success') {
+      return data.joinData.joinUserInfo.camera_token;
+    } else {
+      throw new Error('Failed to request token');
+    }
+  } catch (error) {
+    console.error(error);
+    return { isSuccess: false, result: 'fail token' };
+  }
+}
 
-export { chatroomCreate, chatroomList, chatroomInfo };
+export { chatroomCreate, chatroomList, chatroomInfo, chatroomToken };

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { OpenVidu, Session, Publisher, Subscriber } from 'openvidu-browser';
-import { requestToken } from '@/src/libs/openvidu';
+import { chatroomToken } from '@/src/libs/chatroom';
 
 interface UseOpenViduProps {
   sessionId: string;
@@ -21,7 +21,7 @@ export const useOpenvidu = ({ sessionId, userIdx }: UseOpenViduProps): UseOpenVi
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
 
   const getToken = useCallback(async () => {
-    return await requestToken(sessionId, userIdx);
+    return await chatroomToken(sessionId, userIdx);
   }, [sessionId, userIdx]);
 
   const joinSession = useCallback(async () => {

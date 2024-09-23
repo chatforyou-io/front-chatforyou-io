@@ -5,10 +5,8 @@ import { chatroomInfo } from "@/src/libs/chatroom";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
+import { useOpenvidu } from "@/src/webhooks/useOpenvidu";
 import Video from '@/src/components/openvidu/VideoCall';
-import { useRouter } from "next/navigation";
-import { createToken, requestToken } from "@/src/libs/openvidu";
-import { OpenVidu, Publisher, Session, StreamManager } from "openvidu-browser";
 
 interface PageProps {
   params: {
@@ -21,100 +19,32 @@ export default function Page({ params }: PageProps) {
   
   const { sessionId } = params;
   const { data: userSession, status } = useSession();
+  const { session, publisher, subscribers, joinSession, leaveSession } = useOpenvidu({ sessionId, userIdx: userSession?.user.idx });
   const [chatroom, setChatroom] = useState<Chatroom | undefined>(undefined);
-  const [token, setToken] = useState<string | undefined>(undefined);
-  const [session, setSession] = useState<Session | undefined>(undefined);
-  const [publisher, setPublisher] = useState<Publisher | undefined>(undefined);
-  const [subscribers, setSubscribers] = useState<StreamManager[]>([]);
-  const router = useRouter();
 
-  // 채팅방 정보 가져오기
+  useEffect(() => {
+    if (status === 'authenticated' && userSession?.user?.idx) {
+      joinSession();
+    }
+    return () => {
+      leaveSession();
+    };
+  }, [status, userSession?.user?.idx, joinSession, leaveSession]);
+
   useEffect(() => {
     const getChatroomInfo = async () => {
-      const data = await chatroomInfo(sessionId);
-      
-      if (!data.isSuccess) {
-        router.push('/');
-        return;
+      try {
+        const data = await chatroomInfo(sessionId);
+        if (!data.isSuccess) {
+          throw new Error();
+        }
+        setChatroom(data.roomData);
+      } catch (error) {
+        alert('채팅방 정보 조회 중 문제가 발생하였습니다. 나중에 다시 시도해주세요.');
       }
-
-      setChatroom(data.roomData);
     }
     getChatroomInfo();
-  }, [router, sessionId]);
-
-  // 토큰 가져오기
-  useEffect(() => {
-    const getToken = async () => {
-      const token = await createToken(sessionId);
-      setToken(token);
-    }
-    getToken();
   }, [sessionId]);
-
-  useEffect(() => {
-    if (!token || !userSession?.user.name) {
-      return;
-    }
-
-    const joinSession = async () => {
-      const ov = new OpenVidu();
-      const session = ov.initSession();
-
-      session.on('streamCreated', (event) => {
-        console.log('%cstreamCreated', 'color: blue;');
-        const subscriber = session.subscribe(event.stream, undefined);
-        setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
-      });
-
-      session.on('streamDestroyed', (event) => {
-        console.log('%cstreamDestroyed', 'color: red;');
-        setSubscribers((prevSubscribers) => prevSubscribers.filter((subscriber) => subscriber !== event.stream.streamManager));
-      });
-
-      console.log('%cconnect', 'color: blue;');
-      await session.connect(token, { clientData: userSession?.user.name });
-
-      const publisher = ov.initPublisher(undefined, {
-        audioSource: undefined,
-        videoSource: undefined,
-        publishAudio: true,
-        publishVideo: true,
-        resolution: '640x480',
-        frameRate: 30,
-        insertMode: 'APPEND',
-      });
-
-      console.log('%cpublish', 'color: green;');
-      await session.publish(publisher);
-
-      var devices = await ov.getDevices();
-      var videoDevices = devices.filter(device => device.kind === 'videoinput');
-      var currentVideoDeviceId = publisher.stream.getMediaStream().getVideoTracks()[0].getSettings().deviceId;
-      var currentVideoDevice = videoDevices.find(device => device.deviceId === currentVideoDeviceId);
-
-      setSession(session);
-      setPublisher(publisher);
-    }
-    joinSession();
-  }, [token, userSession?.user.name]);
-
-  useEffect(() => {
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
-
-      if (session) {
-        console.log('%cdisconnect', 'color: red;');
-        session.disconnect();
-      }
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [session]);
   
   return (
     <div className="flex flex-col justify-center items-center w-full h-full">
@@ -138,10 +68,10 @@ export default function Page({ params }: PageProps) {
         </div>
         <div className="flex w-full space-x-4 bg-gray-200 rounded-xl">
           {session && publisher && (
-            <Video key={publisher.stream.streamId} streamManager={publisher} />
+            <Video streamManager={publisher} />
           )}
           {subscribers.map(subscriber => (
-            <Video key={subscriber.id} streamManager={subscriber} />
+              <Video key={subscriber.id} streamManager={subscriber} />
           ))}
         </div>
         <div className="flex w-full space-x-4">

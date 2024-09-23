@@ -9,12 +9,6 @@ export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
   const origin = req.nextUrl.origin;
 
-  console.log('path:', path);
-  console.log('origin:', origin);
-  console.log('redirect:', `${origin}${basePath}/`);
-
-  console.log(token);
-
   if (token && path.startsWith(`/auth/`)) {
     // Skip the middleware for the login and signup pages
     return NextResponse.redirect(`${origin}${basePath}/`);
