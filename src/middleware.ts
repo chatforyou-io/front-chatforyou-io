@@ -11,12 +11,12 @@ export async function middleware(req: NextRequest) {
 
   if (token && path.startsWith(`/auth/`)) {
     // Skip the middleware for the login and signup pages
-    return NextResponse.redirect(`${basePath}/`);
+    return NextResponse.redirect(`${origin}${basePath}/`);
   }
   
   if (!token && !path.startsWith(`/auth/`)) {
     // Redirect to the login page if the user is not authenticated
-    return NextResponse.redirect(`${basePath}/auth/login`);
+    return NextResponse.redirect(`${origin}${basePath}/auth/login`);
   }
 	
   // If authenticated, proceed to the originally requested path
