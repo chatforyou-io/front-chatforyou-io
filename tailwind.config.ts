@@ -16,6 +16,9 @@ const config: Config = {
         },
         error: "#FF2727"
       },
+      backgroundImage: {
+        "magnifying-glass": "url('/chatforyouio/front/images/icon-magnifying-glass.svg')",
+      },
     },
   },
   plugins: [],

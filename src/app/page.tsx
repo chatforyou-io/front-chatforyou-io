@@ -1,13 +1,14 @@
 "use client";
 
 import ChatroomCard from "@/src/components/cards/ChatroomCard";
-import NormalInput from "@/src/components/inputs/NormalInput";
+import SearchInput from "@/src/components/inputs/SearchInput";
 import PrimaryButton from "@/src/components/buttons/PrimaryButton";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { chatroomList } from "@/src/libs/chatroom";
 import Header from "@/src/components/Header";
 import { useSession } from "next-auth/react";
+import DashboardSidebar from "../components/sidebars/DashboardSidebar";
 
 export default function Home() {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
@@ -42,24 +43,17 @@ export default function Home() {
     <main className="h-full bg-white">
       <Header />
       <div className="flex gap-12 pt-24 pb-4 px-4 h-full bg-gray-200">
-        <div className="px-3 py-6 w-60 h-full bg-white rounded">
-          <h3 className="font-semibold text-gray-800">Quantum Dynamics</h3>
-        </div>
-        <div className="p-6 w-full h-full space-y-5 overflow-y-scroll">
-          <h1 className="text-4xl font-bold text-gray-800">Dashboard</h1>
+        <DashboardSidebar />
+        <div className="p-6 w-full min-w-[800px] h-full space-y-5 overflow-y-scroll">
           <div className="flex justify-between">
-            <div className="flex mt-4 space-x-4">
-              <p>Room List</p>
-              <p>Overview</p>
-              <p>Search</p>
-              <p>Account</p>
-            </div>
+            <h1 className="text-4xl font-bold text-gray-800">대시보드</h1>
             <div className="flex gap-3">
-              <NormalInput type="text" name="keyword" placeholder="Search" />
-              <PrimaryButton type="button" onClick={handleClick} label="Create Room" />
+              <SearchInput type="text" name="keyword" placeholder="Search" />
+              <PrimaryButton type="button" onClick={handleClick} label="방 만들기" />
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-8 w-full h-full">
+          <div className="flex gap-8 w-full h-full">
+            {chatrooms && chatrooms.length === 0 && <p>채팅방이 존재하지 않습니다.</p>}
             {chatrooms && chatrooms.map((chatroom, index) => {
               return (
               <ChatroomCard key={index} chatroom={chatroom} />
