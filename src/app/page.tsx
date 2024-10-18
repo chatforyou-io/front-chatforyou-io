@@ -32,7 +32,7 @@ export default function Home() {
 
   useEffect(() => {
     if (status !== "authenticated") {
-      router.push(`/auth/login`);
+      router.push(`${basePath}/auth/login`);
     }
 
     fetchChatrooms();

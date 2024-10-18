@@ -45,7 +45,7 @@ export default function Page() {
       }
   
       alert('가입에 성공하였습니다.');
-      router.push('/auth/login');
+      router.push(`${basePath}/auth/login`);
     } catch (error) {
       console.error('가입 요청 중 오류 발생:', error);
       alert('가입 중 문제가 발생하였습니다. 나중에 다시 시도해주세요.');

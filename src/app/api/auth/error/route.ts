@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export async function GET(req: NextRequest) {
+  const origin = req.nextUrl.origin;
   const error = req.nextUrl.searchParams.get('error');
 
   let errorMessage = '';
@@ -13,5 +14,5 @@ export async function GET(req: NextRequest) {
     errorMessage = '알 수 없는 오류로 로그인에 실패했습니다. 다시 시도해 주세요.';
   }
 
-  return NextResponse.redirect(`${req.nextUrl.origin}/auth/login?error=${errorMessage}`);
+  return NextResponse.redirect(`${origin}/auth/login?error=${errorMessage}`);
 }
