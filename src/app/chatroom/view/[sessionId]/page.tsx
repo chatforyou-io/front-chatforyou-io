@@ -70,20 +70,13 @@ export default function Page({ params }: PageProps) {
           {session && publisher && (
             <Video streamManager={publisher} />
           )}
-          {subscribers.map(subscriber => (
-              <Video key={subscriber.id} streamManager={subscriber} />
-          ))}
         </div>
         <div className="flex w-full space-x-4">
-          <div className="w-full h-20 bg-gray-200 rounded-xl">
-
-          </div>
-          <div className="w-full h-20 bg-gray-200 rounded-xl">
-
-          </div>
-          <div className="w-full h-20 bg-gray-200 rounded-xl">
-
-          </div>
+          {subscribers.map(subscriber => (
+            <div key={subscriber.id} className="w-full h-20 bg-gray-200 rounded-xl">
+              <Video streamManager={subscriber} />
+            </div>
+          ))}
         </div>
         <div className="flex w-full space-x-4">
           <DimmedButton type="button" label="채팅" />
