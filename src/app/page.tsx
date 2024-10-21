@@ -1,7 +1,6 @@
 "use client";
 
 import ChatroomCard from "@/src/components/cards/ChatroomCard";
-import SearchInput from "@/src/components/inputs/SearchInput";
 import PrimaryButton from "@/src/components/buttons/PrimaryButton";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -46,9 +45,14 @@ export default function Home() {
         <DashboardSidebar />
         <div className="p-6 w-full min-w-[800px] h-full space-y-5 overflow-y-scroll">
           <div className="flex justify-between">
-            <h1 className="text-4xl font-bold text-gray-800">대시보드</h1>
+            <h1 className="text-2xl font-bold text-gray-800">대시보드</h1>
             <div className="flex gap-3">
-              <SearchInput type="text" name="keyword" placeholder="Search" />
+              <input
+                type="text"
+                name="keyword"
+                className="border px-6 py-4 w-full bg-white rounded-full"
+                placeholder="검색"
+              />
               <PrimaryButton type="button" onClick={handleClick} label="방 만들기" />
             </div>
           </div>

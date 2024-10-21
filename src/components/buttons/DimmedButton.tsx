@@ -10,7 +10,7 @@ const DimmedButton: React.FC<DimmedButtonProps> = ({ type, onClick, label }) => 
   return (
     <button
       type={type}
-      className="w-full p-[17px] h-[60px] border bg-gray-100 text-xl text-gray-700 placeholder-gray-700 leading-5 rounded-full"
+      className="w-full p-[17px] h-[60px] border bg-gray-100 text-lg leading-5 rounded-full"
       onClick={onClick}
     >
       {label}

@@ -3,7 +3,8 @@
 import TestSidebar from "@/src/components/sidebars/TestSidebars";
 import { userCheckNickname, userCreate, userDelete, userInfo, userUpdate, userValidate } from "@/src/libs/auth";
 import { chatroomCreate, chatroomList } from "@/src/libs/chatroom";
-import { FormEvent, useState } from "react";
+import { useSession } from "next-auth/react";
+import { FormEvent, useEffect, useState } from "react";
 
 interface TestSidebarState {
   userCreate: { title: string; isActivated: boolean; };
@@ -13,10 +14,12 @@ interface TestSidebarState {
   userCheckNickname: { title: string; isActivated: boolean; };
   userValidate: { title: string; isActivated: boolean; };
   chatroomCreate: { title: string; isActivated: boolean; };
+  chatroomJoin: { title: string; isActivated: boolean; };
   chatroomList: { title: string; isActivated: boolean; };
 }
 
 export default function Page() {
+  const { data: userSession, status } = useSession();
   const [state, setState] = useState<TestSidebarState>({
     userCreate: { title: "사용자 생성", isActivated: false },
     userUpdate: { title: "사용자 변경", isActivated: false },
@@ -25,6 +28,7 @@ export default function Page() {
     userCheckNickname: { title: "닉네임 중복", isActivated: false },
     userValidate: { title: "이메일 중복", isActivated: false },
     chatroomCreate: { title: "세션 생성", isActivated: false },
+    chatroomJoin: { title: "세션 참여", isActivated: false },
     chatroomList: { title: "토큰 생성", isActivated: false },
   });
   
@@ -41,7 +45,6 @@ export default function Page() {
     const formData = new FormData(e.currentTarget as HTMLFormElement);
     const user = {
       id: formData.get('id') as string,
-      pwd: formData.get('pwd') as string,
       confirmPwd: formData.get('confirmPwd') as string,
       usePwd: true,
       nickName: formData.get('nickName') as string,
@@ -68,17 +71,16 @@ export default function Page() {
     const form = e.currentTarget as HTMLFormElement;
     const formData = new FormData(e.currentTarget as HTMLFormElement);
     const chatroom = {
-      creator: formData.get('creator') as string,
-      roomName: formData.get('roomName') as string,
-      pwd: formData.get('pwd') as string,
-      usePwd: true,
-      usePrivate: false,
-      useRtc: true,
+      userIdx: userSession!.user.idx as number,
+      roomName: formData.get('roomName') as string || '',
       maxUserCount: parseInt(formData.get('maxUserCount') as string) || 0,
+      usePwd: false,
+      pwd: '',
     };
 
     const actions: {[key: string]: (chatroom: Chatroom) => any} = {
       'chatroomCreate': async (chatroom: Chatroom) => await chatroomCreate(chatroom),
+      //'chatroomJoin': async (chatroom: Chatroom) => await chatroomJoin(chatroom),
       'chatroomList': async (chatroom: Chatroom) => await chatroomList(),
     };
 
@@ -87,24 +89,30 @@ export default function Page() {
     resultTextarea.innerHTML = JSON.stringify(response);
   }
 
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      window.location.href = '/auth/login';
+    }
+  }, [status]);
+
   return (
     <div className="flex gap-4 px-4 pt-24 pb-4 w-full h-full bg-gray-200">
       <TestSidebar onChange={handleChange} />
       {state.userCreate.isActivated && (
         <div className="flex flex-col p-12 w-full h-full space-y-12 bg-white rounded-xl">
           <div className="flex flex-col items-center gap-4">
-            <h1 className="text-gray-700 text-[40px] font-semibold">사용자 생성</h1>
+            <h1 className="text-[40px] font-semibold">사용자 생성</h1>
           </div>
           <form onSubmit={(e) => handleUserSubmit(e, 'userCreate')} className="flex justify-center gap-8 w-full h-full">
             <div className="flex flex-col justify-between w-96 h-full">
               <div className="space-y-4">
-                <input type="text" name="id" placeholder="이메일" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
-                <input type="text" name="pwd" placeholder="비밀번호" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
-                <input type="text" name="confirmPwd" placeholder="비밀번호확인" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
-                <input type="text" name="nickName" placeholder="닉네임" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
-                <input type="text" name="roomName" placeholder="이름" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
+                <input type="text" name="id" placeholder="이메일" className="w-96 h-12 px-4 border border-gray-300 rounded-lg" />
+                <input type="text" name="pwd" placeholder="비밀번호" className="w-96 h-12 px-4 border border-gray-300 rounded-lg" />
+                <input type="text" name="confirmPwd" placeholder="비밀번호확인" className="w-96 h-12 px-4 border border-gray-300 rounded-lg" />
+                <input type="text" name="nickName" placeholder="닉네임" className="w-96 h-12 px-4 border border-gray-300 rounded-lg" />
+                <input type="text" name="roomName" placeholder="이름" className="w-96 h-12 px-4 border border-gray-300 rounded-lg" />
               </div>
-              <button className="w-96 h-12 text-lg text-white bg-blue-400 rounded-lg">생성</button>
+              <button className="w-96 h-12 text-white bg-blue-400 rounded-lg">생성</button>
             </div>
             <div className="flex w-96">
               <textarea name="result" className="border p-4 w-full resize-none" readOnly></textarea>
@@ -115,18 +123,18 @@ export default function Page() {
       {state.userUpdate.isActivated && (
         <div className="flex flex-col p-12 w-full h-full space-y-12 bg-white rounded-xl">
           <div className="flex flex-col items-center gap-4">
-            <h1 className="text-gray-700 text-[40px] font-semibold">사용자 변경</h1>
+            <h1 className="text-[40px] font-semibold">사용자 변경</h1>
           </div>
           <form onSubmit={(e) => handleUserSubmit(e, 'userUpdate')} className="flex justify-center gap-8 w-full h-full">
             <div className="flex flex-col justify-between w-96 h-full">
               <div className="space-y-4">
-                <input type="text" name="id" placeholder="이메일" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
-                <input type="text" name="pwd" placeholder="비밀번호" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
-                <input type="text" name="confirmPwd" placeholder="비밀번호확인" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
-                <input type="text" name="nickName" placeholder="닉네임" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
-                <input type="text" name="name" placeholder="이름" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
+                <input type="text" name="id" placeholder="이메일" className="w-96 h-12 px-4 border border-gray-300 rounded-lg" />
+                <input type="text" name="pwd" placeholder="비밀번호" className="w-96 h-12 px-4 border border-gray-300 rounded-lg" />
+                <input type="text" name="confirmPwd" placeholder="비밀번호확인" className="w-96 h-12 px-4 border border-gray-300 rounded-lg" />
+                <input type="text" name="nickName" placeholder="닉네임" className="w-96 h-12 px-4 border border-gray-300 rounded-lg" />
+                <input type="text" name="name" placeholder="이름" className="w-96 h-12 px-4 border border-gray-300 rounded-lg" />
               </div>
-              <button className="w-96 h-12 text-lg text-white bg-blue-400 rounded-lg">변경</button>
+              <button className="w-96 h-12 text-white bg-blue-400 rounded-lg">변경</button>
             </div>
             <div className="flex w-96">
               <textarea name="result" className="border p-4 w-full resize-none" readOnly></textarea>
@@ -137,15 +145,15 @@ export default function Page() {
       {state.userDelete.isActivated && (
         <div className="flex flex-col p-12 w-full h-full space-y-12 bg-white rounded-xl">
           <div className="flex flex-col items-center gap-4">
-            <h1 className="text-gray-700 text-[40px] font-semibold">사용자 삭제</h1>
+            <h1 className="text-[40px] font-semibold">사용자 삭제</h1>
           </div>
           <form onSubmit={(e) => handleUserSubmit(e, 'userDelete')} className="flex justify-center gap-8 w-full h-full">
             <div className="flex flex-col justify-between w-96 h-full">
               <div className="space-y-4">
-                <input type="text" name="id" placeholder="이메일" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
-                <input type="text" name="pwd" placeholder="비밀번호" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
+                <input type="text" name="id" placeholder="이메일" className="w-96 h-12 px-4 border border-gray-300 rounded-lg" />
+                <input type="text" name="pwd" placeholder="비밀번호" className="w-96 h-12 px-4 border border-gray-300 rounded-lg" />
               </div>
-              <button className="w-96 h-12 text-lg text-white bg-blue-400 rounded-lg">삭제</button>
+              <button className="w-96 h-12 text-white bg-blue-400 rounded-lg">삭제</button>
             </div>
             <div className="flex w-96">
               <textarea name="result" className="border p-4 w-full resize-none" readOnly></textarea>
@@ -156,14 +164,14 @@ export default function Page() {
       {state.userInfo.isActivated && (
         <div className="flex flex-col p-12 w-full h-full space-y-12 bg-white rounded-xl">
           <div className="flex flex-col items-center gap-4">
-            <h1 className="text-gray-700 text-[40px] font-semibold">사용자 조회</h1>
+            <h1 className="text-[40px] font-semibold">사용자 조회</h1>
           </div>
           <form onSubmit={(e) => handleUserSubmit(e, 'userInfo')} className="flex justify-center gap-8 w-full h-full">
             <div className="flex flex-col justify-between w-96 h-full">
               <div className="space-y-4">
-                <input type="text" name="id" placeholder="이메일" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
+                <input type="text" name="id" placeholder="이메일" className="w-96 h-12 px-4 border border-gray-300 rounded-lg" />
               </div>
-              <button className="w-96 h-12 text-lg text-white bg-blue-400 rounded-lg">조회</button>
+              <button className="w-96 h-12 text-white bg-blue-400 rounded-lg">조회</button>
             </div>
             <div className="flex w-96">
               <textarea name="result" className="border p-4 w-full resize-none"></textarea>
@@ -174,14 +182,14 @@ export default function Page() {
       {state.userCheckNickname.isActivated && (
         <div className="flex flex-col p-12 w-full h-full space-y-12 bg-white rounded-xl">
           <div className="flex flex-col items-center gap-4">
-            <h1 className="text-gray-700 text-[40px] font-semibold">닉네임 중복</h1>
+            <h1 className="text-[40px] font-semibold">닉네임 중복</h1>
           </div>
           <form onSubmit={(e) => handleUserSubmit(e, 'userCheckNickname')} className="flex justify-center gap-8 w-full h-full">
             <div className="flex flex-col justify-between w-96 h-full">
               <div className="space-y-4">
-                <input type="text" name="nickName" placeholder="닉네임" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
+                <input type="text" name="nickName" placeholder="닉네임" className="w-96 h-12 px-4 border border-gray-300 rounded-lg" />
               </div>
-              <button className="w-96 h-12 text-lg text-white bg-blue-400 rounded-lg">확인</button>
+              <button className="w-96 h-12 text-white bg-blue-400 rounded-lg">확인</button>
             </div>
             <div className="flex w-96">
               <textarea name="result" className="border p-4 w-full resize-none" readOnly></textarea>
@@ -192,14 +200,14 @@ export default function Page() {
       {state.userValidate.isActivated && (
         <div className="flex flex-col p-12 w-full h-full space-y-12 bg-white rounded-xl">
           <div className="flex flex-col items-center gap-4">
-            <h1 className="text-gray-700 text-[40px] font-semibold">이메일 중복</h1>
+            <h1 className="text-[40px] font-semibold">이메일 중복</h1>
           </div>
           <form onSubmit={(e) => handleUserSubmit(e, 'userValidate')} className="flex justify-center gap-8 w-full h-full">
             <div className="flex flex-col justify-between w-96 h-full">
               <div className="space-y-4">
-                <input type="text" name="id" placeholder="이메일" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
+                <input type="text" name="id" placeholder="이메일" className="w-96 h-12 px-4 border border-gray-300 rounded-lg" />
               </div>
-              <button className="w-96 h-12 text-lg text-white bg-blue-400 rounded-lg">확인</button>
+              <button className="w-96 h-12 text-white bg-blue-400 rounded-lg">확인</button>
             </div>
             <div className="flex w-96">
               <textarea name="result" className="border p-4 w-full resize-none" readOnly></textarea>
@@ -210,17 +218,15 @@ export default function Page() {
       {state.chatroomCreate.isActivated && (
         <div className="flex flex-col p-12 w-full h-full space-y-12 bg-white rounded-xl">
           <div className="flex flex-col items-center gap-4">
-            <h1 className="text-gray-700 text-[40px] font-semibold">세션 생성</h1>
+            <h1 className="text-[40px] font-semibold">세션 생성</h1>
           </div>
           <form onSubmit={(e) => handleChatroomSubmit(e, 'chatroomCreate')} className="flex justify-center gap-8 w-full h-full">
             <div className="flex flex-col justify-between w-96 h-full">
               <div className="space-y-4">
-                <input type="text" name="creator" placeholder="이름" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
-                <input type="text" name="name" placeholder="생성자" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
-                <input type="text" name="pwd" placeholder="비밀번호" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
-                <input type="text" name="maxUserCount" placeholder="최대인원" className="w-96 h-12 px-4 text-lg text-gray-700 border border-gray-300 rounded-lg" />
+                <input type="text" name="roomName" placeholder="방 이름" className="w-96 h-12 px-4 border border-gray-300 rounded-lg" />
+                <input type="text" name="maxUserCount" placeholder="최대인원" className="w-96 h-12 px-4 border border-gray-300 rounded-lg" />
               </div>
-              <button className="w-96 h-12 text-lg text-white bg-blue-400 rounded-lg">생성</button>
+              <button className="w-96 h-12 text-white bg-blue-400 rounded-lg">생성</button>
             </div>
             <div className="flex w-96">
               <textarea name="result" className="border p-4 w-full resize-none" readOnly></textarea>
@@ -231,14 +237,14 @@ export default function Page() {
       {state.chatroomList.isActivated && (
         <div className="flex flex-col p-12 w-full h-full space-y-12 bg-white rounded-xl">
           <div className="flex flex-col items-center gap-4">
-            <h1 className="text-gray-700 text-[40px] font-semibold">토큰 생성</h1>
+            <h1 className="text-[40px] font-semibold">토큰 생성</h1>
           </div>
           <form onSubmit={(e) => handleChatroomSubmit(e, 'chatroomList')} className="flex justify-center gap-8 w-full h-full">
             <div className="flex flex-col justify-between w-96 h-full">
               <div className="space-y-4">
                 No Input
               </div>
-              <button className="w-96 h-12 text-lg text-white bg-blue-400 rounded-lg">생성</button>
+              <button className="w-96 h-12 text-white bg-blue-400 rounded-lg">생성</button>
             </div>
             <div className="flex w-96">
               <textarea name="result" className="border p-4 w-full resize-none" readOnly></textarea>

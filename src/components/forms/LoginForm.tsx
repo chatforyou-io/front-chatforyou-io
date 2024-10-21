@@ -1,8 +1,8 @@
 import { FormEvent, useState } from 'react';
 import PrimaryButton from '@/src/components/buttons/PrimaryButton';
-import NormalInput from '@/src/components/inputs/NormalInput';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
+import clsx from 'clsx';
 
 export default function LoginForm() {
   const [usernameError, setUsernameError] = useState<boolean>(false);
@@ -106,17 +106,31 @@ export default function LoginForm() {
   };
 
   return (
-    <form className="space-y-10" onSubmit={handleSubmit}>
-      <div className='space-y-[7px]'>
-        <NormalInput type="text" name="username" placeholder="이메일 주소" />
-        { usernameError && <p className="text-error text-[17px]">{usernameErrorMsg}</p> }
-        <NormalInput type="password" name="password" placeholder="비밀번호" />
-        { passwordError && <p className="text-error text-[17px]">{passwordErrorMsg}</p> }
+    <form onSubmit={handleSubmit}>
+      <div className="mt-8 space-y-4">
+        <input
+          type="text"
+          name="username"
+          className={clsx('border px-6 py-4 w-full bg-white rounded-full', {
+            'border-red-500': usernameError,
+          })}
+          placeholder="이메일 주소"
+        />
+        { usernameError && <p className="text-error">{usernameErrorMsg}</p> }
+        <input
+          type="password"
+          name="password"
+          className={clsx('border px-6 py-4 w-full bg-white rounded-full', {
+            'border-red-500': passwordError,
+          })}
+          placeholder="비밀번호"
+        />
+        { passwordError && <p className="text-error">{passwordErrorMsg}</p> }
       </div>
-      <div className="space-y-5">
-        <p className="text-blue-500 text-xl font-semibold">비밀번호를 잊으셨나요?</p>
+      <div className="mt-8 space-y-4">
+        <p className="text-primary-normal font-semibold">비밀번호를 잊으셨나요?</p>
         <PrimaryButton type="submit" data-label="로그인" label="로그인" />
-        { loginError && <p className="text-error text-[17px]">{loginErrorMsg}</p> }
+        { loginError && <p className="text-error">{loginErrorMsg}</p> }
       </div>
     </form>
   );

@@ -10,7 +10,7 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({ type, onClick, label }) =
   return (
     <button
       type={type}
-      className="w-full p-[17px] h-[60px] border bg-blue-500 text-xl leading-5 text-white rounded-full"
+      className="w-full p-[17px] h-[60px] border bg-primary-normal text-lg leading-5 text-white rounded-full"
       onClick={onClick}
     >
       {label}

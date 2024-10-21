@@ -1,7 +1,6 @@
 import { FormEvent, useEffect, useState } from 'react';
-import NormalInput from '@/src/components/inputs/NormalInput';
 import DimmedButton from '@/src/components/buttons/DimmedButton';
-import { userValidate } from '@/src/libs/auth';
+import clsx from 'clsx';
 
 interface SignUpEmailValidFormProps {
   validCode: string;
@@ -33,17 +32,21 @@ export default function SignUpEmailValidForm({ validCode, onSubmit }: SignUpEmai
     onSubmit();
   }
 
-  useEffect(() => {
-    console.log('validCode: ', validCode);
-  }, [validCode]);
-
   return (
-    <form className='space-y-10' onSubmit={handleSubmit}>
-      <div className='space-y-[7px]'>
-        <NormalInput type={'input'} name={'code'} placeholder={'4자리 입력'} defaultValue={validCode} error={error} />
-        { errorMsg && <p className='text-error text-[17px]'>{errorMsg}</p> }
+    <form onSubmit={handleSubmit}>
+      <div className="space-y-4">
+        <input
+          type="text"
+          name="code"
+          className={clsx("border px-6 py-4 w-full bg-white rounded-full", {
+            "border-red-500": error,
+          })}
+          placeholder="4자리 입력"
+          defaultValue={validCode}
+        />
+        { errorMsg && <p className="text-error">{errorMsg}</p> }
       </div>
-      <DimmedButton type={'submit'} onClick={() => {}} label={'계속'} />
+      <button type="submit" className="border mt-4 p-4 w-full h-16 bg-gray-100 rounded-full">계속</button>
     </form>
   );
 }

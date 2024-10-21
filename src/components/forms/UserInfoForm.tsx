@@ -1,7 +1,6 @@
 import { FormEvent, useState } from 'react';
-import NormalInput from '@/src/components/inputs/NormalInput';
 import DimmedButton from '@/src/components/buttons/DimmedButton';
-
+import clsx from 'clsx';
 interface SignUpUserInfoFormProps {
   onSubmit: (name: string, pwd: string, confirmPwd: string) => void;
 }
@@ -76,16 +75,37 @@ export default function SignUpUserInfoForm({ onSubmit }: SignUpUserInfoFormProps
   }
 
   return (
-    <form className='space-y-10' onSubmit={handleSubmit}>
-      <div className='space-y-5'>
-        <NormalInput type={'input'} name={'name'} placeholder={'이름'} error={nameError} />
-        { nameErrorMsg && <p className='text-error text-[17px]'>{nameErrorMsg}</p> }
-        <NormalInput type={'password'} name={'pwd'} placeholder={'비밀번호'} error={pwdError} />
-        { pwdErrorMsg && <p className='text-error text-[17px]'>{pwdErrorMsg}</p> }
-        <NormalInput type={'password'} name={'confirmPwd'} placeholder={'비밀번호 확인'} error={confirmPwdError} />
-        { confirmPwdErrorMsg && <p className='text-error text-[17px]'>{confirmPwdErrorMsg}</p> }
+    <form onSubmit={handleSubmit}>
+      <div className="space-y-4">
+        <input
+          type="text"
+          name="name"
+          className={clsx("border px-6 py-4 w-full bg-white rounded-full", {
+            "border-red-500": nameError,
+          })}
+          placeholder="이름"
+        />
+        { nameErrorMsg && <p className="text-error">{nameErrorMsg}</p> }
+        <input
+          type="password"
+          name="pwd"
+          className={clsx("border px-6 py-4 w-full bg-white rounded-full", {
+            "border-red-500": pwdError,
+          })}
+          placeholder="비밀번호"
+        />
+        { pwdErrorMsg && <p className="text-error">{pwdErrorMsg}</p> }
+        <input
+          type="password"
+          name="confirmPwd"
+          className={clsx("border px-6 py-4 w-full bg-white rounded-full", {
+            "border-red-500": confirmPwdError,
+          })}
+          placeholder="비밀번호 확인"
+        />
+        { confirmPwdErrorMsg && <p className="text-error">{confirmPwdErrorMsg}</p> }
       </div>
-      <DimmedButton type={'submit'} onClick={() => {}} label={'계속'} />
+      <button type="submit" className="border mt-4 p-4 w-full h-16 bg-gray-100 rounded-full">계속</button>
     </form>
   );
 }

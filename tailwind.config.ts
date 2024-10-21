@@ -8,6 +8,11 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      width: {
+        "128": "32rem",
+        "144": "36rem",
+        "160": "40rem",
+      },
       colors: {
         brand: {
           50: "#EFF6FF",

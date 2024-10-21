@@ -21,15 +21,15 @@ const ProfileCard: React.FC<ProfileCardProps> = () => {
         <Image src={`${basePath}/images/icon-user.svg`} alt="room" width={48} height={48} className="border-2 border-black rounded-full" />
       </div>
       <div className="flex flex-col items-center space-y-2">
-        <h3 className="font-semibold text-xl text-gray-800">{session.data?.user?.name}</h3>
+        <h3 className="font-semibold text-gray-800">{session.data?.user?.name}</h3>
         <p className="text-sm text-gray-500">{session.data?.user?.id}</p>
       </div>
       <div className="flex flex-col justify-center">
         <div className="py-2 text-center">
-          <button onClick={() => {}} className="text-gray-700">프로필</button>
+          <button onClick={() => {}}>프로필</button>
         </div>
         <div className="border-t py-2 text-center">
-          <button onClick={handleSignOut} className="text-gray-700">로그아웃</button>
+          <button onClick={handleSignOut}>로그아웃</button>
         </div>
       </div>
     </div>

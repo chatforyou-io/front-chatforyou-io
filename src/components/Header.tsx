@@ -20,7 +20,7 @@ export default function Header() {
   return (
     <div className="absolute top-0 w-full">
       <div className="flex justify-between items-center bg-white px-4 py-2 h-20 text-right">
-        <Link href="/" className="text-3xl font-bold text-blue-500">ChatForYou.io</Link>
+        <Link href="/" className="text-xl font-bold text-primary-normal">ChatForYou.io</Link>
         {(session && session.data ) && (
           <div className="flex gap-4">
             <button onClick={handleProfile}>

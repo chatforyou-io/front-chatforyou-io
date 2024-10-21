@@ -47,14 +47,14 @@ export default function Page({ params }: PageProps) {
   }, [sessionId]);
   
   return (
-    <div className="flex flex-col justify-center items-center w-full h-full">
-      <div className="flex flex-col items-center p-4 w-full max-w-xl space-y-4 bg-white rounded-3xl">
+    <div className="flex-center w-full h-full">
+      <div className="flex flex-col items-center p-4 w-144 space-y-4 bg-white rounded-3xl">
         <div className="flex w-full space-x-4">
           <div className="flex justiffy-center items-center">
             <Image src={`${basePath}/images/icon-user.svg`} alt="room" width={48} height={48} className="border-2 border-black rounded-full" />
           </div>
           <div className="flex flex-col items-center space-y-4">
-            <h3 className="font-semibold text-xl text-gray-800">{chatroom?.roomName}</h3>
+            <h3 className="font-semibold text-gray-800">{chatroom?.roomName}</h3>
             <p className="text-sm text-gray-500">2024.08.27</p>
           </div>
         </div>

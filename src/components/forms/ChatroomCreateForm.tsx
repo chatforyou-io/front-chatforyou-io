@@ -38,11 +38,11 @@ export default function ChatroomCreateForm({ onSubmit }: ChatroomCreateFormProps
   };
 
   return (
-    <form className="w-full max-w-xl space-y-12" onSubmit={handleSubmit}>
+    <form className="w-144 space-y-12" onSubmit={handleSubmit}>
       <div className="space-y-8">
         <DimmedInput type="text" name="roomName" placeholder="제목" />
         <DimmedInput type="text" name="description" placeholder="설명" />
-        <select name="maxUserCount" className="border px-6 py-4 w-full bg-gray-100 text-xl text-gray-700 placeholder-gray-700 outline-none rounded-full">
+        <select name="maxUserCount" className="border px-6 py-4 w-full bg-gray-100 rounded-full">
           <option value="">접속인원</option>
           <option value="2">2명</option>
           <option value="3">3명</option>
@@ -60,7 +60,7 @@ export default function ChatroomCreateForm({ onSubmit }: ChatroomCreateFormProps
         </div>
       </div>
       <div className="flex gap-9">
-        <Link href="/" className="w-full p-[17px] h-[60px] border bg-gray-100 text-xl text-gray-700 placeholder-gray-700 leading-5 text-center rounded-full">취소</Link>
+        <Link href="/" className="w-full p-[17px] h-[60px] border bg-gray-100 leading-5 text-center rounded-full">취소</Link>
         <PrimaryButton type="submit" label="방 만들기" />
       </div>
     </form>

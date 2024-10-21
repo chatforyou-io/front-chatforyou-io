@@ -16,7 +16,7 @@ const DimmedInput: React.FC<DimmedInputProps> = ({ type, name, onChange, placeho
       type={type}
       name={name}
       onChange={onChange}
-      className={clsx('border px-6 py-4 w-full bg-gray-100 text-xl text-gray-700 placeholder-gray-700 outline-none rounded-full', {
+      className={clsx('border px-6 py-4 w-full bg-gray-100 text-lg rounded-full', {
         'border-red-500': error,
       })}
       placeholder={placeholder}

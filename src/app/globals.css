@@ -2,30 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-rgb: 229 231 235; /* bg-gray-00 */
-}
+:root {}
 
 html, body {
   width: 100%;
   height: 100%;
   margin: 0;
   padding: 0;
+  color: rgb(55 65 81);
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb));
-}
+body {}
 
-body.dark {
-  color: rgb(var(--background-rgb));
-  background: rgb(var(--foreground-rgb));
+body.dark {}
+
+input {
+  outline: none;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+@layer components {
+  .flex-center {
+    @apply flex flex-col justify-center items-center;
   }
 }
