@@ -1,12 +1,12 @@
 interface Chatroom {
   userIdx?: number,
+  creator?: string,
   sessionId?: string,
-  roomName: string,
-  description?: string,
-  pwd: string,
-  usePwd: boolean,
+  roomName?: string,
+  pwd?: string,
+  usePwd?: boolean,
   usePrivate?: boolean,
   useRtc?: boolean,
   currentUserCount?: number,
-  maxUserCount: number,
+  maxUserCount?: number,
 }

@@ -1,5 +1,4 @@
 import { FormEvent, useEffect, useState } from 'react';
-import DimmedButton from '@/src/components/buttons/DimmedButton';
 import clsx from 'clsx';
 
 interface SignUpEmailValidFormProps {
@@ -38,7 +37,7 @@ export default function SignUpEmailValidForm({ validCode, onSubmit }: SignUpEmai
         <input
           type="text"
           name="code"
-          className={clsx("border px-6 py-4 w-full bg-white rounded-full", {
+          className={clsx("border px-4 h-16 w-full bg-white rounded-full", {
             "border-red-500": error,
           })}
           placeholder="4자리 입력"

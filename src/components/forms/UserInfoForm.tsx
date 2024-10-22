@@ -1,5 +1,4 @@
 import { FormEvent, useState } from 'react';
-import DimmedButton from '@/src/components/buttons/DimmedButton';
 import clsx from 'clsx';
 interface SignUpUserInfoFormProps {
   onSubmit: (name: string, pwd: string, confirmPwd: string) => void;
@@ -80,7 +79,7 @@ export default function SignUpUserInfoForm({ onSubmit }: SignUpUserInfoFormProps
         <input
           type="text"
           name="name"
-          className={clsx("border px-6 py-4 w-full bg-white rounded-full", {
+          className={clsx("border px-4 h-16 w-full bg-white rounded-full", {
             "border-red-500": nameError,
           })}
           placeholder="이름"
@@ -89,7 +88,7 @@ export default function SignUpUserInfoForm({ onSubmit }: SignUpUserInfoFormProps
         <input
           type="password"
           name="pwd"
-          className={clsx("border px-6 py-4 w-full bg-white rounded-full", {
+          className={clsx("border px-4 h-16 w-full bg-white rounded-full", {
             "border-red-500": pwdError,
           })}
           placeholder="비밀번호"
@@ -98,7 +97,7 @@ export default function SignUpUserInfoForm({ onSubmit }: SignUpUserInfoFormProps
         <input
           type="password"
           name="confirmPwd"
-          className={clsx("border px-6 py-4 w-full bg-white rounded-full", {
+          className={clsx("border px-4 h-16 w-full bg-white rounded-full", {
             "border-red-500": confirmPwdError,
           })}
           placeholder="비밀번호 확인"

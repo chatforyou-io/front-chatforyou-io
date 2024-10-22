@@ -1,12 +1,12 @@
 "use client";
 
-import DimmedButton from "@/src/components/buttons/DimmedButton";
-import { chatroomInfo } from "@/src/libs/chatroom";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import VideoCall from '@/src/components/openvidu/VideoCall';
+import { chatroomInfo } from "@/src/libs/chatroom";
 import { useOpenvidu } from "@/src/webhooks/useOpenvidu";
-import Video from '@/src/components/openvidu/VideoCall';
 
 interface PageProps {
   params: {
@@ -21,15 +21,13 @@ export default function Page({ params }: PageProps) {
   const { data: userSession, status } = useSession();
   const { session, publisher, subscribers, joinSession, leaveSession } = useOpenvidu({ sessionId, userIdx: userSession?.user.idx });
   const [chatroom, setChatroom] = useState<Chatroom | undefined>(undefined);
+  const router = useRouter();
 
   useEffect(() => {
     if (status === 'authenticated' && userSession?.user?.idx) {
       joinSession();
-    }
-    return () => {
-      leaveSession();
     };
-  }, [status, userSession?.user?.idx, joinSession, leaveSession]);
+  }, [status, userSession?.user?.idx, joinSession]);
 
   useEffect(() => {
     const getChatroomInfo = async () => {
@@ -40,52 +38,52 @@ export default function Page({ params }: PageProps) {
         }
         setChatroom(data.roomData);
       } catch (error) {
-        alert('채팅방 정보 조회 중 문제가 발생하였습니다. 나중에 다시 시도해주세요.');
+        alert('채팅방이 존재하지 않습니다.');
+        router.push('/');
       }
     }
     getChatroomInfo();
   }, [sessionId]);
+
+  const handleClick = () => {
+    leaveSession();
+    router.push('/');
+  }
   
   return (
     <div className="flex-center w-full h-full">
-      <div className="flex flex-col items-center p-4 w-144 space-y-4 bg-white rounded-3xl">
+      <div className="flex-center p-8 w-160 space-y-4 bg-white rounded-2xl">
         <div className="flex w-full space-x-4">
-          <div className="flex justiffy-center items-center">
-            <Image src={`${basePath}/images/icon-user.svg`} alt="room" width={48} height={48} className="border-2 border-black rounded-full" />
+          <div className="flex-center">
+            <Image src={`${basePath}/images/icon-user.svg`} alt="room" width={48} height={48} className="border-2 border-gray-700 rounded-full" />
           </div>
-          <div className="flex flex-col items-center space-y-4">
-            <h3 className="font-semibold text-gray-800">{chatroom?.roomName}</h3>
-            <p className="text-sm text-gray-500">2024.08.27</p>
+          <div className="w-full">
+            <h3 className="font-semibold">{chatroom?.roomName}</h3>
+            <span className="text-sm">1990.01.01</span>
+          </div>
+          <div>
+            <button
+              onClick={handleClick}
+              className="w-20 h-10 text-sm text-white bg-blue-500 rounded-xl"
+            >
+              나가기
+            </button>
           </div>
         </div>
         <div className="flex w-full space-x-4">
-          <div className="flex justiffy-center items-center">
-            <p className="text-sm text-gray-500">인원수</p>
-          </div>
-          <div className="flex justiffy-center items-center">
-            <p className="text-sm text-gray-500">4명</p>
-          </div>
+          <span className="text-sm">인원수: {chatroom?.currentUserCount}명</span>
         </div>
         <div className="flex w-full space-x-4 bg-gray-200 rounded-xl">
-          {session && publisher && (
-            <Video streamManager={publisher} />
-          )}
+          {session && [publisher, ...subscribers].map((streamManager) => (
+            <VideoCall key={streamManager?.stream.streamId} streamManager={streamManager} />
+          ))}
         </div>
         <div className="flex w-full space-x-4">
           {subscribers.map(subscriber => (
             <div key={subscriber.id} className="w-full h-20 bg-gray-200 rounded-xl">
-              <Video streamManager={subscriber} />
+              <VideoCall streamManager={subscriber} />
             </div>
           ))}
-        </div>
-        <div className="flex w-full space-x-4">
-          <DimmedButton type="button" label="채팅" />
-          <DimmedButton type="button" label="채팅" />
-          <DimmedButton type="button" label="채팅" />
-          <DimmedButton type="button" label="채팅" />
-          <DimmedButton type="button" label="채팅" />
-          <DimmedButton type="button" label="채팅" />
-          <DimmedButton type="button" label="채팅" />
         </div>
       </div>
     </div>

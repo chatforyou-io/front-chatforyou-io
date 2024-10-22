@@ -1,11 +1,11 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { StreamManager } from 'openvidu-browser';
 
-interface Props {
-	streamManager: StreamManager;
+interface SessionProps {
+	streamManager?: StreamManager;
 }
 
-export default function VideoCall({ streamManager }: Props) {
+export default function UserVideo({ streamManager }: SessionProps) {
 	const videoRef = useRef<HTMLVideoElement>(null);
 	const autoplay = true;
 
@@ -14,10 +14,10 @@ export default function VideoCall({ streamManager }: Props) {
 			streamManager.addVideoElement(videoRef.current);
 		}
 	}, [streamManager]);
-
-	return (
+  
+  return (
 		<video autoPlay={autoplay} ref={videoRef} style={{ width: '100%' }}>
-			<track kind="captions" />
-		</video>
-	);
-};
+      <track kind="captions" />
+    </video>
+  );
+}

@@ -86,15 +86,16 @@ const config: Config = {
           800: "#1F2937",
           900: "#111827",
         }, 
-        primary: {
-          normal: "#3A84F8",
-          strong: "#005EEB",
-          heavy: "#0054D1",
-        },
+        primary: "#3A84F8",
         error: "#FF2727"
       },
       backgroundImage: {
         "magnifying-glass": "url('/chatforyouio/front/images/icon-magnifying-glass.svg')",
+      },
+      lineHeight: {
+        12: "3rem",
+        14: "3.5rem",
+        16: "4rem",
       },
     },
   },

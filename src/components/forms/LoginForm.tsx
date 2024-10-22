@@ -1,5 +1,4 @@
 import { FormEvent, useState } from 'react';
-import PrimaryButton from '@/src/components/buttons/PrimaryButton';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import clsx from 'clsx';
@@ -111,7 +110,7 @@ export default function LoginForm() {
         <input
           type="text"
           name="username"
-          className={clsx('border px-6 py-4 w-full bg-white rounded-full', {
+          className={clsx('border px-4 h-16 w-full bg-white rounded-full', {
             'border-red-500': usernameError,
           })}
           placeholder="이메일 주소"
@@ -120,7 +119,7 @@ export default function LoginForm() {
         <input
           type="password"
           name="password"
-          className={clsx('border px-6 py-4 w-full bg-white rounded-full', {
+          className={clsx('border px-4 h-16 w-full bg-white rounded-full', {
             'border-red-500': passwordError,
           })}
           placeholder="비밀번호"
@@ -128,8 +127,13 @@ export default function LoginForm() {
         { passwordError && <p className="text-error">{passwordErrorMsg}</p> }
       </div>
       <div className="mt-8 space-y-4">
-        <p className="text-primary-normal font-semibold">비밀번호를 잊으셨나요?</p>
-        <PrimaryButton type="submit" data-label="로그인" label="로그인" />
+        <p className="text-primary font-semibold">비밀번호를 잊으셨나요?</p>
+        <button
+          type="submit"
+          className="w-full px-4 h-16 border bg-primary text-white rounded-full"
+        >
+          로그인
+        </button>
         { loginError && <p className="text-error">{loginErrorMsg}</p> }
       </div>
     </form>

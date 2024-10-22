@@ -21,7 +21,7 @@ export default function Page() {
           <h1 className="text-4xl font-semibold">로그인</h1>
           <div className="flex mt-2 space-x-2">
             <h3>계정이 없으신가요?</h3>
-            <Link href="/auth/signup" className="text-primary-normal font-semibold">가입하기</Link>
+            <Link href="/auth/signup" className="text-primary font-semibold">가입하기</Link>
           </div>
         </div>
         <div className="mt-8 w-full">

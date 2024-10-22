@@ -1,5 +1,4 @@
 import { FormEvent, useState } from 'react';
-import DimmedButton from '@/src/components/buttons/DimmedButton';
 import { userValidate } from '@/src/libs/auth';
 import clsx from 'clsx';
 
@@ -57,7 +56,7 @@ export default function SignUpEmailForm({ onSubmit }: SignUpEmailFormProps) {
         <input
           type="text"
           name="id"
-          className={clsx("border px-6 py-4 w-full bg-white rounded-full", {
+          className={clsx("border px-4 h-16 w-full bg-white rounded-full", {
             "border-red-500": error,
           })}
           placeholder="이메일"

@@ -1,24 +1,19 @@
 "use client";
 
-import ChatroomCard from "@/src/components/cards/ChatroomCard";
-import PrimaryButton from "@/src/components/buttons/PrimaryButton";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { chatroomList } from "@/src/libs/chatroom";
+import { chatroomCreate, chatroomList } from "@/src/libs/chatroom";
 import Header from "@/src/components/Header";
+import ChatroomCard from "@/src/components/cards/ChatroomCard";
+import ChatroomCreateForm from "@/src/components/forms/ChatroomCreateForm";
+import DashboardSidebar from "@/src/components/sidebars/DashboardSidebar";
 import { useSession } from "next-auth/react";
-import DashboardSidebar from "../components/sidebars/DashboardSidebar";
 
 export default function Home() {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
-  
-  const {data: session, status} = useSession();
+  const { data: userSession, status } = useSession();
   const router = useRouter();
-  
-  const handleClick = () => {
-    router.push("/chatroom/create");
-  }
-  const [chatrooms, setChatrooms] = useState<Chatroom[]>([]);
+  const [isPopup, setIsPopup] = useState<boolean>(false);
 
   const fetchChatrooms = async () => {
     try {
@@ -28,32 +23,57 @@ export default function Home() {
       console.error("Failed to fetch chatrooms:", error);
     }
   };
+  
+  const handleClick = () => {
+    setIsPopup(!isPopup);
+  }
+  const [chatrooms, setChatrooms] = useState<Chatroom[]>([]);
+  
+  const handleSubmit = async (roomName: string, maxUserCount: number, usePwd: boolean, pwd: string) => {
+    try {
+      if (!userSession) throw new Error('로그인이 필요합니다.');
+
+      const chatroom: Chatroom = { roomName, maxUserCount, usePwd, pwd, userIdx: userSession.user.idx };
+      const data = await chatroomCreate(chatroom);
+      if (!data.isSuccess) {
+        throw new Error('방 생성 중 오류가 발생했습니다.');
+      }
+
+      alert('방이 생성되었습니다.')
+      const sessionId = data.roomData.sessionId;
+      router.push(`/chatroom/view/${sessionId}`);
+    } catch (error) {
+      console.error(error);
+      alert('방 생성 중 문제가 발생하였습니다. 나중에 다시 시도해주세요.');
+    }
+  }
 
   useEffect(() => {
-    if (status !== "authenticated") {
-      router.push(`${basePath}/auth/login`);
-    }
-
     fetchChatrooms();
-  }, [basePath, router, status]);
+  }, [basePath, router]);
 
   return (
-
-    <main className="h-full bg-white">
+    <main className="w-full h-full bg-white">
       <Header />
-      <div className="flex gap-12 pt-24 pb-4 px-4 h-full bg-gray-200">
+      <div className="flex space-x-4 pt-24 pb-4 px-4 w-full h-full bg-gray-200">
         <DashboardSidebar />
-        <div className="p-6 w-full min-w-[800px] h-full space-y-5 overflow-y-scroll">
-          <div className="flex justify-between">
-            <h1 className="text-2xl font-bold text-gray-800">대시보드</h1>
+        <div className="p-8 w-full h-full space-y-4">
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold">대시보드</h1>
             <div className="flex gap-3">
               <input
                 type="text"
                 name="keyword"
-                className="border px-6 py-4 w-full bg-white rounded-full"
+                className="border px-4 h-16 w-full bg-white rounded-full"
                 placeholder="검색"
               />
-              <PrimaryButton type="button" onClick={handleClick} label="방 만들기" />
+              <button
+                type="button"
+                className="w-full px-4 h-16 border bg-primary text-white rounded-full"
+                onClick={handleClick}
+              >
+                방 만들기
+              </button>
             </div>
           </div>
           <div className="flex gap-8 w-full h-full">
@@ -65,6 +85,14 @@ export default function Home() {
           </div>
         </div>
       </div>
+      {isPopup &&
+        <>
+          <div className="absolute top-0 left-0 flex-center w-full h-full bg-black opacity-50"></div>
+          <div className="absolute top-0 left-0 flex-center w-full h-full">
+            <ChatroomCreateForm onSubmit={handleSubmit} />
+          </div>
+        </>
+      }
     </main>
   );
 }

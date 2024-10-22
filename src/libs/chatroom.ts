@@ -11,7 +11,9 @@ const chatroomCreate = async (chatroom: Chatroom) => {
       throw new Error('비밀번호를 입력해주세요.');
     }
 
-    chatroom.pwd = btoa(chatroom.pwd);
+    if (chatroom.usePwd) {
+      chatroom.pwd = btoa(chatroom.pwd!);
+    }
     
     const data = await fetch(`${authHost}/chatroom/create`, {
       method: 'POST',

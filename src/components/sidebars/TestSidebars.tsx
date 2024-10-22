@@ -49,7 +49,7 @@ const TestSidebar: FC<TestSidebarProps> = ({ onChange }) => {
   
   return (
     <div className="px-3 py-6 w-60 h-full space-y-8 bg-white rounded-xl">
-      <h2 className="text-xl font-semibold text-gray-800">테스트</h2>
+      <h2 className="text-xl font-semibold">테스트</h2>
       <div className="space-y-6">
         <h3 className="">사용자 관련</h3>
         <div className="flex flex-col space-y-4">
