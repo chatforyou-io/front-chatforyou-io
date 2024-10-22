@@ -1,35 +1,31 @@
 "use client";
 
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
-import { chatroomCreate, chatroomList } from "@/src/libs/chatroom";
+import { useSession } from "next-auth/react";
 import Header from "@/src/components/Header";
 import ChatroomCard from "@/src/components/cards/ChatroomCard";
 import ChatroomCreateForm from "@/src/components/forms/ChatroomCreateForm";
 import DashboardSidebar from "@/src/components/sidebars/DashboardSidebar";
-import { useSession } from "next-auth/react";
+import { chatroomCreate, chatroomList } from "@/src/libs/chatroom";
 
 export default function Home() {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
   const { data: userSession, status } = useSession();
   const router = useRouter();
   const [isPopup, setIsPopup] = useState<boolean>(false);
+  const [chatrooms, setChatrooms] = useState<Chatroom[]>([]);
 
-  const fetchChatrooms = async () => {
+  const fetchChatrooms = useCallback(async () => {
     try {
       const response = await chatroomList();
       setChatrooms(response.roomList);
     } catch (error) {
       console.error("Failed to fetch chatrooms:", error);
     }
-  };
+  }, []);
   
-  const handleClick = () => {
-    setIsPopup(!isPopup);
-  }
-  const [chatrooms, setChatrooms] = useState<Chatroom[]>([]);
-  
-  const handleSubmit = async (roomName: string, maxUserCount: number, usePwd: boolean, pwd: string) => {
+  const handleCreateRoom = useCallback(async (roomName: string, maxUserCount: number, usePwd: boolean, pwd: string) => {
     try {
       if (!userSession) throw new Error('로그인이 필요합니다.');
 
@@ -40,17 +36,16 @@ export default function Home() {
       }
 
       alert('방이 생성되었습니다.')
-      const sessionId = data.roomData.sessionId;
-      router.push(`/chatroom/view/${sessionId}`);
+      router.push(`/chatroom/view/${data.roomData.sessionId}`);
     } catch (error) {
       console.error(error);
       alert('방 생성 중 문제가 발생하였습니다. 나중에 다시 시도해주세요.');
     }
-  }
+  }, [userSession, router]);
 
   useEffect(() => {
     fetchChatrooms();
-  }, [basePath, router]);
+  }, [fetchChatrooms]);
 
   return (
     <main className="w-full h-full bg-white">
@@ -70,7 +65,7 @@ export default function Home() {
               <button
                 type="button"
                 className="w-full px-4 h-16 border bg-primary text-white rounded-full"
-                onClick={handleClick}
+                onClick={() => setIsPopup(true)}
               >
                 방 만들기
               </button>
@@ -89,7 +84,7 @@ export default function Home() {
         <>
           <div className="absolute top-0 left-0 flex-center w-full h-full bg-black opacity-50"></div>
           <div className="absolute top-0 left-0 flex-center w-full h-full">
-            <ChatroomCreateForm onSubmit={handleSubmit} />
+            <ChatroomCreateForm onSubmit={handleCreateRoom} />
           </div>
         </>
       }

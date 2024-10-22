@@ -43,7 +43,7 @@ export default function Page({ params }: PageProps) {
       }
     }
     getChatroomInfo();
-  }, [sessionId]);
+  }, [sessionId, router]);
 
   const handleClick = () => {
     leaveSession();

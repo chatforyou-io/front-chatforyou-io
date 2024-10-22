@@ -1,47 +1,50 @@
 "use client";
 
-import EmailForm from "@/src/components/forms/EmailForm";
-import ValidForm from "@/src/components/forms/ValidForm";
-import UserInfoForm from "@/src/components/forms/UserInfoForm";
-import { signIn } from "next-auth/react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+import EmailForm from "@/src/components/forms/EmailForm";
+import UserInfoForm from "@/src/components/forms/UserInfoForm";
+import ValidForm from "@/src/components/forms/ValidForm";
 import { userCreate } from "@/src/libs/auth";
 import "./style.css";
 
+const STEPS = {
+  EMAIL: 1,
+  VALIDATION: 2,
+  USER_INFO: 3,
+};
+
 export default function Page() {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-  
-  const [step, setStep] = useState<number>(1);
-  const [id, setId] = useState<string>('');
-  const [validCode, setValidCode] = useState<string>('');
   const router = useRouter();
   
-  const handleClick = (provider: string) => {
+  const [step, setStep] = useState(STEPS.EMAIL);
+  const [id, setId] = useState('');
+  const [validCode, setValidCode] = useState('');
+  
+  const handleSocialLogin = (provider: string) => {
     signIn(provider, { callbackUrl: `${basePath}/` });
   }
 
   const handleSubmitEmail = (id: string, mailCode: string) => {
     setId(id);
     setValidCode(mailCode);
-
-    setStep(2);
+    setStep(STEPS.VALIDATION);
   }
 
   const handleSubmitEmailValid = () => {
-    setStep(3);
+    setStep(STEPS.USER_INFO);
   }
 
   const handleSubmitUserInfo = async (name: string, pwd: string, confirmPwd: string) => {
     const user: User = { id, name, pwd, confirmPwd, usePwd: true};
     
     try {
-      const data = await userCreate(user);  
-      if (!data.isSuccess) {
-        throw new Error();
-      }
+      const data = await userCreate(user);
+      if (!data.isSuccess) throw new Error('User creation failed');
   
       alert('가입에 성공하였습니다.');
       router.push(`${basePath}/auth/login`);
@@ -71,7 +74,7 @@ export default function Page() {
         <div className="flex justify-between space-x-4 w-full mt-12 px-20">
           <div className="flex-center">
             <button
-              onClick={() => handleClick('kakao')}
+              onClick={() => handleSocialLogin('kakao')}
               aria-label="kakao login button"
               className="social-login-button bg-yellow-400"
             >
@@ -87,7 +90,7 @@ export default function Page() {
           </div>
           <div className="flex-center">
             <button
-              onClick={() => handleClick('naver')}
+              onClick={() => handleSocialLogin('naver')}
               aria-label="naver login button"
               className="social-login-button bg-green-600"
             >
@@ -103,7 +106,7 @@ export default function Page() {
           </div>
           <div className="flex-center">
             <button
-              onClick={() => handleClick('google')}
+              onClick={() => handleSocialLogin('google')}
               aria-label="google login button"
               className="social-login-button bg-white"
             >
