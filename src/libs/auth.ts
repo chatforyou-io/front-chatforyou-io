@@ -68,13 +68,11 @@ const userUpdate = async (user: User) => {
     /*
       {
         result: 'success',
-        user_data: {
+        userData: {
           idx: number,
           id: string,
-          pwd: string,
-          usePwd: boolean,
-          nickName: string,
-          name: string
+          name: string,
+          nickName: string
         }
       }
     */
@@ -138,8 +136,6 @@ const userInfo = async (id: string, pwd: string) => {
         user_data: {
           idx: number,
           id: string,
-          usePwd: boolean,
-          nickName: string,
           name: string
         }
       }

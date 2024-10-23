@@ -3,9 +3,10 @@ import { signOut, useSession } from 'next-auth/react';
 import React, { MouseEvent } from "react";
 
 interface ProfileCardProps {
+  onActiveUserUpdateForm: () => void;
 }
 
-const ProfileCard: React.FC<ProfileCardProps> = () => {
+const ProfileCard: React.FC<ProfileCardProps> = ({ onActiveUserUpdateForm }) => {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
   const session = useSession();
@@ -26,7 +27,7 @@ const ProfileCard: React.FC<ProfileCardProps> = () => {
       </div>
       <div className="flex flex-col justify-center">
         <div className="py-2 text-center">
-          <button onClick={() => {}}>프로필</button>
+          <button onClick={onActiveUserUpdateForm}>프로필</button>
         </div>
         <div className="border-t py-2 text-center">
           <button onClick={handleSignOut}>로그아웃</button>
