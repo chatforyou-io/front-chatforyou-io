@@ -1,15 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import CustomImage from "@/src/components/CustomImage";
 import ProfileCard from "@/src/components/cards/ProfileCard";
 import UserUpdateForm from "@/src/components/forms/UserUpdateForm";
 
 export default function Header() {
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-
   const session = useSession();
 	const [isProfileActive, setIsProfileActive] = useState<boolean>(false);
   const [isUserUpdateForm, setIsUserUpdateForm] = useState<boolean>(false);
@@ -26,7 +24,7 @@ export default function Header() {
           {(session && session.data ) && (
             <div className="flex gap-4">
               <button onClick={handleProfile}>
-                <Image src={`${basePath}/images/icon-user.svg`} alt="room" width={36} height={36} className="border-2 border-gray-700 rounded-full" />
+                <CustomImage src="/images/icon-user.svg" alt="room" width={36} height={36} className="border-2 border-gray-700 rounded-full" />
               </button>
             </div>
           )}

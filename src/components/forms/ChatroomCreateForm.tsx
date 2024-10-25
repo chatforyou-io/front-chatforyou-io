@@ -3,11 +3,10 @@ import Link from 'next/link';
 
 interface ChatroomCreateFormProps {
   onSubmit: (roomName: string, maxUserCount: number, usePwd: boolean, pwd: string) => void;
+  onClose: () => void;
 }
 
-export default function ChatroomCreateForm({ onSubmit }: ChatroomCreateFormProps) {  
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-
+export default function ChatroomCreateForm({ onSubmit, onClose }: ChatroomCreateFormProps) {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -73,12 +72,13 @@ export default function ChatroomCreateForm({ onSubmit }: ChatroomCreateFormProps
         </div>
       </div>
       <div className="flex gap-9">
-        <Link
-          href="/"
+        <button
+          type="button"
           className="w-full px-4 h-16 leading-16 border bg-gray-100 text-center rounded-full"
+          onClick={onClose}
         >
           취소
-        </Link>
+        </button>
         <button
           type="submit"
           className="w-full px-4 h-16 border bg-primary text-white rounded-full"

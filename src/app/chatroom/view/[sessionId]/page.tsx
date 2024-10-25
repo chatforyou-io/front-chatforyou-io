@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import CustomImage from "@/src/components/CustomImage";
 import VideoCall from '@/src/components/openvidu/VideoCall';
 import { chatroomInfo } from "@/src/libs/chatroom";
 import { useOpenvidu } from "@/src/webhooks/useOpenvidu";
@@ -15,8 +15,6 @@ interface PageProps {
 }
 
 export default function Page({ params }: PageProps) {
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-  
   const { sessionId } = params;
   const { data: userSession, status } = useSession();
   const { session, publisher, subscribers, joinSession, leaveSession } = useOpenvidu({ sessionId, userIdx: userSession?.user.idx });
@@ -55,7 +53,7 @@ export default function Page({ params }: PageProps) {
       <div className="flex-center p-8 w-160 space-y-4 bg-white rounded-2xl">
         <div className="flex w-full space-x-4">
           <div className="flex-center">
-            <Image src={`${basePath}/images/icon-user.svg`} alt="room" width={48} height={48} className="border-2 border-gray-700 rounded-full" />
+            <CustomImage src="/images/icon-user.svg" alt="room" width={48} height={48} className="border-2 border-gray-700 rounded-full" />
           </div>
           <div className="w-full">
             <h3 className="font-semibold">{chatroom?.roomName}</h3>

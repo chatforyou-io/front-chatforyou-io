@@ -1,6 +1,7 @@
-import Image from 'next/image';
-import { signOut, useSession } from 'next-auth/react';
 import React, { MouseEvent } from "react";
+import { useRouter } from 'next/navigation';
+import { signOut, useSession } from 'next-auth/react';
+import CustomImage from "@/src/components/CustomImage";
 
 interface ProfileCardProps {
   onActiveUserUpdateForm: () => void;
@@ -8,18 +9,30 @@ interface ProfileCardProps {
 
 const ProfileCard: React.FC<ProfileCardProps> = ({ onActiveUserUpdateForm }) => {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+  const router = useRouter();
 
   const session = useSession();
 
-  function handleSignOut(event: MouseEvent<HTMLButtonElement>): void {
+  const handleSignOut = async (event: MouseEvent<HTMLButtonElement>): Promise<void> => {
     event.preventDefault();
-    signOut({ callbackUrl: `${basePath}/auth/login` });
+
+    try {
+      const response = await signOut({ redirect: false, callbackUrl: `${basePath}/auth/login` });
+      if (!response) {
+        throw new Error('Unknown error');
+      }
+
+      // 로그인 성공 시 홈페이지로 리다이렉트
+      router.push('/auth/login');
+    } catch (error) {
+      console.error(error);
+    }
   }
   
   return (
     <div className="w-80 bg-white p-8 space-y-8 rounded-xl">
       <div className="flex justify-center">
-        <Image src={`${basePath}/images/icon-user.svg`} alt="room" width={48} height={48} className="border-2 border-gray-700 rounded-full" />
+        <CustomImage src="images/icon-user.svg" alt="room" width={48} height={48} className="border-2 border-gray-700 rounded-full" />
       </div>
       <div className="flex flex-col items-center space-y-2">
         <h3 className="font-semibold">{session.data?.user?.name}</h3>

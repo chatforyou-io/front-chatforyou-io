@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import CustomImage from "@/src/components/CustomImage";
 import EmailForm from "@/src/components/forms/EmailForm";
 import UserInfoForm from "@/src/components/forms/UserInfoForm";
 import ValidForm from "@/src/components/forms/ValidForm";
@@ -18,7 +18,6 @@ const STEPS = {
 };
 
 export default function Page() {
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
   const router = useRouter();
   
   const [step, setStep] = useState(STEPS.EMAIL);
@@ -26,7 +25,7 @@ export default function Page() {
   const [validCode, setValidCode] = useState('');
   
   const handleSocialLogin = (provider: string) => {
-    signIn(provider, { callbackUrl: `${basePath}/` });
+    signIn(provider, { callbackUrl: "/" });
   }
 
   const handleSubmitEmail = (id: string, mailCode: string) => {
@@ -47,7 +46,7 @@ export default function Page() {
       if (!data.isSuccess) throw new Error('User creation failed');
   
       alert('가입에 성공하였습니다.');
-      router.push(`${basePath}/auth/login`);
+      router.push("/auth/login");
     } catch (error) {
       console.error('가입 요청 중 오류 발생:', error);
       alert('가입 중 문제가 발생하였습니다. 나중에 다시 시도해주세요.');
@@ -78,8 +77,8 @@ export default function Page() {
               aria-label="kakao login button"
               className="social-login-button bg-yellow-400"
             >
-              <Image
-                src={`${basePath}/images/icon-kakao.svg`}
+              <CustomImage
+                src="/images/icon-kakao.svg"
                 alt="kakao login"
                 width={36}
                 height={36}
@@ -94,8 +93,8 @@ export default function Page() {
               aria-label="naver login button"
               className="social-login-button bg-green-600"
             >
-              <Image
-                src={`${basePath}/images/icon-naver.svg`}
+              <CustomImage
+                src="/images/icon-naver.svg"
                 alt="naver login"
                 width={32}
                 height={32}
@@ -110,8 +109,8 @@ export default function Page() {
               aria-label="google login button"
               className="social-login-button bg-white"
             >
-              <Image
-                src={`${basePath}/images/icon-google.svg`}
+              <CustomImage
+                src="/images/icon-google.svg"
                 alt="google login"
                 width={32}
                 height={32}

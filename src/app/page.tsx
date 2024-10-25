@@ -10,7 +10,6 @@ import DashboardSidebar from "@/src/components/sidebars/DashboardSidebar";
 import { chatroomCreate, chatroomList } from "@/src/libs/chatroom";
 
 export default function Home() {
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
   const { data: userSession, status } = useSession();
   const router = useRouter();
   const [isPopup, setIsPopup] = useState<boolean>(false);
@@ -84,7 +83,7 @@ export default function Home() {
         <>
           <div className="absolute top-0 left-0 flex-center w-full h-full bg-black opacity-50"></div>
           <div className="absolute top-0 left-0 flex-center w-full h-full">
-            <ChatroomCreateForm onSubmit={handleCreateRoom} />
+            <ChatroomCreateForm onSubmit={handleCreateRoom} onClose={() => setIsPopup(false)} />
           </div>
         </>
       }

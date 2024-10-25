@@ -1,9 +1,9 @@
 'use client';
  
-import LoginForm from "@/src/components/forms/LoginForm";
-import { signIn } from "next-auth/react";
-import Image from "next/image";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
+import CustomImage from "@/src/components/CustomImage";
+import LoginForm from "@/src/components/forms/LoginForm";
 import "./style.css";
 
 
@@ -39,8 +39,8 @@ export default function Page() {
               aria-label="kakao login button"
               className="social-login-button bg-yellow-400"
             >
-              <Image
-                src={`${basePath}/images/icon-kakao.svg`}
+              <CustomImage
+                src="images/icon-kakao.svg"
                 alt="kakao login"
                 width={36}
                 height={36}
@@ -55,8 +55,8 @@ export default function Page() {
               aria-label="naver login button"
               className="social-login-button bg-green-600"
             >
-              <Image
-                src={`${basePath}/images/icon-naver.svg`}
+              <CustomImage
+                src="images/icon-naver.svg"
                 alt="naver login"
                 width={32}
                 height={32}
@@ -71,8 +71,8 @@ export default function Page() {
               aria-label="google login button"
               className="social-login-button bg-white"
             >
-              <Image
-                src={`${basePath}/images/icon-google.svg`}
+              <CustomImage
+                src="images/icon-google.svg"
                 alt="google login"
                 width={32}
                 height={32}

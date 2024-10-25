@@ -4,19 +4,21 @@ import type { NextRequest } from 'next/server';
 
 export async function middleware(req: NextRequest) {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+  const { pathname, origin } = req.nextUrl;
 
+  const isPublicPath = pathname.startsWith('/auth/');
   const token = await getToken({ req });
-  const path = req.nextUrl.pathname;
-  const origin = req.nextUrl.origin;
 
-  if (token && path.startsWith(`/auth/`)) {
+  if (token && isPublicPath) {
     // Skip the middleware for the login and signup pages
     return NextResponse.redirect(`${origin}${basePath}/`);
   }
   
-  if (!token && !path.startsWith(`/auth/`)) {
+  if (!token && !isPublicPath) {
     // Redirect to the login page if the user is not authenticated
-    return NextResponse.redirect(`${origin}${basePath}/auth/login`);
+    const loginUrl = new URL(`${basePath}/auth/login`, origin);
+    loginUrl.searchParams.set('callbackUrl', `${basePath}${pathname}`);
+    return NextResponse.redirect(loginUrl);
   }
 	
   // If authenticated, proceed to the originally requested path

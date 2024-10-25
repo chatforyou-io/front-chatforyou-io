@@ -6,8 +6,6 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 import { addOAuthUser, getOAuthUser, getCredentialsUser } from '@/firebase'
 import { userInfo } from '@/src/libs/auth'
 
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-
 const authOptions: NextAuthOptions = {
   providers: [
     KakaoProvider({
