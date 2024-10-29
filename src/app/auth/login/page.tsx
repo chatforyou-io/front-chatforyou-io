@@ -40,7 +40,7 @@ export default function Page() {
               className="social-login-button bg-yellow-400"
             >
               <CustomImage
-                src="images/icon-kakao.svg"
+                src="/images/icon-kakao.svg"
                 alt="kakao login"
                 width={36}
                 height={36}
@@ -56,7 +56,7 @@ export default function Page() {
               className="social-login-button bg-green-600"
             >
               <CustomImage
-                src="images/icon-naver.svg"
+                src="/images/icon-naver.svg"
                 alt="naver login"
                 width={32}
                 height={32}
@@ -72,7 +72,7 @@ export default function Page() {
               className="social-login-button bg-white"
             >
               <CustomImage
-                src="images/icon-google.svg"
+                src="/images/icon-google.svg"
                 alt="google login"
                 width={32}
                 height={32}

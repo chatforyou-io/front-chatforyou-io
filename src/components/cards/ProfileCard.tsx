@@ -32,7 +32,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ onActiveUserUpdateForm }) => 
   return (
     <div className="w-80 bg-white p-8 space-y-8 rounded-xl">
       <div className="flex justify-center">
-        <CustomImage src="images/icon-user.svg" alt="room" width={48} height={48} className="border-2 border-gray-700 rounded-full" />
+        <CustomImage src="/images/icon-user.svg" alt="room" width={48} height={48} className="border-2 border-gray-700 rounded-full" />
       </div>
       <div className="flex flex-col items-center space-y-2">
         <h3 className="font-semibold">{session.data?.user?.name}</h3>
