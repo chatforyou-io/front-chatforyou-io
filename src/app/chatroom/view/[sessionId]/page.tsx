@@ -7,6 +7,7 @@ import CustomImage from "@/src/components/CustomImage";
 import VideoCall from '@/src/components/openvidu/VideoCall';
 import { chatroomInfo } from "@/src/libs/chatroom";
 import { useOpenvidu } from "@/src/webhooks/useOpenvidu";
+import ChatroomDeviceForm from "@/src/components/forms/ChatroomDeviceForm";
 
 interface PageProps {
   params: {
@@ -20,6 +21,7 @@ export default function Page({ params }: PageProps) {
   const { session, publisher, subscribers, joinSession, leaveSession } = useOpenvidu({ sessionId, userIdx: userSession?.user.idx });
   const hasJoinedRef = useRef(false);
   const [chatroom, setChatroom] = useState<Chatroom | undefined>(undefined);
+  const [isPopup, setIsPopup] = useState<boolean>(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -74,18 +76,23 @@ export default function Page({ params }: PageProps) {
           <span className="text-sm">인원수: {chatroom?.currentUserCount}명</span>
         </div>
         <div className="flex w-full space-x-4 bg-gray-200 rounded-xl">
-          {session && [publisher, ...subscribers].map((streamManager) => (
+          {session && [publisher].filter((currPublisher, index) => index === 0).map((streamManager) => (
             <VideoCall key={streamManager?.stream.streamId} streamManager={streamManager} />
           ))}
         </div>
-        <div className="flex w-full space-x-4">
-          {subscribers.map(subscriber => (
-            <div key={subscriber.id} className="w-full h-20 bg-gray-200 rounded-xl">
-              <VideoCall streamManager={subscriber} />
+        <div className="grid grid-cols-3 w-full space-x-4">
+          {session && [publisher].filter((currPublisher, index) => index !== 0).map((streamManager) => (
+            <div key={streamManager?.stream.streamId} className="w-full h-36 bg-gray-200 rounded-xl">
+              <VideoCall streamManager={streamManager} />
             </div>
           ))}
         </div>
       </div>
+      {isPopup &&
+        <div className="flex-center w-96 h-96 bg-gray-200 rounded-2xl">
+          <ChatroomDeviceForm />
+        </div>
+      }
     </div>
   );
 }

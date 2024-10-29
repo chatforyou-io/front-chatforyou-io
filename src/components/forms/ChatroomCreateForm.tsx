@@ -1,5 +1,4 @@
-import React, { FormEvent, useState } from 'react';
-import Link from 'next/link';
+import React, { FormEvent } from 'react';
 
 interface ChatroomCreateFormProps {
   onSubmit: (roomName: string, maxUserCount: number, usePwd: boolean, pwd: string) => void;
@@ -50,12 +49,6 @@ export default function ChatroomCreateForm({ onSubmit, onClose }: ChatroomCreate
             <option value="2">2명</option>
             <option value="3">3명</option>
             <option value="4">4명</option>
-            <option value="5">5명</option>
-            <option value="6">6명</option>
-            <option value="7">7명</option>
-            <option value="8">8명</option>
-            <option value="9">9명</option>
-            <option value="10">10명</option>
           </select>
         </div>
         <div className="space-y-4">

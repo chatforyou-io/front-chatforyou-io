@@ -26,8 +26,6 @@ export const useOpenvidu = ({ sessionId, userIdx }: UseOpenViduProps): UseOpenVi
   const getToken = useCallback(() => chatroomToken(sessionId, userIdx), [sessionId, userIdx]);
 
   const joinSession = useCallback(async () => {
-    console.log('joinSession occured');
-
     try {
       if (!sessionId || !userIdx) {
         throw new Error('sessionId and userIdx must be provided');

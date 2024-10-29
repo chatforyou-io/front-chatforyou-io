@@ -13,6 +13,10 @@ const config: Config = {
         "144": "36rem",
         "160": "40rem",
       },
+      height: {
+        "36": "9rem",
+        "48": "12rem",
+      },
       colors: {
         brand: {
           50: "#EFF6FF",

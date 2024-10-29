@@ -16,7 +16,7 @@ export default function UserVideo({ streamManager }: SessionProps) {
 	}, [streamManager]);
   
   return (
-		<video autoPlay={autoplay} ref={videoRef} style={{ width: '100%' }}>
+		<video autoPlay={autoplay} ref={videoRef} className="w-full rounded-xl">
       <track kind="captions" />
     </video>
   );
