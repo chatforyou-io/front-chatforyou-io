@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { OpenVidu, Session, Publisher, Subscriber } from 'openvidu-browser';
 import { chatroomToken } from '@/src/libs/chatroom';
 
@@ -19,12 +19,15 @@ export const useOpenvidu = ({ sessionId, userIdx }: UseOpenViduProps): UseOpenVi
   const [session, setSession] = useState<Session>();
   const [publisher, setPublisher] = useState<Publisher>();
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
+  
+  const ovRef = useRef<OpenVidu>();
+  const sessionRef = useRef<Session>();
 
-  const getToken = useCallback(async () => {
-    return await chatroomToken(sessionId, userIdx);
-  }, [sessionId, userIdx]);
+  const getToken = useCallback(() => chatroomToken(sessionId, userIdx), [sessionId, userIdx]);
 
   const joinSession = useCallback(async () => {
+    console.log('joinSession occured');
+
     try {
       if (!sessionId || !userIdx) {
         throw new Error('sessionId and userIdx must be provided');
@@ -36,21 +39,24 @@ export const useOpenvidu = ({ sessionId, userIdx }: UseOpenViduProps): UseOpenVi
         throw new Error('Token is empty');
       }
       
-      const ov = new OpenVidu();
-      const session = ov.initSession();
+      if (!ovRef.current) {
+        ovRef.current = new OpenVidu();
+      }
 
-      session.on('streamCreated', (event) => {
-        const subscriber = session.subscribe(event.stream, undefined);
+      sessionRef.current = ovRef.current.initSession();
+
+      sessionRef.current.on('streamCreated', (event) => {
+        const subscriber = sessionRef.current!.subscribe(event.stream, undefined);
         setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
       });
 
-      session.on('streamDestroyed', (event) => {
+      sessionRef.current.on('streamDestroyed', (event) => {
         setSubscribers((prevSubscribers) => prevSubscribers.filter((subscriber) => subscriber !== event.stream.streamManager));
       });
 
-      await session.connect(token, { clientData: sessionId });
+      await sessionRef.current.connect(token, { clientData: sessionId });
 
-      const publisher = ov.initPublisher(undefined, {
+      const newPublisher = ovRef.current.initPublisher(undefined, {
         audioSource: undefined,
         videoSource: undefined,
         publishAudio: true,
@@ -60,24 +66,24 @@ export const useOpenvidu = ({ sessionId, userIdx }: UseOpenViduProps): UseOpenVi
         insertMode: 'APPEND',
       });
 
-      await session.publish(publisher);
+      await sessionRef.current.publish(newPublisher);
 
-      setSession(session);
-      setPublisher(publisher);
+      setSession(sessionRef.current);
+      setPublisher(newPublisher);
     } catch (error) {
       console.error('Error joining session:', error);
     }
   }, [sessionId, userIdx, getToken]);
 
   const leaveSession = useCallback(() => {
-    setSession((currentSession) => {
-      if (currentSession) {
-        currentSession.disconnect();
-      }
-      return undefined;
-    });
+    if (sessionRef.current) {
+      sessionRef.current.disconnect();
+      sessionRef.current = undefined;
+    }
+    setSession(undefined);
     setPublisher(undefined);
     setSubscribers([]);
+    ovRef.current = undefined;
   }, []);
 
   useEffect(() => {

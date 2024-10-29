@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import CustomImage from "@/src/components/CustomImage";
@@ -16,16 +16,18 @@ interface PageProps {
 
 export default function Page({ params }: PageProps) {
   const { sessionId } = params;
-  const { data: userSession, status } = useSession();
+  const { data: userSession } = useSession();
   const { session, publisher, subscribers, joinSession, leaveSession } = useOpenvidu({ sessionId, userIdx: userSession?.user.idx });
+  const hasJoinedRef = useRef(false);
   const [chatroom, setChatroom] = useState<Chatroom | undefined>(undefined);
   const router = useRouter();
 
   useEffect(() => {
-    if (status === 'authenticated' && userSession?.user?.idx) {
+    if (userSession?.user?.idx && !hasJoinedRef.current) {
       joinSession();
-    };
-  }, [status, userSession?.user?.idx, joinSession]);
+      hasJoinedRef.current = true;
+    }
+  }, [userSession?.user?.idx, joinSession]);
 
   useEffect(() => {
     const getChatroomInfo = async () => {
