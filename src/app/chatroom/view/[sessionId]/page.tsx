@@ -7,7 +7,6 @@ import CustomImage from "@/src/components/CustomImage";
 import VideoCall from '@/src/components/openvidu/VideoCall';
 import { chatroomInfo } from "@/src/libs/chatroom";
 import { useOpenvidu } from "@/src/webhooks/useOpenvidu";
-import ChatroomDeviceForm from "@/src/components/forms/ChatroomDeviceForm";
 
 interface PageProps {
   params: {
@@ -21,7 +20,6 @@ export default function Page({ params }: PageProps) {
   const { session, publisher, subscribers, joinSession, leaveSession } = useOpenvidu({ sessionId, userIdx: userSession?.user.idx });
   const hasJoinedRef = useRef(false);
   const [chatroom, setChatroom] = useState<Chatroom | undefined>(undefined);
-  const [isPopup, setIsPopup] = useState<boolean>(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -88,11 +86,6 @@ export default function Page({ params }: PageProps) {
           )))}
         </div>
       </div>
-      {isPopup &&
-        <div className="flex-center w-96 h-96 bg-gray-200 rounded-2xl">
-          <ChatroomDeviceForm />
-        </div>
-      }
     </div>
   );
 }
