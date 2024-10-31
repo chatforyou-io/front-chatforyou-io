@@ -75,17 +75,17 @@ export default function Page({ params }: PageProps) {
         <div className="flex w-full space-x-4">
           <span className="text-sm">인원수: {chatroom?.currentUserCount}명</span>
         </div>
-        <div className="flex w-full space-x-4 bg-gray-200 rounded-xl">
+        <div className="flex w-full aspect-video space-x-4 bg-gray-200 rounded-xl">
           {session && [publisher].filter((currPublisher, index) => index === 0).map((streamManager) => (
             <VideoCall key={streamManager?.stream.streamId} streamManager={streamManager} />
           ))}
         </div>
         <div className="grid grid-cols-3 w-full space-x-4">
-          {session && [publisher].filter((currPublisher, index) => index !== 0).map((streamManager) => (
-            <div key={streamManager?.stream.streamId} className="w-full h-36 bg-gray-200 rounded-xl">
+          {session && [subscribers].map(subscriber => subscriber.map((streamManager) => (
+            <div key={streamManager?.stream.streamId} className="w-full aspect-video bg-gray-200 rounded-xl">
               <VideoCall streamManager={streamManager} />
             </div>
-          ))}
+          )))}
         </div>
       </div>
       {isPopup &&

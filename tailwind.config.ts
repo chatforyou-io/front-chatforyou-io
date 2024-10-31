@@ -9,6 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       width: {
+        "96": "24rem",
         "128": "32rem",
         "144": "36rem",
         "160": "40rem",
@@ -16,6 +17,8 @@ const config: Config = {
       height: {
         "36": "9rem",
         "48": "12rem",
+        "72": "18rem",
+        "96": "24rem",
       },
       colors: {
         brand: {
