@@ -31,7 +31,7 @@ const userCreate = async (user: User) => {
     /*
       {
         result: 'success',
-        user_data: {
+        userData: {
           idx: number,
           id: string,
           pwd: string,
@@ -114,7 +114,6 @@ const userDelete = async (id: string, pwd: string) => {
 };
 
 const userInfo = async (id: string, pwd: string) => {
-
   try {
     const querysting = new URLSearchParams({ id, pwd: btoa(pwd) }).toString();
     const data = await fetch(`${authHost}/user/info?${querysting}`, {
@@ -133,10 +132,11 @@ const userInfo = async (id: string, pwd: string) => {
     /*
       {
         result: 'success',
-        user_data: {
+        userData: {
           idx: number,
           id: string,
-          name: string
+          name: string,
+          nickName: string
         }
       }
     */

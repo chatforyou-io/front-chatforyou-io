@@ -1,17 +1,36 @@
 'use client';
  
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import CustomImage from "@/src/components/CustomImage";
 import LoginForm from "@/src/components/forms/LoginForm";
 import "./style.css";
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
 export default function Page() {
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+  const router = useRouter();
 
-  const handleClick = (provider: string) => {
-    signIn(provider, { callbackUrl: `${basePath}/` });
+  const handleClick = async (provider: string) => {
+    try {
+      const response = await signIn(provider, { redirect: false });
+      if (!response) {
+        throw new Error('Unknown error');
+      }
+      if (!response.ok) {
+        throw new Error(response.error || 'Unknown error');
+      }
+
+      // 로그인 성공 시 홈페이지로 리다이렉트
+      router.push('/');
+      
+      // 페이지 데이터 새로고침
+      router.refresh();
+    } catch (error) {
+      console.error(error?.toString() || 'Unknown error');
+      return;
+    }
   }
 
   return (

@@ -1,5 +1,5 @@
 import { FormEvent, useState } from 'react';
-import { userValidate } from '@/src/libs/auth';
+import { userValidate } from '@/src/libs/user';
 import clsx from 'clsx';
 
 interface SignUpEmailFormProps {

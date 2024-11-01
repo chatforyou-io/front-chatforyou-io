@@ -4,51 +4,61 @@ import KakaoProvider from 'next-auth/providers/kakao'
 import GoogleProvider from 'next-auth/providers/google'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { addOAuthUser, getOAuthUser, getCredentialsUser } from '@/firebase'
-import { userInfo } from '@/src/libs/auth'
+import { userInfo } from '@/src/libs/user'
+
+const NEXTAUTH_URL = process.env.NEXTAUTH_URL;
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH;
+
 
 const authOptions: NextAuthOptions = {
   providers: [
     KakaoProvider({
       clientId: process.env.KAKAO_CLIENT_ID!,
-      clientSecret: process.env.KAKAO_CLIENT_SECRET!
+      clientSecret: process.env.KAKAO_CLIENT_SECRET!,
     }),
     NaverProvider({
       clientId: process.env.NAVER_CLIENT_ID!,
-      clientSecret: process.env.NAVER_CLIENT_SECRET!
+      clientSecret: process.env.NAVER_CLIENT_SECRET!,
     }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
     CredentialsProvider({
       type: 'credentials',
       id: 'credentials',
       name: 'Credentials',
       credentials: {
-        username: { label: 'Username', type: 'text' },
-        password: { label: 'Password', type: 'password' }
+        username: {},
+        password: {}
       },
       async authorize(credentials) {
-        // 아이디와 비밀번호 입력 여부 체크
-        if (!credentials || !credentials.username || !credentials.password) {
-          throw new Error('잘못된 자격 증명');
+        const { username, password } = credentials as {
+          username: string;
+          password: string;
         }
 
-        const data = await userInfo(credentials.username, credentials.password);
-        if (!data || data.result !== 'success') {
-          throw new Error('잘못된 아이디와 비밀번호');
+        // 아이디와 비밀번호 입력 여부 체크
+        if (!username || !password) {
+          return null;
+        }
+
+        const { isSuccess, userData } = await userInfo(username, password);
+        if (!isSuccess) {
+          return null;
         }
 
         // 회원 조회 (User 객체 또는 null 반환)
-        return data.userData;
+        return userData;
       }
     })
   ],
   callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
+    async signIn({ user, account, profile }) {
       // SNS 로그인 체크
       if (user && account && profile) {
         const snsUser = await getOAuthUser(account.provider, account.providerAccountId);
+        console.log(snsUser);
         if (!snsUser) {
           addOAuthUser(user.name!, account.providerAccountId, {
             provider: account.provider,
@@ -68,24 +78,16 @@ const authOptions: NextAuthOptions = {
         // return '/unauthorized'
       }
     },
-    async redirect({ url, baseUrl }) {
-      return baseUrl;
-    },
-    async session({ session, token, user }) {
-      session.user.idx = token.idx;
-      session.user.id = token.id;
-      session.user.name = token.name;
-      return session;
-    },
-    async jwt({ token, user, account, profile, trigger }) {
+    async jwt({ token, user }) {
       if (user) {
-        token.idx = user.idx;
-        token.id = user.id;
-        token.name = user.name;
+        token = { ...token, ...user };
       }
       return token;
     },
-    
+    async session({ session, token }) {
+      session.user = token;
+      return session;
+    },
   },
   secret: process.env.NEXTAUTH_SECRET,
   session: {
