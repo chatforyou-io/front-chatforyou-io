@@ -15,6 +15,10 @@ export default function Home() {
   const [isPopup, setIsPopup] = useState<boolean>(false);
   const [chatrooms, setChatrooms] = useState<Chatroom[]>([]);
 
+  useEffect(() => {
+    console.log(userSession, status);
+  }, [userSession, status]);
+
   const fetchChatrooms = useCallback(async () => {
     try {
       const response = await chatroomList();

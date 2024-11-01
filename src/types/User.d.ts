@@ -1,4 +1,5 @@
 interface User {
+  provider?: string,
   idx?: number,
   id: string,
   pwd?: string,

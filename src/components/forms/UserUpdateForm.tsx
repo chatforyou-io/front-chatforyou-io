@@ -1,7 +1,7 @@
 import { FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { userUpdate } from '@/src/libs/auth';
+import { userUpdate } from '@/src/libs/user';
 
 interface UserUpdateFormProps {
   onClose: () => void;

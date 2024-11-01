@@ -1,7 +1,7 @@
 "use client";
 
 import TestSidebar from "@/src/components/sidebars/TestSidebars";
-import { userCheckNickname, userCreate, userDelete, userInfo, userUpdate, userValidate } from "@/src/libs/auth";
+import { userCheckNickname, userCreate, userDelete, userInfo, userUpdate, userValidate } from "@/src/libs/user";
 import { chatroomCreate, chatroomList } from "@/src/libs/chatroom";
 import { useSession } from "next-auth/react";
 import { FormEvent, useEffect, useState } from "react";

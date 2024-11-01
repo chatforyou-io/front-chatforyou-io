@@ -8,7 +8,7 @@ import CustomImage from "@/src/components/CustomImage";
 import EmailForm from "@/src/components/forms/EmailForm";
 import UserInfoForm from "@/src/components/forms/UserInfoForm";
 import ValidForm from "@/src/components/forms/ValidForm";
-import { userCreate } from "@/src/libs/auth";
+import { userCreate } from "@/src/libs/user";
 import "./style.css";
 
 const STEPS = {
@@ -24,8 +24,25 @@ export default function Page() {
   const [id, setId] = useState('');
   const [validCode, setValidCode] = useState('');
   
-  const handleSocialLogin = (provider: string) => {
-    signIn(provider, { callbackUrl: "/" });
+  const handleSocialLogin = async (provider: string) => {
+    try {
+      const response = await signIn(provider, { redirect: false });
+      if (!response) {
+        throw new Error('Unknown error');
+      }
+      if (!response.ok) {
+        throw new Error(response.error || 'Unknown error');
+      }
+
+      // 로그인 성공 시 홈페이지로 리다이렉트
+      router.push('/');
+      
+      // 페이지 데이터 새로고침
+      router.refresh();
+    } catch (error) {
+      console.error(error?.toString() || 'Unknown error');
+      return;
+    }
   }
 
   const handleSubmitEmail = (id: string, mailCode: string) => {

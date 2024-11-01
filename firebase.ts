@@ -1,6 +1,5 @@
 import { FirebaseError, initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs, query, where, addDoc, setDoc, doc } from 'firebase/firestore';
-import { User } from 'next-auth';
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
