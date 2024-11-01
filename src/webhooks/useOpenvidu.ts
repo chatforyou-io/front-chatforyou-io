@@ -42,6 +42,7 @@ export const useOpenvidu = ({ sessionId, userIdx }: UseOpenViduProps): UseOpenVi
       }
 
       sessionRef.current = ovRef.current.initSession();
+      ovRef.current.enableProdMode(); // 프로덕션 모드 활성화
 
       sessionRef.current.on('streamCreated', (event) => {
         const subscriber = sessionRef.current!.subscribe(event.stream, undefined);
