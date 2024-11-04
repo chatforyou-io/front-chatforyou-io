@@ -5,7 +5,7 @@ interface SessionProps {
 	streamManager?: StreamManager;
 }
 
-export default function UserVideo({ streamManager }: SessionProps) {
+export default function OpenviduStream({ streamManager }: SessionProps) {
 	const videoRef = useRef<HTMLVideoElement>(null);
 	const autoplay = true;
 

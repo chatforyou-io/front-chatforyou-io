@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import CustomImage from "@/src/components/CustomImage";
-import VideoCall from '@/src/components/openvidu/VideoCall';
+import OpenviduStream from '@/src/components/openvidu/OpenviduStream';
 import { chatroomInfo } from "@/src/libs/chatroom";
 import { useOpenvidu } from "@/src/webhooks/useOpenvidu";
 
@@ -75,13 +75,13 @@ export default function Page({ params }: PageProps) {
         </div>
         <div className="flex w-full aspect-video space-x-4 bg-gray-200 rounded-xl">
           {session && [publisher].filter((currPublisher, index) => index === 0).map((streamManager) => (
-            <VideoCall key={streamManager?.stream.streamId} streamManager={streamManager} />
+            <OpenviduStream key={streamManager?.stream.streamId} streamManager={streamManager} />
           ))}
         </div>
         <div className="grid grid-cols-3 w-full space-x-4">
           {session && [subscribers].map(subscriber => subscriber.map((streamManager) => (
             <div key={streamManager?.stream.streamId} className="w-full aspect-video bg-gray-200 rounded-xl">
-              <VideoCall streamManager={streamManager} />
+              <OpenviduStream streamManager={streamManager} />
             </div>
           )))}
         </div>
