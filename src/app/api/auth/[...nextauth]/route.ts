@@ -54,10 +54,17 @@ const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ user, account, profile }) {
-      // SNS 로그인 체크
-      if (user && account && profile) {
-        const snsUser = await userSocialLogin(account.provider, account.providerAccountId, undefined, undefined, undefined);
+      if (!user || !account || !profile) {
+        return false;
       }
+
+      const { isSuccess, userData } = await userSocialLogin(account.provider, account.providerAccountId, profile.email, profile.name, undefined);
+      if (!isSuccess) {
+        return false;
+      }
+
+      Object.assign(user, userData);
+
       return true;
     },
     async jwt({ token, user }) {
