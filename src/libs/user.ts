@@ -162,6 +162,55 @@ const userLogin = async (id: string, pwd: string) => {
   }
 };
 
+const userSocialLogin = async (provider: string, providerAccountId: string, id?: string, name?: string, nickName?: string) => {
+  try {
+    const data = await fetch(`${authHost}/auth/login/social`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Basic ${authToken}`,
+      },
+      body: JSON.stringify({ provider, providerAccountId, id, name, nickName }),
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`${response.status}: 서버와의 통신 중 오류가 발생했습니다.`);
+      }
+      // 응답 헤더에서 필요한 정보 추출
+      const headers: { [key: string]: string } = {};
+      response.headers.forEach((value, name) => {
+        if (name === "accesstoken" || name === "refreshtoken") {
+          headers[name] = value;
+        }
+      });
+
+      return response
+        .json()
+        .then(data => {
+          data.userData.accesstoken = headers.accesstoken;
+          data.userData.refreshtoken = headers.refreshtoken;
+          return data;
+        });
+    });
+
+    /*
+      {
+        result: "success",
+        userData: {
+          idx: number,
+          id: string,
+          name: string,
+          nickName: string
+        }
+      }
+    */
+    data.isSuccess = true;
+    return data;
+  } catch (error) {
+    return { isSuccess: false, result: "fail info", error: error };
+  }
+};
+
 const userInfo = async (id: string, pwd: string) => {
   try {
     const querysting = new URLSearchParams({ id, pwd: btoa(pwd) }).toString();
@@ -270,4 +319,4 @@ const userValidate = async (email: string) => {
   }
 };
 
-export { userCreate, userUpdate, userDelete, userLogin, userInfo, userCheckNickname, userValidate };
+export { userCreate, userUpdate, userDelete, userLogin, userSocialLogin, userInfo, userCheckNickname, userValidate };

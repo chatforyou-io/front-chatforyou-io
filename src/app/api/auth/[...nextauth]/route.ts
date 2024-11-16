@@ -1,10 +1,9 @@
-import NextAuth, { NextAuthOptions } from 'next-auth'
-import NaverProvider from 'next-auth/providers/naver'
-import KakaoProvider from 'next-auth/providers/kakao'
-import GoogleProvider from 'next-auth/providers/google'
-import CredentialsProvider from 'next-auth/providers/credentials'
-import { addOAuthUser, getOAuthUser, getCredentialsUser } from '@/firebase'
-import { userLogin } from '@/src/libs/user'
+import NextAuth, { NextAuthOptions } from "next-auth"
+import NaverProvider from "next-auth/providers/naver"
+import KakaoProvider from "next-auth/providers/kakao"
+import GoogleProvider from "next-auth/providers/google"
+import CredentialsProvider from "next-auth/providers/credentials"
+import { userLogin, userSocialLogin } from "@/src/libs/user"
 
 const NEXTAUTH_URL = process.env.NEXTAUTH_URL;
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH;
@@ -25,9 +24,9 @@ const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
     CredentialsProvider({
-      type: 'credentials',
-      id: 'credentials',
-      name: 'Credentials',
+      type: "credentials",
+      id: "credentials",
+      name: "Credentials",
       credentials: {
         username: {},
         password: {}
@@ -57,25 +56,9 @@ const authOptions: NextAuthOptions = {
     async signIn({ user, account, profile }) {
       // SNS 로그인 체크
       if (user && account && profile) {
-        const snsUser = await getOAuthUser(account.provider, account.providerAccountId);
-        if (!snsUser) {
-          addOAuthUser(user.name!, account.providerAccountId, {
-            provider: account.provider,
-            providerAccountId: account.providerAccountId
-          });  
-        }
+        const snsUser = await userSocialLogin(account.provider, account.providerAccountId, undefined, undefined, undefined);
       }
-
-      // 로그인 제한 로직 (필요 시 활용)
-      const isAllowedToSignIn = true;
-      if (isAllowedToSignIn) {
-        return true
-      } else {
-        // Return false to display a default error message
-        return false
-        // Or you can return a URL to redirect to:
-        // return '/unauthorized'
-      }
+      return true;
     },
     async jwt({ token, user }) {
       if (user) {
