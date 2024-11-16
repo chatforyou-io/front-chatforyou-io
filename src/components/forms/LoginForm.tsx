@@ -69,7 +69,7 @@ export default function LoginForm() {
     setLoginErrorMsg('');
 
     try {
-      const response = await signIn('credentials', { redirect: false, username, password: btoa(password) });
+      const response = await signIn('credentials', { redirect: false, username, password: password });
       if (!response) {
         throw new Error('Unknown error');
       }

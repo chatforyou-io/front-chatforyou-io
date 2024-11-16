@@ -4,7 +4,7 @@ import KakaoProvider from 'next-auth/providers/kakao'
 import GoogleProvider from 'next-auth/providers/google'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { addOAuthUser, getOAuthUser, getCredentialsUser } from '@/firebase'
-import { userInfo } from '@/src/libs/user'
+import { userLogin } from '@/src/libs/user'
 
 const NEXTAUTH_URL = process.env.NEXTAUTH_URL;
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH;
@@ -43,7 +43,7 @@ const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const { isSuccess, userData } = await userInfo(username, password);
+        const { isSuccess, userData } = await userLogin(username, password);
         if (!isSuccess) {
           return null;
         }
@@ -58,7 +58,6 @@ const authOptions: NextAuthOptions = {
       // SNS 로그인 체크
       if (user && account && profile) {
         const snsUser = await getOAuthUser(account.provider, account.providerAccountId);
-        console.log(snsUser);
         if (!snsUser) {
           addOAuthUser(user.name!, account.providerAccountId, {
             provider: account.provider,
