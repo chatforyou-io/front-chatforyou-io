@@ -54,11 +54,30 @@ const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ user, account, profile }) {
+      if (account?.type === "credentials") {
+        return true;
+      }
+
       if (!user || !account || !profile) {
         return false;
       }
 
-      const { isSuccess, userData } = await userSocialLogin(account.provider, account.providerAccountId, profile.email, profile.name, undefined);
+      let email, name;
+      switch (account.provider) {
+        case "naver":
+          email = profile.response.email;
+          name = profile.response.name;
+          break;
+        case "kakao":
+          email = profile.kakao_account.email;
+          name = user.name;
+          break;
+        case "google":
+          email = profile.email;
+          name = user.name;
+          break;
+      }
+      const { isSuccess, userData } = await userSocialLogin(account.provider, account.providerAccountId, email, name, undefined);
       if (!isSuccess) {
         return false;
       }
