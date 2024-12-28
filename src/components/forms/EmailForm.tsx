@@ -1,5 +1,5 @@
 import { FormEvent, useState } from 'react';
-import { userValidate } from '@/src/libs/user';
+import { validate } from '@/src/libs/auth';
 import clsx from 'clsx';
 
 interface SignUpEmailFormProps {
@@ -32,7 +32,7 @@ export default function SignUpEmailForm({ onSubmit }: SignUpEmailFormProps) {
     }
 
     // id 중복 체크
-    const data = await userValidate(id);
+    const data = await validate(id);
     if (!data.isSuccess) {
       setError(true);
       setErrorMsg('이미 가입된 이메일 주소입니다. 다른 이메일을 입력하거나 지금 로그인 하십시오.');

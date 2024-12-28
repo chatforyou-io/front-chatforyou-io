@@ -9,4 +9,6 @@ interface Chatroom {
   useRtc?: boolean,
   currentUserCount?: number,
   maxUserCount?: number,
+  createDt?: string,
+  updateDt?: string,
 }

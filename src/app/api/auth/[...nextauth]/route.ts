@@ -3,7 +3,7 @@ import NaverProvider from "next-auth/providers/naver"
 import KakaoProvider from "next-auth/providers/kakao"
 import GoogleProvider from "next-auth/providers/google"
 import CredentialsProvider from "next-auth/providers/credentials"
-import { userLogin, userSocialLogin } from "@/src/libs/user"
+import { login, socialLogin } from "@/src/libs/auth"
 
 const NEXTAUTH_URL = process.env.NEXTAUTH_URL;
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH;
@@ -42,7 +42,7 @@ const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const { isSuccess, userData } = await userLogin(username, password);
+        const { isSuccess, userData } = await login(username, password);
         if (!isSuccess) {
           return null;
         }
@@ -77,7 +77,7 @@ const authOptions: NextAuthOptions = {
           name = user.name;
           break;
       }
-      const { isSuccess, userData } = await userSocialLogin(account.provider, account.providerAccountId, email, name, undefined);
+      const { isSuccess, userData } = await socialLogin(account.provider, account.providerAccountId, email, name, undefined);
       if (!isSuccess) {
         return false;
       }

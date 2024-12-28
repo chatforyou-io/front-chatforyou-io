@@ -59,7 +59,7 @@ export default function Page({ params }: PageProps) {
           </div>
           <div className="w-full">
             <h3 className="font-semibold">{chatroom?.roomName}</h3>
-            <span className="text-sm">1990.01.01</span>
+            <span className="text-sm">{chatroom?.createDt}</span>
           </div>
           <div>
             <button
