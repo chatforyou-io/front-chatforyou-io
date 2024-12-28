@@ -14,7 +14,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Build the Docker image
+    
+    - name: Set environment variables
+      run: echo "NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH" >> .env
       env:
         NEXT_PUBLIC_BASE_PATH: ${{ secrets.NEXT_PUBLIC_BASE_PATH }}
-      run: docker buildx build --platform linux/amd64 -t hjproject.kro.kr/chatforyou/nextjs-app:${{ github.sha }} --load --push .  
+        
+    - name: Build the Docker image
+      run: docker buildx build --platform linux/amd64 -t hjproject.kro.kr/chatforyou/nextjs-app:${{ github.sha }} --load --push .
