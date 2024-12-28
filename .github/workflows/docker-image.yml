@@ -16,9 +16,40 @@ jobs:
     - uses: actions/checkout@v4
     
     - name: Set environment variables
-      run: echo "NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH" >> .env
+      run: |
+        echo "API_AUTH_HOST=$API_AUTH_HOST" >> .env
+        echo "API_AUTH_PASSWORD=$API_AUTH_PASSWORD" >> .env
+        echo "API_AUTH_USERNAME=$API_AUTH_USERNAME" >> .env
+        echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" >> .env
+        echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET" >> .env
+        echo "KAKAO_CLIENT_ID=$KAKAO_CLIENT_ID" >> .env
+        echo "KAKAO_CLIENT_SECRET=$KAKAO_CLIENT_SECRET" >> .env
+        echo "NAVER_CLIENT_ID=$NAVER_CLIENT_ID" >> .env
+        echo "NAVER_CLIENT_SECRET=$NAVER_CLIENT_SECRET" >> .env
+        echo "NEXTAUTH_SECRET=$NEXTAUTH_SECRET" >> .env
+        echo "NEXTAUTH_URL=$NEXTAUTH_URL" >> .env
+        echo "NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH" >> .env
+        echo "OPENVIDU_HOST=$OPENVIDU_HOST" >> .env
+        echo "OPENVIDU_PASSWORD=$OPENVIDU_PASSWORD" >> .env
+        echo "OPENVIDU_URL=$OPENVIDU_URL" >> .env
+        echo "OPENVIDU_USERNAME=$OPENVIDU_USERNAME" >> .env
       env:
+        API_AUTH_HOST: ${{ secrets.API_AUTH_HOST }}
+        API_AUTH_PASSWORD: ${{ secrets.API_AUTH_PASSWORD }}
+        API_AUTH_USERNAME: ${{ secrets.API_AUTH_USERNAME }}
+        GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+        GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+        KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
+        KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
+        NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+        NAVER_CLIENT_SECRET: ${{ secrets.NEXT_PUBLIC_BASE_PATH }}
+        NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+        NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
         NEXT_PUBLIC_BASE_PATH: ${{ secrets.NEXT_PUBLIC_BASE_PATH }}
+        OPENVIDU_HOST: ${{ secrets.OPENVIDU_HOST }}
+        OPENVIDU_PASSWORD: ${{ secrets.OPENVIDU_PASSWORD }}
+        OPENVIDU_URL: ${{ secrets.OPENVIDU_URL }}
+        OPENVIDU_USERNAME: ${{ secrets.OPENVIDU_USERNAME }}
         
     - name: Build the Docker image
       run: docker buildx build --platform linux/amd64 -t hjproject.kro.kr/chatforyou/nextjs-app:${{ github.sha }} --load --push .
