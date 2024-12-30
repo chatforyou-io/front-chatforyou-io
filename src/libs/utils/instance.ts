@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/src/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/src/libs/utils/authOption";
 
 const authHost = process.env.API_AUTH_HOST;
 const authUsername = process.env.API_AUTH_USERNAME;
