@@ -1,7 +1,6 @@
 "use server";
 
 import axios, { AxiosError } from "axios";
-import { userDelete } from "./user";
 
 const authHost = process.env.API_AUTH_HOST;
 const authUsername = process.env.API_AUTH_USERNAME;
@@ -16,16 +15,16 @@ const login = async (id: string, pwd: string) => {
       },
     });
 
-    const accesstoken = response.headers["accesstoken"];
-    const refreshtoken = response.headers["refreshtoken"];
+    const accessToken = response.headers["accesstoken"];
+    const refreshToken = response.headers["refreshtoken"];
 
     return {
       isSuccess: true,
       ...response.data,
       userData: {
         ...response.data.userData,
-        accesstoken,
-        refreshtoken,
+        accessToken,
+        refreshToken,
       },
     };
   } catch (error) {
@@ -50,16 +49,16 @@ const socialLogin = async (provider: string, providerAccountId: string, id?: str
       },
     });
 
-    const accesstoken = response.headers["accesstoken"];
-    const refreshtoken = response.headers["refreshtoken"];
+    const accessToken = response.headers["accesstoken"];
+    const refreshToken = response.headers["refreshtoken"];
 
     return {
       isSuccess: true,
       ...response.data,
       userData: {
         ...response.data.userData,
-        accesstoken,
-        refreshtoken,
+        accessToken,
+        refreshToken,
       },
     };
   } catch (error) {
@@ -84,13 +83,6 @@ const validate = async (email: string) => {
         "Authorization": `Basic ${authToken}`,
       },
       withCredentials: true,
-    });
-    const apiResponse = await fetch(`${authHost}/auth/validate?email=${email}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Basic ${authToken}`,
-      },
     });
 
     let mailCode = "";

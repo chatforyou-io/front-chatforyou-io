@@ -8,6 +8,6 @@ interface User {
   name?: string,
   nickName?: string,
   create_date?: Date,
-  accesstoken?: string,
-  refreshtoken?: string,
+  accessToken?: string,
+  refreshToken?: string,
 }

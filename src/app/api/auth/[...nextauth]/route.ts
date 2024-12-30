@@ -9,7 +9,7 @@ const NEXTAUTH_URL = process.env.NEXTAUTH_URL;
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH;
 
 
-const authOptions: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
     KakaoProvider({
       clientId: process.env.KAKAO_CLIENT_ID!,

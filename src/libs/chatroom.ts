@@ -1,5 +1,8 @@
 "use server";
 
+import axios, { AxiosError } from "axios";
+import instance from "./utils/instance";
+
 const authHost = process.env.API_AUTH_HOST;
 const authUsername = process.env.API_AUTH_USERNAME;
 const authPassword = process.env.API_AUTH_PASSWORD;
@@ -14,94 +17,87 @@ const chatroomCreate = async (chatroom: Chatroom) => {
     if (chatroom.usePwd) {
       chatroom.pwd = btoa(chatroom.pwd!);
     }
+
+    const response = await instance.post("/chatroom/create", chatroom);
     
-    const data = await fetch(`${authHost}/chatroom/create`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Basic ${authToken}`,
-      },
-      body: JSON.stringify(chatroom),
-    }).then(response => {
-      if (!response.ok) {
-        throw new Error("서버와의 통신 중 오류가 발생했습니다.");
-      }
-      return response.json();
-    });
-    
-    data.isSuccess = true;
-    return data;
+    return { isSuccess: true, ...response.data };
   } catch (error) {
-    return { isSuccess: false, result: "fail create", error: error };
+    if (axios.isAxiosError(error)) {
+      const axiosError = error as AxiosError;
+      const statusCode = axiosError.response?.status;
+      const errorMessage = `${statusCode}: 서버와의 통신 중 오류가 발생했습니다.`;
+      return { isSuccess: false, result: "fail create", error: errorMessage };
+    }
+
+    return { isSuccess: false, result: "fail create", error: (error as Error).message };
   }
 };
 
 const chatroomList = async () => {
   try {
-    const data = await fetch(`${authHost}/chatroom/list`, {
-      method: "GET",
+    const response = await axios.get(`${authHost}/chatroom/list`, {
       headers: {
-        "Content-Type": "application/json",
         "Authorization": `Basic ${authToken}`,
       },
-    }).then(response => {
-      if (!response.ok) {
-        throw new Error("서버와의 통신 중 오류가 발생했습니다.");
-      }
-      return response.json();
     });
     
-    data.isSuccess = true;
-    return data;
+    return { isSuccess: true, ...response.data };
   } catch (error) {
-    return { isSuccess: false, result: "fail list", error: error };
+    if (axios.isAxiosError(error)) {
+      const axiosError = error as AxiosError;
+      const statusCode = axiosError.response?.status;
+      const errorMessage = `${statusCode}: 서버와의 통신 중 오류가 발생했습니다.`;
+      return { isSuccess: false, result: "fail list", error: errorMessage };
+    }
+
+    return { isSuccess: false, result: "fail list", error: (error as Error).message };
   }
 };
 
 const chatroomInfo = async (sessionId: string) => {
   try {
-    const data = await fetch(`${authHost}/chatroom/info/${sessionId}`, {
-      method: "GET",
+    const response = await axios.get(`${authHost}/chatroom/info/${sessionId}`, {
       headers: {
-        "Content-Type": "application/json",
         "Authorization": `Basic ${authToken}`,
       },
-    }).then(response => {
-      if (!response.ok) {
-        throw new Error("서버와의 통신 중 오류가 발생했습니다.");
-      }
-      return response.json();
     });
-
-    data.isSuccess = true;
-    return data;
+    
+    return { isSuccess: true, ...response.data };
   } catch (error) {
-    return { isSuccess: false, result: "fail info", error: error };
+    if (axios.isAxiosError(error)) {
+      const axiosError = error as AxiosError;
+      const statusCode = axiosError.response?.status;
+      const errorMessage = `${statusCode}: 서버와의 통신 중 오류가 발생했습니다.`;
+      return { isSuccess: false, result: "fail info", error: errorMessage };
+    }
+
+    return { isSuccess: false, result: "fail info", error: (error as Error).message };
   }
 };
 
 const chatroomToken = async (sessionId: string, userIdx: number) => {
   try {
-    const data = await fetch(`${authHost}/chatroom/join/${sessionId}?user_idx=${userIdx}`, {
-      method: "GET",
+    const response = await axios.get(`${authHost}/chatroom/join/${sessionId}`, {
+      params: { user_idx: userIdx },
       headers: {
-        "Content-Type": "application/json",
         "Authorization": `Basic ${authToken}`,
       },
-    }).then(response => {
-      if (!response.ok) {
-        throw new Error("서버와의 통신 중 오류가 발생했습니다.");
-      }
-      return response.json();
     });
-    
-    if (data.result === "success") {
-      return data.joinData.joinUserInfo.camera_token;
-    } else {
-      throw new Error("Failed to request token");
+
+    if (response.data.result !== "success") {
+      throw new Error(response.data.error);
     }
+
+    return response.data.joinData.joinUserInfo.camera_token;
   } catch (error) {
-    return { isSuccess: false, result: "fail token", error: error };
+    if (axios.isAxiosError(error)) {
+      const axiosError = error as AxiosError;
+      const statusCode = axiosError.response?.status;
+      const errorMessage = `${statusCode}: 서버와의 통신 중 오류가 발생했습니다.`;
+      return { isSuccess: false, result: "fail token", error: errorMessage };
+    }
+
+    return { isSuccess: false, result: "fail token", error: (error as Error).message };
   }
 }
 
