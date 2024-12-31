@@ -3,22 +3,13 @@
 import axios, { AxiosError } from "axios";
 import instance from "./utils/instance";
 
-const authHost = process.env.API_AUTH_HOST;
-const authUsername = process.env.API_AUTH_USERNAME;
-const authPassword = process.env.API_AUTH_PASSWORD;
-const authToken = btoa(authUsername + ":" + authPassword);
-
 const chatroomCreate = async (chatroom: Chatroom) => {
   try {
     if (chatroom.usePwd && !chatroom.pwd) {
       throw new Error("비밀번호를 입력해주세요.");
     }
 
-    if (chatroom.usePwd) {
-      chatroom.pwd = btoa(chatroom.pwd!);
-    }
-
-    const response = await instance.post("/chatroom/create", chatroom);
+    const response = await instance.post("/chatforyouio/chatroom/create", chatroom.usePwd ? { ...chatroom, pwd: chatroom.pwd } : chatroom);
     
     return { isSuccess: true, ...response.data };
   } catch (error) {
@@ -35,11 +26,7 @@ const chatroomCreate = async (chatroom: Chatroom) => {
 
 const chatroomList = async () => {
   try {
-    const response = await axios.get(`${authHost}/chatroom/list`, {
-      headers: {
-        "Authorization": `Basic ${authToken}`,
-      },
-    });
+    const response = await instance.get("/chatforyouio/chatroom/list");
     
     return { isSuccess: true, ...response.data };
   } catch (error) {
@@ -56,11 +43,7 @@ const chatroomList = async () => {
 
 const chatroomInfo = async (sessionId: string) => {
   try {
-    const response = await axios.get(`${authHost}/chatroom/info/${sessionId}`, {
-      headers: {
-        "Authorization": `Basic ${authToken}`,
-      },
-    });
+    const response = await instance.get(`/chatforyouio/chatroom/info/${sessionId}`);
     
     return { isSuccess: true, ...response.data };
   } catch (error) {
@@ -77,12 +60,7 @@ const chatroomInfo = async (sessionId: string) => {
 
 const chatroomToken = async (sessionId: string, userIdx: number) => {
   try {
-    const response = await axios.get(`${authHost}/chatroom/join/${sessionId}`, {
-      params: { user_idx: userIdx },
-      headers: {
-        "Authorization": `Basic ${authToken}`,
-      },
-    });
+    const response = await instance.get(`/chatforyouio/chatroom/join/${sessionId}`, { params: { user_idx: userIdx } });
 
     if (response.data.result !== "success") {
       throw new Error(response.data.error);

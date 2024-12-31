@@ -1,19 +1,11 @@
 "use server";
 
 import axios, { AxiosError } from "axios";
-
-const authHost = process.env.API_AUTH_HOST;
-const authUsername = process.env.API_AUTH_USERNAME;
-const authPassword = process.env.API_AUTH_PASSWORD;
-const authToken = btoa(authUsername + ":" + authPassword);
+import instance from "./utils/instance";
 
 const login = async (id: string, pwd: string) => {
   try {
-    const response = await axios.post(`${authHost}/auth/login`, { id, pwd: btoa(pwd) }, {
-      headers: {
-        "Authorization": `Basic ${authToken}`,
-      },
-    });
+    const response = await instance.post("/chatforyouio/auth/login", { id, pwd: btoa(pwd) });
 
     const accessToken = response.headers["accesstoken"];
     const refreshToken = response.headers["refreshtoken"];
@@ -28,8 +20,6 @@ const login = async (id: string, pwd: string) => {
       },
     };
   } catch (error) {
-    console.error("로그인 중 오류 발생:", error);
-
     if (axios.isAxiosError(error)) {
       const axiosError = error as AxiosError;
       const statusCode = axiosError.response?.status;
@@ -43,27 +33,13 @@ const login = async (id: string, pwd: string) => {
 
 const socialLogin = async (provider: string, providerAccountId: string, id?: string, name?: string, nickName?: string) => {
   try {
-    const response = await axios.post(`${authHost}/auth/login/social`, { provider, providerAccountId, id, name, nickName }, {
-      headers: {
-        "Authorization": `Basic ${authToken}`,
-      },
-    });
+    const response = await instance.post("/chatforyouio/auth/login/social", { provider, providerAccountId, id, name, nickName });
 
     const accessToken = response.headers["accesstoken"];
     const refreshToken = response.headers["refreshtoken"];
 
-    return {
-      isSuccess: true,
-      ...response.data,
-      userData: {
-        ...response.data.userData,
-        accessToken,
-        refreshToken,
-      },
-    };
+    return { isSuccess: true, ...response.data, userData: { ...response.data.userData, accessToken, refreshToken } };
   } catch (error) {
-    console.error("소셜 로그인 중 오류 발생:", error);
-
     if (axios.isAxiosError(error)) {
       const axiosError = error as AxiosError;
       const statusCode = axiosError.response?.status;
@@ -77,13 +53,7 @@ const socialLogin = async (provider: string, providerAccountId: string, id?: str
 
 const validate = async (email: string) => {
   try {
-    const response = await axios.get(`${authHost}/auth/validate`, {
-      params: { email },
-      headers: {
-        "Authorization": `Basic ${authToken}`,
-      },
-      withCredentials: true,
-    });
+    const response = await instance.get("/chatforyouio/auth/validate", { params: { email }, withCredentials: true });
 
     let mailCode = "";
     const cookies = response.headers['set-cookie'];
@@ -94,13 +64,16 @@ const validate = async (email: string) => {
       }
     }
     
-    return {
-      isSuccess: true,
-      result: response.data.result,
-      mailCode: mailCode,
-    };
+    return { isSuccess: true, result: response.data.result, mailCode };
   } catch (error) {
-    return { isSuccess: false, result: "fail validate", error: error };
+    if (axios.isAxiosError(error)) {
+      const axiosError = error as AxiosError;
+      const statusCode = axiosError.response?.status;
+      const errorMessage = `${statusCode}: 서버와의 통신 중 오류가 발생했습니다.`;
+      return { isSuccess: false, result: "fail validate", error: errorMessage };
+    }
+
+    return { isSuccess: false, result: "fail validate", error: (error as Error).message };
   }
 };
 

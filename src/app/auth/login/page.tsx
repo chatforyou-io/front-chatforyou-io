@@ -7,8 +7,6 @@ import CustomImage from "@/src/components/CustomImage";
 import LoginForm from "@/src/components/forms/LoginForm";
 import "./style.css";
 
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-
 export default function Page() {
   const router = useRouter();
 
