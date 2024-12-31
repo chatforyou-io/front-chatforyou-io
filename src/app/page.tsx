@@ -10,14 +10,10 @@ import DashboardSidebar from "@/src/components/sidebars/DashboardSidebar";
 import { chatroomCreate, chatroomList } from "@/src/libs/chatroom";
 
 export default function Home() {
-  const { data: userSession, status } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [isPopup, setIsPopup] = useState<boolean>(false);
   const [chatrooms, setChatrooms] = useState<Chatroom[]>([]);
-
-  useEffect(() => {
-    console.log(userSession, status);
-  }, [userSession, status]);
 
   const fetchChatrooms = useCallback(async () => {
     try {
@@ -30,21 +26,21 @@ export default function Home() {
   
   const handleCreateRoom = useCallback(async (roomName: string, maxUserCount: number, usePwd: boolean, pwd: string) => {
     try {
-      if (!userSession) throw new Error('로그인이 필요합니다.');
+      if (!session) throw new Error('로그인이 필요합니다.');
 
-      const chatroom: Chatroom = { roomName, maxUserCount, usePwd, pwd, userIdx: userSession.user.idx };
+      const chatroom: Chatroom = { roomName, maxUserCount, usePwd, pwd, userIdx: session.user.idx };
       const data = await chatroomCreate(chatroom);
       if (!data.isSuccess) {
         throw new Error('방 생성 중 오류가 발생했습니다.');
       }
 
-      alert('방이 생성되었습니다.')
+      alert('방이 생성되었습니다.');
       router.push(`/chatroom/view/${data.roomData.sessionId}`);
     } catch (error) {
       console.error(error);
       alert('방 생성 중 문제가 발생하였습니다. 나중에 다시 시도해주세요.');
     }
-  }, [userSession, router]);
+  }, [session, router]);
 
   useEffect(() => {
     fetchChatrooms();
