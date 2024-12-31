@@ -8,16 +8,14 @@ interface ProfileCardProps {
 }
 
 const ProfileCard: React.FC<ProfileCardProps> = ({ onActiveUserUpdateForm }) => {
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
   const router = useRouter();
-
   const session = useSession();
 
   const handleSignOut = async (event: MouseEvent<HTMLButtonElement>): Promise<void> => {
     event.preventDefault();
 
     try {
-      const response = await signOut({ redirect: false, callbackUrl: `${basePath}/auth/login` });
+      const response = await signOut({ redirect: false });
       if (!response) {
         throw new Error('Unknown error');
       }

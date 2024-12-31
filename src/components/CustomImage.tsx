@@ -6,9 +6,8 @@ type CustomImageProps = Omit<ImageProps, 'src'> & {
 };
 
 const CustomImage: React.FC<CustomImageProps> = ({ src, alt, ...rest }) => {
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
   const fullSrc = src.startsWith('/')
-    ? `${basePath}${src}`
+    ? `/chatforyouio/front${src}`
     : src;
     
   return <Image src={fullSrc} alt={alt} {...rest} />;

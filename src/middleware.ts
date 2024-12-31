@@ -3,7 +3,6 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export async function middleware(req: NextRequest) {
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
   const { pathname, origin } = req.nextUrl;
 
   const isPublicPath = pathname.startsWith('/auth/');
@@ -11,13 +10,13 @@ export async function middleware(req: NextRequest) {
 
   if (token && isPublicPath) {
     // Skip the middleware for the login and signup pages
-    return NextResponse.redirect(`${origin}${basePath}/`);
+    return NextResponse.redirect(`${origin}/chatforyouio/front/`);
   }
   
   if (!token && !isPublicPath) {
     // Redirect to the login page if the user is not authenticated
-    const loginUrl = new URL(`${basePath}/auth/login`, origin);
-    loginUrl.searchParams.set('callbackUrl', `${basePath}${pathname}`);
+    const loginUrl = new URL("/chatforyouio/front/auth/login", origin);
+    loginUrl.searchParams.set('callbackUrl', `/chatforyouio/front${pathname}`);
     return NextResponse.redirect(loginUrl);
   }
 	
