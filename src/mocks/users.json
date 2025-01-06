@@ -11,7 +11,6 @@
     {
         "idx": 233,
         "id": "park_jiwon@kakao.com",
-        "pwd": null,
         "name": "박지원",
         "nickName": "지원이",
         "provider": "kakao",
@@ -22,7 +21,6 @@
         "id": "choi_yuna@gmail.com",
         "pwd": "hashed_password_2",
         "name": "최유나",
-        "nickName": null,
         "provider": "",
         "friendList": [32, 33, 35]
     },
@@ -38,25 +36,21 @@
     {
         "idx": 536,
         "id": "hong_gildong@yahoo.com",
-        "pwd": null,
         "name": "홍길동",
         "nickName": "길동이",
-        "provider": "yahoo",
-        "friendList": null
+        "provider": "yahoo"
     },
     {
         "idx": 637,
         "id": "kang_eunbi@outlook.com",
         "pwd": "hashed_password_4",
         "name": "강은비",
-        "nickName": null,
         "provider": "",
         "friendList": [38, 39]
     },
     {
         "idx": 738,
         "id": "song_minsu@gmail.com",
-        "pwd": null,
         "name": "송민수",
         "nickName": "민수",
         "provider": "google",
@@ -74,10 +68,7 @@
     {
         "idx": 940,
         "id": "oh_sehun@kakao.com",
-        "pwd": null,
         "name": "오세훈",
-        "nickName": null,
-        "provider": "kakao",
-        "friendList": null
+        "provider": "kakao"
     }
 ]
