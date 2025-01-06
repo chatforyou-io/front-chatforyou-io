@@ -1,0 +1,90 @@
+[
+    {
+        "userIdx": 31,
+        "sessionId": "67a58da6-5043-43e8-b4a6-2909a4c080c7",
+        "roomName": "Room Name 434",
+        "usePwd": false,
+        "maxUserCount": 4,
+        "createDate": 1736148877208,
+        "updateDate": 1736148877208
+    },
+    {
+        "userIdx": 42,
+        "creator": "User42",
+        "sessionId": "8b2c1f3e-9a7d-4e56-b0c8-1d3f2a5e6b9c",
+        "roomName": "Cool Room 101",
+        "usePwd": true,
+        "usePrivate": true,
+        "useRtc": false,
+        "maxUserCount": 6,
+        "createDate": 1736149000000,
+        "updateDate": 1736149100000
+    },
+    {
+        "userIdx": 53,
+        "creator": "Creator53",
+        "sessionId": "3f4a5b6c-7d8e-9f0a-1b2c-3d4e5f6a7b8c",
+        "roomName": "Gaming Zone",
+        "usePwd": false,
+        "usePrivate": false,
+        "useRtc": true,
+        "maxUserCount": 8,
+        "createDate": 1736150000000,
+        "updateDate": 1736150000000
+    },
+    {
+        "userIdx": 61,
+        "sessionId": "67a58da6-5043-43e8-b4a6-2909a4c080c7",
+        "roomName": "Room Name 1",
+        "usePwd": false,
+        "maxUserCount": 4,
+        "createDate": 1736148877208,
+        "updateDate": 1736148877208
+    },
+    {
+        "userIdx": 72,
+        "creator": "User2",
+        "sessionId": "8b2c1f3e-9a7d-4e56-b0c8-1d3f2a5e6b9c",
+        "roomName": "Cool Room 2",
+        "usePwd": true,
+        "usePrivate": true,
+        "useRtc": false,
+        "maxUserCount": 6,
+        "createDate": 1736149000000,
+        "updateDate": 1736149100000
+    },
+    {
+        "userIdx": 83,
+        "creator": "Creator3",
+        "sessionId": "3f4a5b6c-7d8e-9f0a-1b2c-3d4e5f6a7b8c",
+        "roomName": "Gaming Zone 3",
+        "usePwd": false,
+        "usePrivate": false,
+        "useRtc": true,
+        "maxUserCount": 8,
+        "createDate": 1736150000000,
+        "updateDate": 1736150000000
+    },
+    {
+        "userIdx": 94,
+        "sessionId": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+        "roomName": "Study Room 4",
+        "usePwd": true,
+        "useRtc": false,
+        "maxUserCount": 3,
+        "createDate": 1736151000000,
+        "updateDate": 1736151000000
+    },
+    {
+        "userIdx": 105,
+        "creator": "User5",
+        "sessionId": "b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e",
+        "roomName": "Music Lounge 5",
+        "usePwd": false,
+        "usePrivate": true,
+        "useRtc": true,
+        "maxUserCount": 5,
+        "createDate": 1736152000000,
+        "updateDate": 1736152000000
+    }
+]
