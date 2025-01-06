@@ -1,0 +1,83 @@
+[
+    {
+        "idx": 132,
+        "id": "kim_minseo@naver.com",
+        "pwd": "hashed_password_1",
+        "name": "김민서",
+        "nickName": "민서",
+        "provider": "naver",
+        "friendList": [33, 34, 35]
+    },
+    {
+        "idx": 233,
+        "id": "park_jiwon@kakao.com",
+        "pwd": null,
+        "name": "박지원",
+        "nickName": "지원이",
+        "provider": "kakao",
+        "friendList": [32, 34]
+    },
+    {
+        "idx": 334,
+        "id": "choi_yuna@gmail.com",
+        "pwd": "hashed_password_2",
+        "name": "최유나",
+        "nickName": null,
+        "provider": "",
+        "friendList": [32, 33, 35]
+    },
+    {
+        "idx": 435,
+        "id": "lee_seojun@daum.net",
+        "pwd": "hashed_password_3",
+        "name": "이서준",
+        "nickName": "서준",
+        "provider": "daum",
+        "friendList": [32, 34]
+    },
+    {
+        "idx": 536,
+        "id": "hong_gildong@yahoo.com",
+        "pwd": null,
+        "name": "홍길동",
+        "nickName": "길동이",
+        "provider": "yahoo",
+        "friendList": null
+    },
+    {
+        "idx": 637,
+        "id": "kang_eunbi@outlook.com",
+        "pwd": "hashed_password_4",
+        "name": "강은비",
+        "nickName": null,
+        "provider": "",
+        "friendList": [38, 39]
+    },
+    {
+        "idx": 738,
+        "id": "song_minsu@gmail.com",
+        "pwd": null,
+        "name": "송민수",
+        "nickName": "민수",
+        "provider": "google",
+        "friendList": [37, 39]
+    },
+    {
+        "idx": 839,
+        "id": "jung_hyejin@naver.com",
+        "pwd": "hashed_password_5",
+        "name": "정혜진",
+        "nickName": "혜진",
+        "provider": "naver",
+        "friendList": [37, 38]
+    },
+    {
+        "idx": 940,
+        "id": "oh_sehun@kakao.com",
+        "pwd": null,
+        "name": "오세훈",
+        "nickName": null,
+        "provider": "kakao",
+        "friendList": null
+    }
+]
