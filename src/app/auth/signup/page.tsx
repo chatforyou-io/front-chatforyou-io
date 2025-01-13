@@ -71,7 +71,7 @@ export default function Page() {
   }
 
   return (
-    <div className="flex-center w-full h-full">
+    <div className="flex-center size-full">
       <div className="flex-center p-12 w-144 bg-white rounded-3xl">
         <div className="flex flex-col items-center gap-8">
           <h1 className="text-[40px] leading-10 font-semibold">계정 생성</h1>

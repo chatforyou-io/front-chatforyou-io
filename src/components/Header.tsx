@@ -37,8 +37,8 @@ export default function Header() {
       </div>
       {isUserUpdateForm && (
         <>
-          <div className="absolute top-0 left-0 flex-center w-full h-full bg-black opacity-50"></div>
-          <div className="absolute top-0 left-0 flex-center w-full h-full">
+          <div className="absolute top-0 left-0 flex-center size-full bg-black opacity-50"></div>
+          <div className="absolute top-0 left-0 flex-center size-full">
             <UserUpdateForm onClose={() => setIsUserUpdateForm(false)} />
           </div>
         </>

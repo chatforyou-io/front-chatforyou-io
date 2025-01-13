@@ -51,7 +51,7 @@ export default function Page({ params }: PageProps) {
   }
   
   return (
-    <div className="flex-center w-full h-full">
+    <div className="flex-center size-full">
       <div className="flex-center p-8 w-160 space-y-4 bg-white rounded-2xl">
         <div className="flex w-full space-x-4">
           <div className="flex-center">
