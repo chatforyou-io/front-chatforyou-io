@@ -1,7 +1,6 @@
 import { getToken } from 'next-auth/jwt';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { login } from './libs/auth';
 
 export async function middleware(req: NextRequest) {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
