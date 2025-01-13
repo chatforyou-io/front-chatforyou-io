@@ -109,4 +109,21 @@ const userList = async () => {
   }
 }
 
-export { userCreate, userUpdate, userDelete, userInfo, userCheckNickname, userList };
+const userCurrentList = async () => {
+  try {
+    const response = await instance.get("/chatforyouio/user/list/current");
+    
+    return { isSuccess: true, ...response.data };
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const axiosError = error as AxiosError;
+      const statusCode = axiosError.response?.status;
+      const errorMessage = `${statusCode}: 서버와의 통신 중 오류가 발생했습니다.`;
+      return { isSuccess: false, result: "fail current list", error: errorMessage };
+    }
+
+    return { isSuccess: false, result: "fail current list", error: (error as Error).message };
+  }
+}
+
+export { userCreate, userUpdate, userDelete, userInfo, userCheckNickname, userList, userCurrentList };
