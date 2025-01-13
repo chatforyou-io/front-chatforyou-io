@@ -24,9 +24,9 @@ const userCreate = async (user: User) => {
   }
 };
 
-const userUpdate = async (user: User) => {
+const userUpdate = async (idx: number, nickName: string) => {
   try {
-    const response = await instance.patch("/chatforyouio/user/update", user);
+    const response = await instance.patch("/chatforyouio/user/update", { idx, nickName });
     
     return { isSuccess: true, ...response.data };
   } catch (error) {
@@ -41,9 +41,9 @@ const userUpdate = async (user: User) => {
   }
 };
 
-const userDelete = async (id: string, pwd: string) => {
+const userDelete = async (idx: number) => {
   try {
-    const response = await instance.delete("/chatforyouio/user/delete", { data: { id, pwd: btoa(pwd) } });
+    const response = await instance.delete("/chatforyouio/user/delete", { data: { userIdx: idx } });
     
     return { isSuccess: true, ...response.data };
   } catch (error) {
