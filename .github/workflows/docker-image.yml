@@ -55,15 +55,14 @@ jobs:
           NEXT_PUBLIC_BASE_PATH: ${{ secrets.NEXT_PUBLIC_BASE_PATH }}
 
       # 4. TIMESTAMP 생성 (한국 시간으로) && IMAGE_URI 로 이미지명:태크명 공통화
-      # IMAGE_URI = chatforyou-io/chatforyou-io-backend:시간
+      # IMAGE_URI = chatforyou-io/chatforyou-io-frontend:시간
       - name: Generate TIMESTAMP in KST
         id: timestamp
         run: |
           export TZ=Asia/Seoul
           TIMESTAMP=$(date '+%Y%m%d%H%M%S')
           echo "TIMESTAMP=$TIMESTAMP" >> $GITHUB_ENV
-          # 이미지명 예시 : chatforyou-io-backend
-          echo "IMAGE_URI=ghcr.io/${{ github.repository_owner }}/{이미지명}:$TIMESTAMP" >> $GITHUB_ENV
+          echo "IMAGE_URI=ghcr.io/${{ github.repository_owner }}/chatforyou-io-frontend:$TIMESTAMP" >> $GITHUB_ENV
 
       # 5. Docker 이미지 빌드 및 태그
       - name: Build Docker Image
