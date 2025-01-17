@@ -1,37 +1,60 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import CustomImage from '../CustomImage';
-import { userList } from '@/src/libs/user';
+import { userCurrentList, userList } from '@/src/libs/user';
+import userMocks from '@/src/mocks/users.json';
 
 interface DashboardSidebarProps {
 }
 
 const DashboardSidebar: FC<DashboardSidebarProps> = () => {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<User[]>(userMocks);
+  const [currentUsers, setCurrentUsers] = useState<User[]>([]);
 
   const fetchUsers = useCallback(async () => {
     try {
       const data = await userList();
-      const users = data.userList;
-      setUsers(Array.isArray(users) ? users : []);
+      setUsers([ ...userMocks, ...(data.userList || []) ]);
+      console.log(users);
     } catch (error) {
       console.error("Failed to fetch users:", error);
       setUsers([]);
     }
   }, []);
 
+  const fetchCurrentUsers = useCallback(async () => {
+    try {
+      const data = await userCurrentList();
+      setCurrentUsers(data.userList || []);
+      console.log(currentUsers);
+    } catch (error) {
+      console.error("Failed to fetch current users:", error);
+      setCurrentUsers([]);
+    }
+  }, []);
+
   useEffect(() => {
     fetchUsers();
-  }, [fetchUsers]);
+    fetchCurrentUsers();
+  }, [fetchUsers, fetchCurrentUsers]);
 
   return (
-    <div className="p-8 w-72 h-full bg-white rounded">
-      <h3 className="text-xl font-semibold">접속 중 ({users.length}명)</h3>
-      <div className="flex flex-col gap-4 mt-8 w-full h-full">
-        {users.length === 0 && <p>사용자가 존재하지 않습니다.</p>}
-        {users.map((user) => (
-          <div key={user.idx} className="flex items-center gap-2 w-full">
-            <CustomImage src="/images/icon-user.svg" alt="room" width={36} height={36} className="border-2 border-gray-700 rounded-full" />
-            <span>{user.name}</span>
+    <div className="py-8 w-72 h-full bg-white rounded overflow-y-auto">
+      <h3 className="text-xl text-center font-semibold">접속 중 ({currentUsers.length}명)</h3>
+      <div className="flex flex-col gap-4 py-8 size-full">
+        {currentUsers.map((user) => (
+          <div key={user.idx} className="flex items-center gap-2 px-4 w-full">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width={36} height={36} className="border-2 border-gray-700 text-gray-700 rounded-full">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" fill="currentColor" />
+            </svg>
+            <span className="text-gray-700">{user.name}</span>
+          </div>
+        ))}
+        {users.filter((user) => !currentUsers.find((current) => current.idx === user.idx)).map((user) => (
+          <div key={user.idx} className="flex items-center gap-2 px-4 w-full">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width={36} height={36} className="border-2 border-gray-400 text-gray-400 rounded-full">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" fill="currentColor" />
+            </svg>
+            <span className="text-gray-400">{user.name}</span>
           </div>
         ))}
       </div>

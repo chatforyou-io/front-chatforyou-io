@@ -7,9 +7,9 @@ interface DimmedTemplateProps {
 
 const DimmedTemplate: React.FC<DimmedTemplateProps> = ({ children }) => {
   return (
-    <main className="w-full h-full bg-gray-200">
+    <main className="size-full bg-gray-200">
       <Header />
-      <div className="pt-20 w-full h-full">
+      <div className="pt-20 size-full">
         {children}
       </div>
     </main>

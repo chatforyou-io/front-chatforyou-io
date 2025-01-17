@@ -32,7 +32,7 @@ export default function Page() {
   }
 
   return (
-    <div className="flex-center w-full h-full">
+    <div className="flex-center size-full">
       <div className="flex-center p-12 w-144 bg-white rounded-3xl">
         <div className="flex-center">
           <h1 className="text-4xl font-semibold">로그인</h1>
