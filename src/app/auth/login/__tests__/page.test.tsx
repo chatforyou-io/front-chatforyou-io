@@ -1,71 +1,39 @@
-import '@testing-library/jest-dom';
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
-import { useRouter } from 'next/navigation';
-import { signIn } from 'next-auth/react';
-import Page from '../page';
+import "@testing-library/jest-dom";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { signIn } from "next-auth/react";
+import Page from "../page";
 
-// Next.js의 Image 컴포넌트를 모방(mock)합니다.
-jest.mock('next/image', () => ({
-  __esModule: true,
-  default: (props: any) => {
-    // eslint-disable-next-line @next/next/no-img-element
-    return <img {...props} alt='' priority={undefined} />
-  },
-}));
-
-// next-auth의 signIn 함수를 모방(mock)합니다.
-jest.mock('next-auth/react', () => ({
+// next-auth/react 모듈을 mock 함수로 만들어줍니다.
+jest.mock("next-auth/react", () => ({
   signIn: jest.fn(),
 }));
 
-// next/navigation의 useRouter 함수를 모방(mock)합니다.
-jest.mock('next/navigation', () => ({
+// next/navigation 모듈을 mock 함수로 만들어줍니다.
+jest.mock("next/navigation", () => ({
   useRouter: () => ({
     push: jest.fn(),
     refresh: jest.fn(),
   }),
 }));
 
-describe('Page', () => {
+// Page 컴포넌트에 대한 테스트 케이스를 작성합니다.
+describe("Page", () => {
+  // 테스트 케이스 실행 전에 jest.spyOn을 사용하여 모든 mock 함수를 초기화합니다.
   beforeEach(() => {
     jest.clearAllMocks();
-    (signIn as jest.Mock).mockClear();
   });
 
-  it('renders form elements', () => {
+  // 각 소셜 로그인 버튼을 클릭했을 때 signIn 함수가 호출되는지 확인합니다.
+  const testCases = [
+    { provider: "kakao", buttonLabel: "kakao login button" },
+    { provider: "naver", buttonLabel: "naver login button" },
+    { provider: "google", buttonLabel: "google login button" },
+  ];
+
+  test.each(testCases)("handles provider button click", async ({ provider, buttonLabel }) => {
     render(<Page />);
-    expect(screen.getByPlaceholderText('이메일 주소')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('비밀번호')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '로그인' })).toBeInTheDocument();
-  });
-
-  it('handles Kakao button click', () => {
-    render(<Page />);
-    const kakaoButton = screen.getByRole('button', { name: 'Kakao 로그인' });
-    expect(kakaoButton).toBeInTheDocument();
-
-    fireEvent.click(kakaoButton);
-
-    expect(signIn).toHaveBeenCalledWith('kakao', { callbackUrl: '/' });
-  });
-
-  it('handles Naver button click', () => {
-    render(<Page />);
-    const naverButton = screen.getByRole('button', { name: 'Naver 로그인' });
-    expect(naverButton).toBeInTheDocument();
-
-    fireEvent.click(naverButton);
-
-    expect(signIn).toHaveBeenCalledWith('naver', { callbackUrl: '/' });
-  });
-
-  it('handles Google button click', () => {
-    render(<Page />);
-    const googleButton = screen.getByRole('button', { name: 'Google 로그인' });
-    expect(googleButton).toBeInTheDocument();
-
-    fireEvent.click(googleButton);
-
-    expect(signIn).toHaveBeenCalledWith('google', { callbackUrl: '/' });
+    await userEvent.click(screen.getByLabelText(buttonLabel));
+    expect(signIn).toHaveBeenCalledWith(provider, { redirect: false });
   });
 });

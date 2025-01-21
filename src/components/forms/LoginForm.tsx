@@ -114,6 +114,7 @@ export default function LoginForm() {
             'border-red-500': usernameError,
           })}
           placeholder="이메일 주소"
+          aria-label="이메일 주소"
         />
         { usernameError && <p className="text-error">{usernameErrorMsg}</p> }
         <input
@@ -123,6 +124,7 @@ export default function LoginForm() {
             'border-red-500': passwordError,
           })}
           placeholder="비밀번호"
+          aria-label="비밀번호"
         />
         { passwordError && <p className="text-error">{passwordErrorMsg}</p> }
       </div>
@@ -131,6 +133,7 @@ export default function LoginForm() {
         <button
           type="submit"
           className="w-full px-4 h-16 border bg-primary text-white rounded-full"
+          aria-label="로그인"
         >
           로그인
         </button>
