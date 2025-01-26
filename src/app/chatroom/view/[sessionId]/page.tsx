@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import CustomImage from "@/src/components/CustomImage";
 import OpenviduStream from '@/src/components/openvidu/OpenviduStream';
-import { chatroomInfo } from "@/src/libs/chatroom";
-import { useOpenvidu } from "@/src/webhooks/useOpenvidu";
+import { chatroomInfo, chatroomToken } from "@/src/libs/chatroom";
+import { OpenviduContext } from "@/src/contexts/OpenviduContext";
 
 interface PageProps {
   params: {
@@ -16,39 +16,44 @@ interface PageProps {
 
 export default function Page({ params }: PageProps) {
   const { sessionId } = params;
+  const { publisher, subscribers, joinSession, leaveSession } = useContext(OpenviduContext);
   const { data: userSession } = useSession();
-  const { session, publisher, subscribers, joinSession, leaveSession } = useOpenvidu({ sessionId, userIdx: userSession?.user.idx });
-  const hasJoinedRef = useRef(false);
+  const userIdx = useMemo(() => userSession?.user.idx, [userSession?.user.idx]);
   const [chatroom, setChatroom] = useState<Chatroom | undefined>(undefined);
   const router = useRouter();
 
   useEffect(() => {
-    if (userSession?.user?.idx && !hasJoinedRef.current) {
-      joinSession();
-      hasJoinedRef.current = true;
-    }
-  }, [userSession?.user?.idx, joinSession]);
-
-  useEffect(() => {
-    const getChatroomInfo = async () => {
+    const fetchOpenvidu = async () => {
+      if (!sessionId || !userIdx) return;
+      
       try {
-        const data = await chatroomInfo(sessionId);
-        if (!data.isSuccess) {
-          throw new Error();
-        }
-        setChatroom(data.roomData);
+        const data = await chatroomToken(sessionId, userIdx);
+        if (!data.isSuccess) throw new Error("토큰을 가져오는데 실패했습니다.");
+
+        const { roomInfo, joinUserInfo } = data;
+
+        setChatroom(roomInfo);
+        joinSession(joinUserInfo.camera_token, userIdx);
       } catch (error) {
-        alert('채팅방이 존재하지 않습니다.');
-        router.push('/');
+        console.error("OpenVidu 세션 참여 중 오류 발생:", error);
+        alert("채팅방 정보를 가져오는데 실패했습니다.");
+        router.push("/");
       }
     }
-    getChatroomInfo();
-  }, [sessionId, router]);
+
+    fetchOpenvidu();
+  }, [sessionId, userIdx, joinSession, router]);
 
   const handleClick = () => {
     leaveSession();
     router.push('/');
-  }
+  };
+
+  useEffect(() => {
+    return () => {
+      leaveSession();
+    };
+  }, [leaveSession]);
   
   return (
     <div className="flex-center size-full">
@@ -74,16 +79,16 @@ export default function Page({ params }: PageProps) {
           <span className="text-sm">인원수: {chatroom?.currentUserCount}명</span>
         </div>
         <div className="flex w-full aspect-video space-x-4 bg-gray-200 rounded-xl">
-          {session && [publisher].filter((currPublisher, index) => index === 0).map((streamManager) => (
-            <OpenviduStream key={streamManager?.stream.streamId} streamManager={streamManager} />
-          ))}
+          {publisher && (
+            <OpenviduStream key={publisher.stream.streamId} streamManager={publisher} />
+          )}
         </div>
         <div className="grid grid-cols-3 w-full space-x-4">
-          {session && [subscribers].map(subscriber => subscriber.map((streamManager) => (
-            <div key={streamManager?.stream.streamId} className="w-full aspect-video bg-gray-200 rounded-xl">
-              <OpenviduStream streamManager={streamManager} />
+          {subscribers && subscribers.map(subscriber => (
+            <div key={subscriber.stream.streamId} className="w-full aspect-video bg-gray-200 rounded-xl">
+              <OpenviduStream streamManager={subscriber} />
             </div>
-          )))}
+          ))}
         </div>
       </div>
     </div>

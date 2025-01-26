@@ -66,7 +66,7 @@ const chatroomToken = async (sessionId: string, userIdx: number) => {
       throw new Error(response.data.error);
     }
 
-    return response.data.joinData.joinUserInfo.camera_token;
+    return { isSuccess: true, ...response.data.joinData };
   } catch (error) {
     if (axios.isAxiosError(error)) {
       const axiosError = error as AxiosError;
