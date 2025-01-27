@@ -79,6 +79,6 @@ jobs:
       - name: Deploy to Kubernetes
         run: |
           kubectl set image deployment/$DEPLOYMENT_NAME \
-            chatforyou-container=$IMAGE_URI \
+            nextjs-container=$IMAGE_URI \
             -n $K8S_NAMESPACE
           kubectl rollout status deployment/$DEPLOYMENT_NAME -n $K8S_NAMESPACE
