@@ -7,6 +7,7 @@ import CustomImage from "@/src/components/CustomImage";
 import OpenviduStream from '@/src/components/openvidu/OpenviduStream';
 import { chatroomInfo, chatroomToken } from "@/src/libs/chatroom";
 import { OpenviduContext } from "@/src/contexts/OpenviduContext";
+import DeviceSelectors from "@/src/components/sidebars/DeviceSelectors";
 
 interface PageProps {
   params: {
@@ -16,7 +17,7 @@ interface PageProps {
 
 export default function Page({ params }: PageProps) {
   const { sessionId } = params;
-  const { publisher, subscribers, joinSession, leaveSession } = useContext(OpenviduContext);
+  const { publisher, subscribers, currentAudioInput, currentVideoInput, joinSession, leaveSession } = useContext(OpenviduContext);
   const { data: userSession } = useSession();
   const userIdx = useMemo(() => userSession?.user.idx, [userSession?.user.idx]);
   const [chatroom, setChatroom] = useState<Chatroom | undefined>(undefined);
@@ -24,7 +25,7 @@ export default function Page({ params }: PageProps) {
 
   useEffect(() => {
     const fetchOpenvidu = async () => {
-      if (!sessionId || !userIdx) return;
+      if (!sessionId || !userIdx || !currentAudioInput || !currentVideoInput) return;
       
       try {
         const data = await chatroomToken(sessionId, userIdx);
@@ -42,7 +43,7 @@ export default function Page({ params }: PageProps) {
     }
 
     fetchOpenvidu();
-  }, [sessionId, userIdx, joinSession, router]);
+  }, [sessionId, userIdx, currentAudioInput, currentVideoInput, joinSession, router]);
 
   const handleClick = () => {
     leaveSession();
@@ -58,6 +59,7 @@ export default function Page({ params }: PageProps) {
   return (
     <div className="flex-center size-full">
       <div className="flex-center p-8 w-160 space-y-4 bg-white rounded-2xl">
+        <DeviceSelectors />
         <div className="flex w-full space-x-4">
           <div className="flex-center">
             <CustomImage src="/images/icon-user.svg" alt="room" width={48} height={48} className="border-2 border-gray-700 rounded-full" />

@@ -1,6 +1,7 @@
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/src/libs/utils/authOption";
+import { redirect } from "next/navigation";
 
 const authHost = process.env.API_DOMAIN;
 
@@ -19,19 +20,13 @@ instance.interceptors.request.use(
     }
     return config;
   },
-  (error: AxiosError) => {
-    return Promise.reject(error);
-  }
+  (error: AxiosError) => Promise.reject(error),
 );
 
 // 응답 인터셉터 추가
 instance.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error: AxiosError) => {
-    return Promise.reject(error);
-  }
+  (response: AxiosResponse) => response,
+  (error: AxiosError) => Promise.reject(error),
 );
 
 export default instance;

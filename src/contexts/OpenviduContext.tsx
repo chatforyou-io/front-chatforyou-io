@@ -42,6 +42,8 @@ export default function OpenviduProvider({ children }: { children: ReactNode }) 
   const [currentVideoInput, setCurrentVideoInput] = useState<Device>();
 
   const joinSession = useCallback(async (token: string, userIdx: number) => {
+    if (!currentAudioInput || !currentVideoInput) return;
+
     if (!ov.current) {
       ov.current = new OpenVidu();
       ov.current.enableProdMode();
@@ -78,7 +80,7 @@ export default function OpenviduProvider({ children }: { children: ReactNode }) 
 
       setPublisher(newPublisher);
     }
-  }, [setPublisher, setSubscribers]);
+  }, [currentAudioInput, currentVideoInput]);
 
   const leaveSession = useCallback(() => {
     if (session.current) {
@@ -104,9 +106,14 @@ export default function OpenviduProvider({ children }: { children: ReactNode }) 
     
     setAudioInputs(audioDevices);
     setVideoInputs(videoDevices);
-    setCurrentAudioInput(audioDevices[0]);
-    setCurrentVideoInput(videoDevices[0]);
-  }, [setAudioInputs, setVideoInputs]);
+
+    if (audioDevices.length > 0) {
+      setCurrentAudioInput(audioDevices[0]);
+    }
+    if (videoDevices.length > 0) {
+      setCurrentVideoInput(videoDevices[0]);
+    }
+  }, []);
 
   const setDevice = useCallback(async (device: Device) => {
     if (!ov.current) {
@@ -120,7 +127,7 @@ export default function OpenviduProvider({ children }: { children: ReactNode }) 
       setCurrentVideoInput(device);
     }
 
-    const newPublisher = ov.current.initPublisher(undefined, {
+    const newPublisher = await ov.current.initPublisherAsync(undefined, {
       audioSource: device.kind === 'audioinput' ? device.deviceId : currentAudioInput?.deviceId,
       videoSource: device.kind === 'videoinput' ? device.deviceId : currentVideoInput?.deviceId,
       publishAudio: true,
