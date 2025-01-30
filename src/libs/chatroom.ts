@@ -2,7 +2,7 @@
 
 import { AxiosError } from "axios";
 import instance from "@/src/libs/utils/instance";
-import { handleAxiosError } from "@/src/libs/utils/common";
+import { handleAxiosError } from "@/src/libs/utils/serverCommon";
 
 const chatroomCreate = async (chatroom: Chatroom) => {
   try {
@@ -12,7 +12,7 @@ const chatroomCreate = async (chatroom: Chatroom) => {
     
     return { isSuccess: true,  ...data };
   } catch (error) {
-    handleAxiosError(error as AxiosError);
+    return handleAxiosError(error as AxiosError);
   }
 };
 
@@ -22,7 +22,7 @@ const chatroomList = async () => {
     
     return { isSuccess: true, ...data };
   } catch (error) {
-    handleAxiosError(error as AxiosError);
+    return handleAxiosError(error as AxiosError);
   }
 };
 
@@ -32,7 +32,7 @@ const chatroomInfo = async (sessionId: string) => {
     
     return { isSuccess: true, ...data };
   } catch (error) {
-    handleAxiosError(error as AxiosError);
+    return handleAxiosError(error as AxiosError);
   }
 };
 
@@ -45,7 +45,7 @@ const chatroomToken = async (sessionId: string, userIdx: number) => {
 
     return { isSuccess: true, ...joinData };
   } catch (error) {
-    handleAxiosError(error as AxiosError);
+    return handleAxiosError(error as AxiosError);
   }
 }
 

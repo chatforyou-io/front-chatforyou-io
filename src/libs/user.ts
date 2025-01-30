@@ -2,7 +2,7 @@
 
 import { AxiosError } from "axios";
 import instance from "@/src/libs/utils/instance";
-import { handleAxiosError } from "@/src/libs/utils/common";
+import { handleAxiosError } from "@/src/libs/utils/serverCommon";
 
 const userCreate = async (user: User) => {
   try {
@@ -12,7 +12,7 @@ const userCreate = async (user: User) => {
 
     return { isSuccess: true, ...data };
   } catch (error) {
-    handleAxiosError(error as AxiosError);
+    return handleAxiosError(error as AxiosError);
   }
 };
 
@@ -22,7 +22,7 @@ const userUpdate = async (idx: number, nickName: string) => {
     
     return { isSuccess: true, ...data };
   } catch (error) {
-    handleAxiosError(error as AxiosError);
+    return handleAxiosError(error as AxiosError);
   }
 };
 
@@ -32,7 +32,7 @@ const userDelete = async (idx: number) => {
     
     return { isSuccess: true, ...data };
   } catch (error) {
-    handleAxiosError(error as AxiosError);
+    return handleAxiosError(error as AxiosError);
   }
 };
 
@@ -42,7 +42,7 @@ const userInfo = async (id: string, pwd: string) => {
     
     return { isSuccess: true, ...data };
   } catch (error) {
-    handleAxiosError(error as AxiosError);
+    return handleAxiosError(error as AxiosError);
   }
 };
 
@@ -52,27 +52,27 @@ const userCheckNickname = async (nickname: string) => {
     
     return { isSuccess: true, ...data };
   } catch (error) {
-    handleAxiosError(error as AxiosError);
+    return handleAxiosError(error as AxiosError);
   }
 };
 
 const userList = async () => {
   try {
-    const { data } = await instance.get("/chatforyouio/user/list");
+    const response = await instance.get("/chatforyouio/user/list");
     
-    return { isSuccess: true, ...data };
+    return { isSuccess: true, ...response.data };
   } catch (error) {
-    handleAxiosError(error as AxiosError);
+    return handleAxiosError(error as AxiosError);
   }
 }
 
 const userCurrentList = async () => {
   try {
-    const { data } = await instance.get("/chatforyouio/user/list/current");
+    const response = await instance.get("/chatforyouio/user/list/current");
     
-    return { isSuccess: true, ...data };
+    return { isSuccess: true, ...response.data };
   } catch (error) {
-    handleAxiosError(error as AxiosError);
+    return handleAxiosError(error as AxiosError);
   }
 }
 

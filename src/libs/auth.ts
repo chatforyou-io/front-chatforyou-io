@@ -2,7 +2,7 @@
 
 import { AxiosError } from "axios";
 import instance from "@/src/libs/utils/instance";
-import { handleAxiosError } from "@/src/libs/utils/common";
+import { handleAxiosError } from "@/src/libs/utils/serverCommon";
 
 const login = async (id: string, pwd: string) => {
   try {
@@ -23,7 +23,7 @@ const login = async (id: string, pwd: string) => {
       },
     };
   } catch (error) {
-    handleAxiosError(error as AxiosError);
+    return handleAxiosError(error as AxiosError);
   }
 };
 
@@ -44,7 +44,7 @@ const socialLogin = async (provider: string, providerAccountId: string, id?: str
       }
     };
   } catch (error) {
-    handleAxiosError(error as AxiosError);
+    return handleAxiosError(error as AxiosError);
   }
 };
 
@@ -60,7 +60,7 @@ const validate = async (email: string) => {
     
     return { isSuccess: true, result: data.result, mailCode };
   } catch (error) {
-    handleAxiosError(error as AxiosError);
+    return handleAxiosError(error as AxiosError);
   }
 };
 
