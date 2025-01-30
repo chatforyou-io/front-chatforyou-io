@@ -1,5 +1,6 @@
 import { chatroomCreate } from "@/src/libs/chatroom";
-import { signOut, useSession } from "next-auth/react";
+import { useHandleRequestFail } from "@/src/webhooks/useHandleRequestFail";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { FormEvent, useMemo } from "react";
 
@@ -11,6 +12,7 @@ export default function ChatroomCreateForm({ onClose }: ChatroomCreateFormProps)
   const { data: userSession } = useSession();
   const userIdx = useMemo(() => userSession?.user.idx, [userSession?.user.idx]);
   const router = useRouter();
+  const handleRequestFail = useHandleRequestFail();
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -34,12 +36,7 @@ export default function ChatroomCreateForm({ onClose }: ChatroomCreateFormProps)
     try {
       const data = await chatroomCreate({ roomName, maxUserCount, usePwd, pwd, userIdx });
       if (!data.isSuccess) {
-        const { status, message } = data;
-        if (status === 401) {
-          signOut({ redirect: false });
-          router.push("/auth/login");
-        }
-        
+        const message = handleRequestFail(data);
         throw new Error(message);
       }
 

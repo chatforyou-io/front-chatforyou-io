@@ -8,6 +8,7 @@ import OpenviduStream from '@/src/components/openvidu/OpenviduStream';
 import { chatroomToken } from "@/src/libs/chatroom";
 import { OpenviduContext } from "@/src/contexts/OpenviduContext";
 import DeviceSelectors from "@/src/components/sidebars/DeviceSelectors";
+import { useHandleRequestFail } from "@/src/webhooks/useHandleRequestFail";
 
 interface PageProps {
   params: {
@@ -25,13 +26,17 @@ export default function Page({ params }: PageProps) {
   const [redirect, setRedirect] = useState(false);
   const [leave, setLeave] = useState(false);
   const router = useRouter();
+  const handleRequestFail = useHandleRequestFail();
 
   useEffect(() => {
     const fetchChatroom = async () => {
       try {
         const data = await chatroomToken(sessionId, userIdx);
-        if (!data.isSuccess) throw new Error(data);
-        console.log("data", data);
+        if (!data.isSuccess) {
+          const message = handleRequestFail(data);
+          throw new Error(message);
+        }
+        
         setChatroom(data.roomInfo);
         setToken(data.joinUserInfo.camera_token);
       } catch (error) {
@@ -42,7 +47,7 @@ export default function Page({ params }: PageProps) {
     };
 
     fetchChatroom();
-  }, [sessionId, userIdx]);
+  }, [sessionId, userIdx, handleRequestFail]);
 
   useEffect(() => {
     const fetchOpenvidu = async () => {

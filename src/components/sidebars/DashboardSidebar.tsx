@@ -1,7 +1,7 @@
 import { FC, useCallback, useEffect, useState } from 'react';
-import CustomImage from '../CustomImage';
 import { userCurrentList, userList } from '@/src/libs/user';
 import userMocks from '@/src/mocks/users.json';
+import { useHandleRequestFail } from '@/src/webhooks/useHandleRequestFail';
 
 interface DashboardSidebarProps {
 }
@@ -9,26 +9,37 @@ interface DashboardSidebarProps {
 const DashboardSidebar: FC<DashboardSidebarProps> = () => {
   const [users, setUsers] = useState<User[]>(userMocks);
   const [currentUsers, setCurrentUsers] = useState<User[]>([]);
+  const handleRequestFail = useHandleRequestFail();
 
   const fetchUsers = useCallback(async () => {
     try {
       const data = await userList();
-      setUsers([ ...userMocks, ...(data.userList || []) ]);
+      if (!data.isSuccess) {
+        const message = handleRequestFail(data);
+        throw new Error(message);
+      }
+      
+      setUsers(prevUsers => [ ...prevUsers, ...(data.userList || []) ]);
     } catch (error) {
       console.error("Failed to fetch users:", error);
       setUsers([]);
     }
-  }, []);
+  }, [handleRequestFail]);
 
   const fetchCurrentUsers = useCallback(async () => {
     try {
       const data = await userCurrentList();
-      setCurrentUsers(data.userList || []);
+      if (!data.isSuccess) {
+        const message = handleRequestFail(data);
+        throw new Error(message);
+      }
+      
+      setCurrentUsers(prevCurrentUsers => [ ...prevCurrentUsers, ...(data.userList || []) ]);
     } catch (error) {
       console.error("Failed to fetch current users:", error);
       setCurrentUsers([]);
     }
-  }, []);
+  }, [handleRequestFail]);
 
   useEffect(() => {
     fetchUsers();
@@ -40,7 +51,7 @@ const DashboardSidebar: FC<DashboardSidebarProps> = () => {
       <h3 className="text-xl text-center font-semibold">접속 중 ({currentUsers.length}명)</h3>
       <div className="flex flex-col gap-4 py-8 size-full">
         {currentUsers.map((user) => (
-          <div key={user.idx} className="flex items-center gap-2 px-4 w-full">
+          <div key={`currentuser_${user.idx}`} className="flex items-center gap-2 px-4 w-full">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width={36} height={36} className="border-2 border-gray-700 text-gray-700 rounded-full">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" fill="currentColor" />
             </svg>
@@ -48,7 +59,7 @@ const DashboardSidebar: FC<DashboardSidebarProps> = () => {
           </div>
         ))}
         {users.filter((user) => !currentUsers.find((current) => current.idx === user.idx)).map((user) => (
-          <div key={user.idx} className="flex items-center gap-2 px-4 w-full">
+          <div key={`user_${user.idx}`} className="flex items-center gap-2 px-4 w-full">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width={36} height={36} className="border-2 border-gray-400 text-gray-400 rounded-full">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" fill="currentColor" />
             </svg>

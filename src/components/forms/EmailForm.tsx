@@ -1,6 +1,7 @@
 import { FormEvent, useState } from 'react';
 import { validate } from '@/src/libs/auth';
 import clsx from 'clsx';
+import { useHandleRequestFail } from '@/src/webhooks/useHandleRequestFail';
 
 interface SignUpEmailFormProps {
   onSubmit: (id: string, mailCode: string) => void;
@@ -9,6 +10,7 @@ interface SignUpEmailFormProps {
 export default function SignUpEmailForm({ onSubmit }: SignUpEmailFormProps) {
   const [error, setError] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
+  const handleRequestFail = useHandleRequestFail();
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -31,23 +33,31 @@ export default function SignUpEmailForm({ onSubmit }: SignUpEmailFormProps) {
       return;
     }
 
-    // id 중복 체크
-    const data = await validate(id);
-    if (!data?.isSuccess) {
+    try {
+      // id 중복 체크
+      const data = await validate(id);
+      if (!data.isSuccess) {
+        const message = handleRequestFail(data);
+        throw new Error(message);
+      }
+
+      // 수신받은 인증 번호
+      if ('mailCode' in data) {
+        const { mailCode } = data;
+        // Error 초기화
+        setError(false);
+        setErrorMsg('');
+
+        // 부모 컴포넌트로 id 전달
+        onSubmit(id, mailCode);
+      } else {
+        throw new Error("Unexpected response format");
+      }
+    } catch (error) {
+      console.error(error);
       setError(true);
-      setErrorMsg('이미 가입된 이메일 주소입니다. 다른 이메일을 입력하거나 지금 로그인 하십시오.');
-      return;
+      setErrorMsg('이메일을 찾을 수 없습니다. 다시 시도하세요.');
     }
-
-    // 수신받은 인증 번호
-    const { mailCode } = data;
-
-    // Error 초기화
-    setError(false);
-    setErrorMsg('');
-
-    // 부모 컴포넌트로 id 전달
-    onSubmit(id, mailCode);
   }
 
   return (

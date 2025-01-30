@@ -7,19 +7,26 @@ import ChatroomCreateForm from "@/src/components/forms/ChatroomCreateForm";
 import DashboardSidebar from "@/src/components/sidebars/DashboardSidebar";
 import { chatroomList } from "@/src/libs/chatroom";
 import chatroomMocks from "@/src/mocks/chatrooms.json";
+import { useHandleRequestFail } from "@/src/webhooks/useHandleRequestFail";
 
 export default function Home() {
   const [isPopup, setIsPopup] = useState<boolean>(false);
   const [chatrooms, setChatrooms] = useState<Chatroom[]>(chatroomMocks);
+  const handleRequestFail = useHandleRequestFail();
 
   const fetchChatrooms = useCallback(async () => {
     try {
-      const { roomList } = await chatroomList();
-      setChatrooms(prevChatrooms => [ ...prevChatrooms, ...(roomList || []) ]);
+      const data = await chatroomList();
+      if (!data.isSuccess) {
+        const message = handleRequestFail(data);
+        throw new Error(message);
+      }
+
+      setChatrooms(prevChatrooms => [ ...prevChatrooms, ...(data.roomList || []) ]);
     } catch (error) {
       console.error("Failed to fetch chatrooms:", error);
     }
-  }, []);
+  }, [handleRequestFail]);
 
   useEffect(() => {
     fetchChatrooms();

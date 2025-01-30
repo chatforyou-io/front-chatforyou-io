@@ -1,7 +1,8 @@
-import { FormEvent, useEffect } from 'react';
+import { FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { userDelete, userUpdate } from '@/src/libs/user';
+import { useHandleRequestFail } from '@/src/webhooks/useHandleRequestFail';
 
 interface UserUpdateFormProps {
   onClose: () => void;
@@ -10,6 +11,7 @@ interface UserUpdateFormProps {
 export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
   const { data: session, update } = useSession();
   const router = useRouter();
+  const handleRequestFail = useHandleRequestFail();
 
   const handleUpdate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -26,7 +28,10 @@ export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
     
     try {
       const data = await userUpdate(idx, nickName);
-      if (!data.isSuccess) throw new Error('User update failed');
+      if (!data.isSuccess) {
+        const message = handleRequestFail(data);
+        throw new Error(message);
+      }
   
       alert('회원 정보 수정에 성공하였습니다.');
 
@@ -44,7 +49,10 @@ export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
     try {
       const { idx } = session?.user;
       const data = await userDelete(idx);
-      if (!data.isSuccess) throw new Error('User delete failed');
+      if (!data.isSuccess) {
+        const message = handleRequestFail(data);
+        throw new Error(message);
+      }
   
       alert('회원 탈퇴에 성공하였습니다.');
       router.push('/auth/login');

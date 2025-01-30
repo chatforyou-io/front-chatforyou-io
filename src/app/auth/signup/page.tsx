@@ -10,6 +10,7 @@ import UserInfoForm from "@/src/components/forms/UserInfoForm";
 import ValidForm from "@/src/components/forms/ValidForm";
 import { userCreate } from "@/src/libs/user";
 import "./style.css";
+import { useHandleRequestFail } from "@/src/webhooks/useHandleRequestFail";
 
 const STEPS = {
   EMAIL: 1,
@@ -19,6 +20,7 @@ const STEPS = {
 
 export default function Page() {
   const router = useRouter();
+  const handleRequestFail = useHandleRequestFail();
   
   const [step, setStep] = useState(STEPS.EMAIL);
   const [id, setId] = useState('');
@@ -60,7 +62,10 @@ export default function Page() {
     
     try {
       const data = await userCreate(user);
-      if (!data.isSuccess) throw new Error('User creation failed');
+      if (!data.isSuccess) {
+        const message = handleRequestFail(data);
+        throw new Error(message);
+      }
   
       alert('가입에 성공하였습니다.');
       router.push("/auth/login");
