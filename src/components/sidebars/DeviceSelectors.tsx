@@ -1,23 +1,23 @@
-import { FC, useCallback, useContext, useEffect, useState } from 'react';
-import { userCurrentList, userList } from '@/src/libs/user';
+import { FC, useContext, useEffect } from 'react';
 import { OpenviduContext } from '@/src/contexts/OpenviduContext';
-import { Device } from 'openvidu-browser';
 
 interface DeviceSelectorsProps {
 }
 
 const DeviceSelectors: FC<DeviceSelectorsProps> = () => {
-  const { audioInputs, videoInputs, currentAudioInput, currentVideoInput, getDevices, setDevice } = useContext(OpenviduContext);
+  const { audioInputs, videoInputs, getDevices, setDevice } = useContext(OpenviduContext);
 
   const handleAudioChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const audioInput = audioInputs?.find((device) => device.deviceId === e.target.value);
     if (!audioInput) return;
+    
     setDevice(audioInput);
   };
 
   const handleVideoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const videoInput = videoInputs?.find((device) => device.deviceId === e.target.value);
     if (!videoInput) return;
+
     setDevice(videoInput);
   };
 

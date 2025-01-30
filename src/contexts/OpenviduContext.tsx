@@ -1,5 +1,5 @@
-import { Device, OpenVidu, Publisher, Session, Subscriber } from 'openvidu-browser';
-import { createContext, useState, ReactNode, useRef, use, useCallback } from 'react';
+import { Device, OpenVidu, Publisher, PublisherProperties, Session, Subscriber } from "openvidu-browser";
+import { createContext, useState, ReactNode, useRef, useCallback } from "react";
 
 interface OpenviduContextType {
   ov: OpenVidu | undefined;
@@ -8,8 +8,7 @@ interface OpenviduContextType {
   subscribers: Subscriber[] | undefined;
   audioInputs: Device[] | undefined;
   videoInputs: Device[] | undefined;
-  currentAudioInput: Device | undefined;
-  currentVideoInput: Device | undefined
+  publisherProperties: PublisherProperties | undefined;
   joinSession: (token: string, userIdx: number) => void;
   leaveSession: () => void;
   getDevices: () => void;
@@ -23,8 +22,7 @@ export const OpenviduContext = createContext<OpenviduContextType>({
   subscribers: [],
   audioInputs: [],
   videoInputs: [],
-  currentAudioInput: undefined,
-  currentVideoInput: undefined,
+  publisherProperties: undefined,
   joinSession: () => {},
   leaveSession: () => {},
   getDevices: () => {},
@@ -34,12 +32,19 @@ export const OpenviduContext = createContext<OpenviduContextType>({
 export default function OpenviduProvider({ children }: { children: ReactNode }) {
   const ov = useRef<OpenVidu>();
   const session = useRef<Session>();
+  const publisherProperties = useRef<PublisherProperties>({
+    audioSource: undefined,
+    videoSource: undefined,
+    publishAudio: true,
+    publishVideo: true,
+    resolution: "640x480",
+    frameRate: 30,
+    insertMode: "APPEND",
+  });
   const [publisher, setPublisher] = useState<Publisher>();
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [audioInputs, setAudioInputs] = useState<Device[]>([]);
   const [videoInputs, setVideoInputs] = useState<Device[]>([]);
-  const [currentAudioInput, setCurrentAudioInput] = useState<Device>();
-  const [currentVideoInput, setCurrentVideoInput] = useState<Device>();
 
   const initOpenvidu = async () => {
     if (!ov.current) {
@@ -57,16 +62,16 @@ export default function OpenviduProvider({ children }: { children: ReactNode }) 
     }
 
     const devices = await ov.current!.getDevices();
-    const audioDevices = devices.filter((device) => device.kind === 'audioinput');
-    const videoDevices = devices.filter((device) => device.kind === 'videoinput');
+    const audioDevices = devices.filter((device) => device.kind === "audioinput");
+    const videoDevices = devices.filter((device) => device.kind === "videoinput");
 
     if (!audioDevices.length || !videoDevices.length) {
       console.error("디바이스가 없습니다.");
       return;
     }
 
-    setCurrentAudioInput(audioDevices[0]);
-    setCurrentVideoInput(videoDevices[0]);
+    audioDevices.length ? publisherProperties.current.audioSource = audioDevices[0].deviceId : undefined;
+    videoDevices.length ? publisherProperties.current.videoSource = videoDevices[0].deviceId : undefined;
   
     session.current = ov.current!.initSession();
 
@@ -86,15 +91,7 @@ export default function OpenviduProvider({ children }: { children: ReactNode }) 
 
     await session.current.connect(token, { clientData: userIdx });
 
-    const newPublisher = ov.current!.initPublisher(undefined, {
-      audioSource: audioDevices[0].deviceId,
-      videoSource: videoDevices[0].deviceId,
-      publishAudio: true,
-      publishVideo: true,
-      resolution: "640x480",
-      frameRate: 30,
-      insertMode: "APPEND",
-    });
+    const newPublisher = ov.current!.initPublisher(undefined, publisherProperties.current);
 
     await session.current.publish(newPublisher);
 
@@ -117,8 +114,8 @@ export default function OpenviduProvider({ children }: { children: ReactNode }) 
     await initOpenvidu();
 
     const devices = await ov.current!.getDevices();
-    const audioDevices = devices.filter((device) => device.kind === 'audioinput');
-    const videoDevices = devices.filter((device) => device.kind === 'videoinput');
+    const audioDevices = devices.filter((device) => device.kind === "audioinput");
+    const videoDevices = devices.filter((device) => device.kind === "videoinput");
     
     setAudioInputs(audioDevices);
     setVideoInputs(videoDevices);
@@ -127,35 +124,23 @@ export default function OpenviduProvider({ children }: { children: ReactNode }) 
   const setDevice = useCallback(async (device: Device) => {
     await initOpenvidu();
 
-    if (device.kind === 'audioinput') {
-      setCurrentAudioInput(device);
-    } else if (device.kind === 'videoinput') {
-      setCurrentVideoInput(device);
-    }
-
-    const newPublisher = await ov.current!.initPublisherAsync(undefined, {
-      audioSource: device.kind === 'audioinput' ? device.deviceId : currentAudioInput?.deviceId,
-      videoSource: device.kind === 'videoinput' ? device.deviceId : currentVideoInput?.deviceId,
-      publishAudio: true,
-      publishVideo: true,
-      resolution: '640x480',
-      frameRate: 30,
-      insertMode: 'APPEND',
-    });
-
+    if (!ov.current) return;
     if (!session.current) return;
 
-    if (publisher) {
-      await session.current.unpublish(publisher);
-    }
+    if (device.kind === "audioinput") publisherProperties.current.audioSource = device.deviceId;
+    if (device.kind === "videoinput") publisherProperties.current.videoSource = device.deviceId;
+
+    const newPublisher = await ov.current.initPublisherAsync(undefined, publisherProperties.current);
+
+    if (publisher) await session.current.unpublish(publisher);
 
     await session.current.publish(newPublisher);
 
     setPublisher(newPublisher);
-  }, []);
+  }, [publisher]);
 
   return (
-    <OpenviduContext.Provider value={{ ov: ov.current, session: session.current, publisher, subscribers, audioInputs, videoInputs, currentAudioInput, currentVideoInput, joinSession, leaveSession, getDevices, setDevice }}>
+    <OpenviduContext.Provider value={{ ov: ov.current, session: session.current, publisherProperties: publisherProperties.current, publisher, subscribers, audioInputs, videoInputs, joinSession, leaveSession, getDevices, setDevice }}>
       {children}
     </OpenviduContext.Provider>
   );
