@@ -14,7 +14,6 @@ const DashboardSidebar: FC<DashboardSidebarProps> = () => {
     try {
       const data = await userList();
       setUsers([ ...userMocks, ...(data.userList || []) ]);
-      console.log(users);
     } catch (error) {
       console.error("Failed to fetch users:", error);
       setUsers([]);
@@ -25,7 +24,6 @@ const DashboardSidebar: FC<DashboardSidebarProps> = () => {
     try {
       const data = await userCurrentList();
       setCurrentUsers(data.userList || []);
-      console.log(currentUsers);
     } catch (error) {
       console.error("Failed to fetch current users:", error);
       setCurrentUsers([]);
