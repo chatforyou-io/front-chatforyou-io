@@ -1,32 +1,53 @@
-import React, { FormEvent } from 'react';
+import { chatroomCreate } from "@/src/libs/chatroom";
+import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import React, { FormEvent, useMemo } from "react";
 
 interface ChatroomCreateFormProps {
-  onSubmit: (roomName: string, maxUserCount: number, usePwd: boolean, pwd: string) => void;
   onClose: () => void;
 }
 
-export default function ChatroomCreateForm({ onSubmit, onClose }: ChatroomCreateFormProps) {
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+export default function ChatroomCreateForm({ onClose }: ChatroomCreateFormProps) {
+  const { data: userSession } = useSession();
+  const userIdx = useMemo(() => userSession?.user.idx, [userSession?.user.idx]);
+  const router = useRouter();
 
-    const formData = new FormData(e.currentTarget);
-    const roomName = formData.get('roomName') as string || '';
-    const maxUserCount = parseInt(formData.get('maxUserCount') as string) || 0;
-    const usePwd = formData.get('usePwd') as string === 'on';
-    const pwd = formData.get('pwd') as string || '';
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+    const roomName = formData.get("roomName") as string || '';
+    const maxUserCount = parseInt(formData.get("maxUserCount") as string) || 0;
+    const usePwd = formData.get("usePwd") as string === "on";
+    const pwd = formData.get("pwd") as string || '';
 
     if (!roomName || maxUserCount === 0) {
-      alert('제목과 접속인원은 필수입니다.');
+      alert("제목과 접속인원은 필수입니다.");
       return;
     }
 
     if (usePwd && !pwd) {
-      alert('암호를 입력하세요.');
+      alert("암호를 입력하세요.");
       return;
     }
-    
-    // 부모 컴포넌트로 데이터 전달
-    onSubmit(roomName, maxUserCount, usePwd, pwd);
+
+    try {
+      const data = await chatroomCreate({ roomName, maxUserCount, usePwd, pwd, userIdx });
+      if (!data.isSuccess) {
+        const { status, message } = data;
+        if (status === 401) {
+          signOut({ redirect: false });
+          router.push("/auth/login");
+        }
+        
+        throw new Error(message);
+      }
+
+      router.push(`/chatroom/view/${data.roomData.sessionId}`);
+    } catch (error) {
+      console.error(error);
+      alert("방 생성 중 문제가 발생하였습니다. 나중에 다시 시도해주세요.");
+    }
   };
 
   return (

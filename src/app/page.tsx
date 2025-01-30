@@ -1,47 +1,25 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import Header from "@/src/components/Header";
 import ChatroomCard from "@/src/components/cards/ChatroomCard";
 import ChatroomCreateForm from "@/src/components/forms/ChatroomCreateForm";
 import DashboardSidebar from "@/src/components/sidebars/DashboardSidebar";
-import { chatroomCreate, chatroomList } from "@/src/libs/chatroom";
+import { chatroomList } from "@/src/libs/chatroom";
 import chatroomMocks from "@/src/mocks/chatrooms.json";
 
 export default function Home() {
-  const { data: session } = useSession();
-  const router = useRouter();
   const [isPopup, setIsPopup] = useState<boolean>(false);
   const [chatrooms, setChatrooms] = useState<Chatroom[]>(chatroomMocks);
 
   const fetchChatrooms = useCallback(async () => {
     try {
-      const response = await chatroomList();
-      setChatrooms([ ...chatrooms, ...(response.roomList || []) ]);
+      const { roomList } = await chatroomList();
+      setChatrooms(prevChatrooms => [ ...prevChatrooms, ...(roomList || []) ]);
     } catch (error) {
       console.error("Failed to fetch chatrooms:", error);
     }
   }, []);
-  
-  const handleCreateRoom = useCallback(async (roomName: string, maxUserCount: number, usePwd: boolean, pwd: string) => {
-    try {
-      if (!session) throw new Error('로그인이 필요합니다.');
-
-      const chatroom: Chatroom = { roomName, maxUserCount, usePwd, pwd, userIdx: session.user.idx };
-      const data = await chatroomCreate(chatroom);
-      if (!data.isSuccess) {
-        throw new Error('방 생성 중 오류가 발생했습니다.');
-      }
-
-      alert('방이 생성되었습니다.');
-      router.push(`/chatroom/view/${data.roomData.sessionId}`);
-    } catch (error) {
-      console.error(error);
-      alert('방 생성 중 문제가 발생하였습니다. 나중에 다시 시도해주세요.');
-    }
-  }, [session, router]);
 
   useEffect(() => {
     fetchChatrooms();
@@ -84,7 +62,7 @@ export default function Home() {
         <>
           <div className="absolute top-0 left-0 flex-center size-full bg-black opacity-50"></div>
           <div className="absolute top-0 left-0 flex-center size-full">
-            <ChatroomCreateForm onSubmit={handleCreateRoom} onClose={() => setIsPopup(false)} />
+            <ChatroomCreateForm onClose={() => setIsPopup(false)} />
           </div>
         </>
       }
