@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import CustomImage from "@/src/components/CustomImage";
 import OpenviduStream from '@/src/components/openvidu/OpenviduStream';
-import { chatroomInfo, chatroomToken } from "@/src/libs/chatroom";
+import { chatroomToken } from "@/src/libs/chatroom";
 import { OpenviduContext } from "@/src/contexts/OpenviduContext";
 import DeviceSelectors from "@/src/components/sidebars/DeviceSelectors";
 
@@ -17,44 +17,81 @@ interface PageProps {
 
 export default function Page({ params }: PageProps) {
   const { sessionId } = params;
-  const { publisher, subscribers, currentAudioInput, currentVideoInput, joinSession, leaveSession } = useContext(OpenviduContext);
+  const { publisher, subscribers, joinSession, leaveSession } = useContext(OpenviduContext);
   const { data: userSession } = useSession();
   const userIdx = useMemo(() => userSession?.user.idx, [userSession?.user.idx]);
   const [chatroom, setChatroom] = useState<Chatroom | undefined>(undefined);
+  const [token, setToken] = useState<string | undefined>(undefined);
+  const [redirect, setRedirect] = useState(false);
+  const [leave, setLeave] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    const fetchOpenvidu = async () => {
-      if (!sessionId || !userIdx || !currentAudioInput || !currentVideoInput) return;
-      
+    const fetchChatroom = async () => {
       try {
         const data = await chatroomToken(sessionId, userIdx);
-        if (!data.isSuccess) throw new Error("토큰을 가져오는데 실패했습니다.");
-
-        const { roomInfo, joinUserInfo } = data;
-
-        setChatroom(roomInfo);
-        joinSession(joinUserInfo.camera_token, userIdx);
+        if (!data.isSuccess) throw new Error(data);
+        console.log("data", data);
+        setChatroom(data.roomInfo);
+        setToken(data.joinUserInfo.camera_token);
       } catch (error) {
-        console.error("OpenVidu 세션 참여 중 오류 발생:", error);
+        console.error(error);
+        alert("채팅방이 존재하지 않습니다.");
+        setRedirect(true);
+      }
+    };
+
+    fetchChatroom();
+  }, [sessionId, userIdx]);
+
+  useEffect(() => {
+    const fetchOpenvidu = async () => {
+      if (!token || !userIdx) return;
+
+      try {
+        joinSession(token, userIdx);
+      } catch (error) {
+        console.error(error);
         alert("채팅방 정보를 가져오는데 실패했습니다.");
-        router.push("/");
+        setLeave(true);
       }
     }
-
+    
     fetchOpenvidu();
-  }, [sessionId, userIdx, currentAudioInput, currentVideoInput, joinSession, router]);
+  }, [token, userIdx, joinSession]);
 
   const handleClick = () => {
-    leaveSession();
-    router.push('/');
+    setLeave(true);
+    setRedirect(true);
   };
 
   useEffect(() => {
-    return () => {
-      leaveSession();
+    const beforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      setLeave(true);
+      setRedirect(true);
+      event.returnValue = '';
     };
-  }, [leaveSession]);
+
+    window.addEventListener("beforeunload", beforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", beforeUnload);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (leave) {
+      leaveSession();
+      setRedirect(true);
+    }
+  }, [leave, leaveSession]);
+
+  useEffect(() => {
+    if (redirect) {
+      router.push("/");
+    }
+  }, [redirect, router]);
   
   return (
     <div className="flex-center size-full">
