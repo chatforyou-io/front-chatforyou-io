@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import clsx from 'clsx';
 
 interface SignUpEmailValidFormProps {

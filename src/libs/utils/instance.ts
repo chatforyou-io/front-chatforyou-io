@@ -1,7 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/src/libs/utils/authOption";
-import { redirect } from "next/navigation";
 
 const authHost = process.env.API_DOMAIN;
 
