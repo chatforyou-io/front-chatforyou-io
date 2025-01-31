@@ -3,12 +3,12 @@
 import { useContext, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import CustomImage from "@/src/components/CustomImage";
 import OpenviduStream from '@/src/components/openvidu/OpenviduStream';
 import { chatroomToken } from "@/src/libs/chatroom";
 import { OpenviduContext } from "@/src/contexts/OpenviduContext";
 import DeviceSelectors from "@/src/components/sidebars/DeviceSelectors";
 import { useHandleRequestFail } from "@/src/webhooks/useHandleRequestFail";
+import IconUser from "@/public/images/icon-user.svg";
 
 interface PageProps {
   params: {
@@ -104,7 +104,7 @@ export default function Page({ params }: PageProps) {
         <DeviceSelectors />
         <div className="flex w-full space-x-4">
           <div className="flex-center">
-            <CustomImage src="/images/icon-user.svg" alt="room" width={48} height={48} className="border-2 border-gray-700 rounded-full" />
+            <IconUser aria-label="room" width={48} height={48} className="border-2 border-gray-700 rounded-full" />
           </div>
           <div className="w-full">
             <h3 className="font-semibold">{chatroom?.roomName}</h3>

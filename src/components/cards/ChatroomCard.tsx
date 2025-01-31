@@ -1,6 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
-import CustomImage from '@/src/components/CustomImage';
+import IconExclamationCircle from '@/public/images/icon-exclamation-circle.svg';
+import IconUser from '@/public/images/icon-user.svg';
+import IconStar from '@/public/images/icons/star.svg';
 
 interface ChatroomCardProps {
   chatroom: Chatroom;
@@ -13,7 +15,7 @@ const ChatroomCard: React.FC<ChatroomCardProps> = ({ chatroom }) => {
         <h1 className="text-lg font-bold">{chatroom.roomName}</h1>
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <CustomImage src="/images/icon-exclamation-circle.svg" alt="room" width={20} height={20} />
+            <IconExclamationCircle aria-label="room" width={20} height={20} />
             <p className="text-sm">{chatroom.currentUserCount} / {chatroom.maxUserCount}</p>
           </div>
           <Link
@@ -26,14 +28,14 @@ const ChatroomCard: React.FC<ChatroomCardProps> = ({ chatroom }) => {
       </div>
       <div className="flex justify-between gap-4 border-t pt-6">
         <div className="flex space-x-2 w-full">
-          <CustomImage src="/images/icon-user.svg" alt="room" width={40} height={40} className="w-10 h-10 border-2 border-gray-700 rounded-full" />
+          <IconUser aria-label="room" width={40} height={40} className="w-10 h-10 border-2 border-gray-700 rounded-full" />
           <div>
             <h3 className="font-semibold">Username</h3>
             <p className="text-sm">user@mail.com</p>
           </div>
         </div>
         <div className="flex-center">
-          <CustomImage src="/images/icons/star.svg" alt="room" width={32} height={32} className="w-8 h-8 text-gray-700 rounded-full" />
+          <IconStar aria-label="room" width={32} height={32} className="w-8 h-8 text-gray-700 rounded-full" />
         </div>
       </div>
     </div>

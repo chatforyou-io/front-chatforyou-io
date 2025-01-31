@@ -3,9 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import CustomImage from "@/src/components/CustomImage";
 import ProfileCard from "@/src/components/cards/ProfileCard";
 import UserUpdateForm from "@/src/components/forms/UserUpdateForm";
+import IconUser from "@/public/images/icon-user.svg";
 
 export default function Header() {
   const session = useSession();
@@ -24,7 +24,7 @@ export default function Header() {
           {(session && session.data ) && (
             <div className="flex gap-4">
               <button onClick={handleProfile}>
-                <CustomImage src="/images/icon-user.svg" alt="room" width={36} height={36} className="border-2 border-gray-700 rounded-full" />
+                <IconUser aria-label="room" width={36} height={36} className="border-2 border-gray-700 rounded-full" />
               </button>
             </div>
           )}

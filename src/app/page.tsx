@@ -8,6 +8,7 @@ import DashboardSidebar from "@/src/components/sidebars/DashboardSidebar";
 import { chatroomList } from "@/src/libs/chatroom";
 import chatroomMocks from "@/src/mocks/chatrooms.json";
 import { useHandleRequestFail } from "@/src/webhooks/useHandleRequestFail";
+import IconPlus from "@/public/images/icons/plus.svg";
 
 export default function Home() {
   const [isPopup, setIsPopup] = useState<boolean>(false);
@@ -22,7 +23,8 @@ export default function Home() {
         throw new Error(message);
       }
 
-      setChatrooms(prevChatrooms => [ ...prevChatrooms, ...(data.roomList || []) ]);
+      const newChatrooms = [ ...chatroomMocks, ...(data.roomList || []) ];
+      setChatrooms(newChatrooms);
     } catch (error) {
       console.error("Failed to fetch chatrooms:", error);
     }
@@ -49,10 +51,11 @@ export default function Home() {
               />
               <button
                 type="button"
-                className="w-full px-4 h-16 border bg-primary text-white rounded-full"
+                className="flex justify-center items-center w-full px-4 h-16 border bg-primary text-white rounded-full"
                 onClick={() => setIsPopup(true)}
               >
-                방 만들기
+                <IconPlus aria-label="plus" width={24} height={24} />
+                <span className="hidden sm:inline-block">방 만들기</span>
               </button>
             </div>
           </div>

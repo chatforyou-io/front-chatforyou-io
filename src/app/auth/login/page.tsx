@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
-import CustomImage from "@/src/components/CustomImage";
 import LoginForm from "@/src/components/forms/LoginForm";
-import "./style.css";
+import IconKakao from "@/public/images/icon-kakao.svg";
+import IconNaver from "@/public/images/icon-naver.svg";
+import IconGoogle from "@/public/images/icon-google.svg";
 
 export default function Page() {
   const router = useRouter();
@@ -54,15 +55,9 @@ export default function Page() {
             <button
               onClick={() => handleClick('kakao')}
               aria-label="kakao login button"
-              className="social-login-button bg-yellow-400"
+              className="flex justify-center items-center w-16 h-16 shadow rounded-2xl bg-yellow-400"
             >
-              <CustomImage
-                src="/images/icon-kakao.svg"
-                alt="kakao login"
-                width={36}
-                height={36}
-                priority
-              />
+              <IconKakao aria-label="kakao login" width={36} height={36} />
             </button>
             <p className="mt-2">Kakao</p>
           </div>
@@ -70,15 +65,9 @@ export default function Page() {
             <button
               onClick={() => handleClick('naver')}
               aria-label="naver login button"
-              className="social-login-button bg-green-600"
+              className="flex justify-center items-center w-16 h-16 shadow rounded-2xl bg-green-600 text-white"
             >
-              <CustomImage
-                src="/images/icon-naver.svg"
-                alt="naver login"
-                width={32}
-                height={32}
-                priority
-              />
+              <IconNaver aria-label="naver login" width={32} height={32} />
             </button>
             <p className="mt-2">Naver</p>
           </div>
@@ -86,15 +75,9 @@ export default function Page() {
             <button
               onClick={() => handleClick('google')}
               aria-label="google login button"
-              className="social-login-button bg-white"
+              className="flex justify-center items-center w-16 h-16 shadow rounded-2xl bg-white"
             >
-              <CustomImage
-                src="/images/icon-google.svg"
-                alt="google login"
-                width={32}
-                height={32}
-                priority
-              />
+              <IconGoogle aria-label="google login" width={48} height={48} />
             </button>
             <p className="mt-2">Google</p>
           </div>
