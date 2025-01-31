@@ -77,8 +77,8 @@ export default function Page() {
   }
 
   return (
-    <div className="flex-center size-full">
-      <div className="flex-center p-12 w-144 bg-white rounded-3xl">
+    <div className="flex justify-center items-center size-full">
+      <div className="flex justify-center items-center p-12 w-144 bg-white rounded-3xl">
         <div className="flex flex-col items-center gap-8">
           <h1 className="text-[40px] leading-10 font-semibold">계정 생성</h1>
           <h1 className="text-[20px[ leading-5">환영합니다! 귀하의 자세한 정보를 입력하십시오.</h1>
@@ -88,38 +88,38 @@ export default function Page() {
           {step === 2 && <ValidForm validCode={validCode} onSubmit={handleSubmitEmailValid} />}
           {step === 3 && <UserInfoForm onSubmit={handleSubmitUserInfo} />}
         </div>
-        <div className="relative flex-center border-b border-gray-700 mt-12 w-full">
+        <div className="relative flex justify-center items-center border-b border-gray-700 mt-12 w-full">
           <div className="absolute -bottom-3.5 px-4 bg-white">
             <span>또는 다음으로 로그인</span>
           </div>
         </div>
         <div className="flex justify-between space-x-4 w-full mt-12 px-20">
-          <div className="flex-center">
+          <div className="flex justify-center items-center">
             <button
+              type="button"
               onClick={() => handleSocialLogin('kakao')}
               aria-label="kakao login button"
-              className="flex justify-center items-center w-16 h-16 shadow rounded-2xl bg-yellow-400"
-            >
+              className="flex justify-center items-center w-16 h-16 shadow rounded-2xl bg-yellow-400">
               <IconKakao aria-label="kakao login" width={36} height={36} />
             </button>
             <p className="mt-2">Kakao</p>
           </div>
-          <div className="flex-center">
+          <div className="flex justify-center items-center">
             <button
+              type="button"
               onClick={() => handleSocialLogin('naver')}
               aria-label="naver login button"
-              className="flex justify-center items-center w-16 h-16 shadow rounded-2xl bg-green-600 text-white"
-            >
+              className="flex justify-center items-center w-16 h-16 shadow rounded-2xl bg-green-600 text-white">
               <IconNaver aria-label="naver login" width={32} height={32} />
             </button>
             <p className="mt-2">Naver</p>
           </div>
-          <div className="flex-center">
+          <div className="flex justify-center items-center">
             <button
+              type="button"
               onClick={() => handleSocialLogin('google')}
               aria-label="google login button"
-              className="flex justify-center items-center w-16 h-16 shadow rounded-2xl bg-white"
-            >
+              className="flex justify-center items-center w-16 h-16 shadow rounded-2xl bg-white">
               <IconGoogle aria-label="google login" width={48} height={48} />
             </button>
             <p className="mt-2">Google</p>

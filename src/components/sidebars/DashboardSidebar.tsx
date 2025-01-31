@@ -49,21 +49,25 @@ const DashboardSidebar: FC<DashboardSidebarProps> = () => {
   }, [fetchUsers, fetchCurrentUsers]);
 
   return (
-    <div className="py-8 w-72 h-full bg-white rounded overflow-y-auto">
-      <h3 className="text-xl text-center font-semibold">접속 중 ({currentUsers.length}명)</h3>
-      <div className="flex flex-col gap-4 py-8 size-full">
-        {currentUsers.map((user) => (
-          <div key={`currentuser_${user.idx}`} className="flex items-center gap-2 px-4 w-full">
-            <IconUser aria-label="room" width={36} height={36} className="border-2 border-gray-700 text-gray-700 fill-gray-700 rounded-full" />
-            <span className="text-gray-700">{user.name}</span>
+    <div className="w-full lg:w-72 lg:h-full">
+      <div className="lg:p-4 lg:size-full rounded overflow-y-auto">
+        <div className="p-4 size-full bg-white">
+          <h3 className="text-xl text-center font-semibold">접속 중 ({currentUsers.length}명)</h3>
+          <div className="flex flex-col gap-4 py-4 size-full">
+            {currentUsers.map((user) => (
+              <div key={`currentuser_${user.idx}`} className="flex items-center gap-2 px-4 w-full">
+                <IconUser aria-label="room" width={36} height={36} className="border-2 border-gray-700 text-gray-700 fill-gray-700 rounded-full" />
+                <span className="text-gray-700">{user.name}</span>
+              </div>
+            ))}
+            {users.filter((user) => !currentUsers.find((current) => current.idx === user.idx)).map((user) => (
+              <div key={`user_${user.idx}`} className="flex items-center gap-2 px-4 w-full">
+                <IconUser aria-label="room" width={36} height={36} className="border-2 border-gray-400 text-gray-400 fill-gray-400 rounded-full" />
+                <span className="text-gray-400">{user.name}</span>
+              </div>
+            ))}
           </div>
-        ))}
-        {users.filter((user) => !currentUsers.find((current) => current.idx === user.idx)).map((user) => (
-          <div key={`user_${user.idx}`} className="flex items-center gap-2 px-4 w-full">
-            <IconUser aria-label="room" width={36} height={36} className="border-2 border-gray-400 text-gray-400 fill-gray-400 rounded-full" />
-            <span className="text-gray-400">{user.name}</span>
-          </div>
-        ))}
+        </div>
       </div>
     </div>
   );

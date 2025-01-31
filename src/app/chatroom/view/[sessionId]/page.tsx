@@ -99,11 +99,11 @@ export default function Page({ params }: PageProps) {
   }, [redirect, router]);
   
   return (
-    <div className="flex-center size-full">
-      <div className="flex-center p-8 w-160 space-y-4 bg-white rounded-2xl">
+    <div className="flex flex-col justify-center items-center size-full">
+      <div className="flex flex-col justify-center items-center p-8 w-160 space-y-4 bg-white rounded-2xl">
         <DeviceSelectors />
         <div className="flex w-full space-x-4">
-          <div className="flex-center">
+          <div className="flex justify-center items-center">
             <IconUser aria-label="room" width={48} height={48} className="border-2 border-gray-700 rounded-full" />
           </div>
           <div className="w-full">
@@ -112,9 +112,9 @@ export default function Page({ params }: PageProps) {
           </div>
           <div>
             <button
+              type="button"
               onClick={handleClick}
-              className="w-20 h-10 text-sm text-white bg-blue-500 rounded-xl"
-            >
+              className="w-20 h-10 text-sm text-white bg-blue-500 rounded-xl">
               나가기
             </button>
           </div>

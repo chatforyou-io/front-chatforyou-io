@@ -10,12 +10,12 @@ interface ChatroomCardProps {
 
 const ChatroomCard: React.FC<ChatroomCardProps> = ({ chatroom }) => {
   return (
-    <div className="px-4 py-6 w-80 h-52 space-y-4 bg-white rounded-xl">
+    <div className="px-4 py-6 w-full sm:w-80 h-52 space-y-4 bg-white rounded-xl">
       <div className="flex flex-col justify-between gap-4">
         <h1 className="text-lg font-bold">{chatroom.roomName}</h1>
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <IconExclamationCircle aria-label="room" width={20} height={20} />
+            <IconExclamationCircle aria-label="room" width={20} height={20} className="font-bold text-gray-700" />
             <p className="text-sm">{chatroom.currentUserCount} / {chatroom.maxUserCount}</p>
           </div>
           <Link
@@ -34,8 +34,8 @@ const ChatroomCard: React.FC<ChatroomCardProps> = ({ chatroom }) => {
             <p className="text-sm">user@mail.com</p>
           </div>
         </div>
-        <div className="flex-center">
-          <IconStar aria-label="room" width={32} height={32} className="w-8 h-8 text-gray-700 rounded-full" />
+        <div className="flex justify-center items-center">
+          <IconStar aria-label="room" width={32} height={32} className="w-8 h-8 text-gray-400 rounded-full" />
         </div>
       </div>
     </div>
