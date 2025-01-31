@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import Header from "@/src/components/Header";
 import ChatroomCard from "@/src/components/cards/ChatroomCard";
 import ChatroomCreateForm from "@/src/components/forms/ChatroomCreateForm";
 import DashboardSidebar from "@/src/components/sidebars/DashboardSidebar";
