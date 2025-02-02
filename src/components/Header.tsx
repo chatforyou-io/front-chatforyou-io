@@ -2,24 +2,32 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import ProfileCard from "@/src/components/cards/ProfileCard";
 import UserUpdateForm from "@/src/components/forms/UserUpdateForm";
 import IconUser from "@/public/images/icon-user.svg";
 import Modal from "./Modal";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
   const session = useSession();
+  const router = useRouter();
 	const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
   const [isUserUpdateFormOpen, setIsUserUpdateFormOpen] = useState<boolean>(false);
   
-  function handleProfile() {
+  const handleProfile = () => {
     setIsProfileOpen(!isProfileOpen);
   }
 
-  function handleActiveUserUpdateForm() {
+  const handleActiveUserUpdateForm = () => {
     setIsProfileOpen(false);
     setIsUserUpdateFormOpen(true);
+  }
+
+  const handleSignOut = async () => {
+    await signOut({ redirect: false });
+    setIsProfileOpen(false);
+    router.push("/");
   }
 
   return (
@@ -40,7 +48,7 @@ export default function Header() {
         </div>
       </div>
       <Modal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)}>
-        <ProfileCard onActiveUserUpdateForm={() => handleActiveUserUpdateForm()} />
+        <ProfileCard onActiveUserUpdateForm={() => handleActiveUserUpdateForm()} onSignOut={() => handleSignOut()} />
       </Modal>
       <Modal isOpen={isUserUpdateFormOpen} onClose={() => setIsUserUpdateFormOpen(false)}>
         <UserUpdateForm onClose={() => setIsUserUpdateFormOpen(false)} />

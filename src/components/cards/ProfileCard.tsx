@@ -1,31 +1,13 @@
-import React, { MouseEvent } from "react";
-import { useRouter } from 'next/navigation';
-import { signOut, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import IconUser from '@/public/images/icon-user.svg';
 
 interface ProfileCardProps {
   onActiveUserUpdateForm: () => void;
+  onSignOut: () => void;
 }
 
-const ProfileCard: React.FC<ProfileCardProps> = ({ onActiveUserUpdateForm }) => {
-  const router = useRouter();
+export default function ProfileCard({ onActiveUserUpdateForm, onSignOut }: ProfileCardProps) {
   const session = useSession();
-
-  const handleSignOut = async (event: MouseEvent<HTMLButtonElement>): Promise<void> => {
-    event.preventDefault();
-
-    try {
-      const response = await signOut({ redirect: false });
-      if (!response) {
-        throw new Error('Unknown error');
-      }
-
-      // 로그인 성공 시 홈페이지로 리다이렉트
-      router.push('/auth/login');
-    } catch (error) {
-      console.error(error);
-    }
-  }
   
   return (
     <div className="w-80 bg-white p-8 space-y-8 rounded-xl">
@@ -41,11 +23,9 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ onActiveUserUpdateForm }) => 
           <button type="button" onClick={onActiveUserUpdateForm}>회원 정보 수정</button>
         </div>
         <div className="border-t py-2 text-center">
-          <button type="button" onClick={handleSignOut}>로그아웃</button>
+          <button type="button" onClick={onSignOut}>로그아웃</button>
         </div>
       </div>
     </div>
   );
-};
-
-export default ProfileCard;
+}
