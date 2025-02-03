@@ -1,9 +1,0 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer components {
-  .social-login-button {
-    @apply flex justify-center items-center w-16 h-16 shadow rounded-2xl;
-  }
-}
