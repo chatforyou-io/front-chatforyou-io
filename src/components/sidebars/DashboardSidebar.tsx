@@ -1,76 +1,83 @@
-import { FC, useCallback, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import { userCurrentList, userList } from "@/src/libs/user";
 import { useHandleRequestFail } from "@/src/webhooks/useHandleRequestFail";
+import IconDown from "@/public/images/icons/arrow-down.svg";
 import IconUser from '@/public/images/icon-user.svg';
+import clsx from "clsx";
 
-interface DashboardSidebarProps {
-}
+const UserItem = ({ user, isCurrent }: { user: User; isCurrent?: boolean; }) => (
+  <div className="flex items-center gap-2 px-4 w-full">
+    <IconUser 
+      aria-label="user" 
+      width={36} 
+      height={36} 
+      className={clsx("border-2 rounded-full", {
+        "border-gray-700 text-gray-700 fill-gray-700": isCurrent,
+        "border-gray-400 text-gray-400 fill-gray-400": !isCurrent
+      })} 
+    />
+    <span className={isCurrent ? "text-gray-700" : "text-gray-400"}>{user.name}</span>
+  </div>
+);
 
-const DashboardSidebar: FC<DashboardSidebarProps> = () => {
+export default function DashboardSidebar() {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [users, setUsers] = useState<User[]>([]);
   const [currentUsers, setCurrentUsers] = useState<User[]>([]);
   const handleRequestFail = useHandleRequestFail();
 
-  const fetchUsers = useCallback(async () => {
+  const toggleIsOpen = useCallback(() => setIsOpen(prevIsOpen => !prevIsOpen), []);
+
+  const fetchUsers = useCallback(async (fetchFunc: () => Promise<any>, setFunc: Dispatch<SetStateAction<User[]>>) => {
     try {
-      const data = await userList();
+      const data = await fetchFunc();
       if (!data.isSuccess) {
         const message = handleRequestFail(data);
         throw new Error(message);
       }
       
-      const newUsers = [ ...(data.userList || []) ];
-      setUsers(newUsers);
+      setFunc(data.userList || []);
     } catch (error) {
       console.error("Failed to fetch users:", error);
-      setUsers([]);
-    }
-  }, [handleRequestFail]);
-
-  const fetchCurrentUsers = useCallback(async () => {
-    try {
-      const data = await userCurrentList();
-      if (!data.isSuccess) {
-        const message = handleRequestFail(data);
-        throw new Error(message);
-      }
-      
-      const newCurrentUsers = [ ...(data.userList || []) ];
-      setCurrentUsers(newCurrentUsers);
-    } catch (error) {
-      console.error("Failed to fetch current users:", error);
-      setCurrentUsers([]);
+      setFunc([]);
     }
   }, [handleRequestFail]);
 
   useEffect(() => {
-    fetchUsers();
-    fetchCurrentUsers();
-  }, [fetchUsers, fetchCurrentUsers]);
+    fetchUsers(userList, setUsers);
+    fetchUsers(userCurrentList, setCurrentUsers);
+  }, [fetchUsers]);
+
+  const currentUserIds = new Set(currentUsers.map(user => user.idx));
+  const offlineUsers = users.filter(user => !currentUserIds.has(user.idx));
 
   return (
-    <div className="w-full lg:w-72 lg:h-full">
-      <div className="lg:p-4 lg:size-full rounded-sm overflow-y-auto">
-        <div className="p-4 size-full bg-white">
-          <h3 className="text-xl text-center font-semibold">접속 중 ({currentUsers.length}명)</h3>
-          <div className="flex flex-col gap-4 py-4 size-full">
-            {currentUsers.map((user) => (
-              <div key={`currentuser_${user.idx}`} className="flex items-center gap-2 px-4 w-full">
-                <IconUser aria-label="room" width={36} height={36} className="border-2 border-gray-700 text-gray-700 fill-gray-700 rounded-full" />
-                <span className="text-gray-700">{user.name}</span>
-              </div>
-            ))}
-            {users.filter((user) => !currentUsers.find((current) => current.idx === user.idx)).map((user) => (
-              <div key={`user_${user.idx}`} className="flex items-center gap-2 px-4 w-full">
-                <IconUser aria-label="room" width={36} height={36} className="border-2 border-gray-400 text-gray-400 fill-gray-400 rounded-full" />
-                <span className="text-gray-400">{user.name}</span>
-              </div>
-            ))}
+    <div className="flex justify-center items-center px-4 w-full md:w-160 lg:w-96">
+      <div className="flex flex-col justify-center items-center gap-4 py-2 w-full text-center bg-white rounded-xl">
+        <div className={clsx("flex flex-col gap-4 lg:flex", { hidden: !isOpen })}>
+          <div className="flex justify-center items-center gap-2 pt-2">
+            <h3 className="text-xl text-center font-semibold">접속 중 ({currentUsers.length}명)</h3>
+            <button
+              type="button"
+              onClick={toggleIsOpen}
+              className="hidden lg:block rotate-180">
+              <IconDown width={24} height={24} />
+            </button>
+          </div>
+          <div className="flex justify-center size-full pt-4 overflow-y-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 mx-auto px-4">
+              {currentUsers.map((user) => (<UserItem key={`${user.idx}`} user={user} isCurrent={true} />))}
+              {offlineUsers.map((user) => (<UserItem key={`${user.idx}`} user={user} isCurrent={false} />))}
+            </div>
           </div>
         </div>
+        <button
+          type="button"
+          onClick={toggleIsOpen}
+          className="lg:hidden">
+          <IconDown width={24} height={24} />
+        </button>
       </div>
     </div>
   );
-};
-
-export default DashboardSidebar;
+}

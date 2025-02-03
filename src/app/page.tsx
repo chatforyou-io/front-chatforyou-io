@@ -36,36 +36,33 @@ export default function Home() {
 
   return (
     <>
-      <main className="flex pt-20 size-full bg-gray-200">
-        <DashboardSidebar />
-        <div className="flex flex-col lg:flex-row gap-4 size-full">
-          <div className="lg:p-4 size-full space-y-4 overflow-y-auto">
-            <div className="flex justify-between items-center">
-              <div className="flex justify-center items-center">
-                <h1 className="text-2xl font-bold">대시보드</h1>
-              </div>
-              <div className="flex gap-3">
-                <input
-                  type="text"
-                  name="keyword"
-                  className="border px-4 h-16 w-full bg-white rounded-full"
-                  placeholder="검색"
-                />
-                <button
-                  type="button"
-                  className="flex justify-center items-center w-full px-4 h-16 border bg-primary text-white rounded-full"
-                  onClick={() => setIsPopup(true)}>
-                  <IconPlus aria-label="plus" width={24} height={24} />
-                  <span className="hidden sm:inline-block">방 만들기</span>
-                </button>
-              </div>
-            </div>
-            <div className="flex flex-wrap gap-8 size-fit">
-              {chatrooms && chatrooms.length === 0 && <p>채팅방이 존재하지 않습니다.</p>}
-              {chatrooms && chatrooms.map((chatroom, index) => {
-                return (
-                <ChatroomCard key={index} chatroom={chatroom} />
-              )})}
+      <main className="flex flex-col size-full bg-gray-200">
+        <div className="flex flex-shrink-0 justify-between lg:justify-between items-center p-4 w-full bg-gray-200">
+          <div className="hidden lg:inline-block justify-center items-center w-40">
+            <h1 className="text-2xl font-bold">대시보드</h1>
+          </div>
+          <div className="flex gap-4 justify-center w-full">
+            <input
+              type="text"
+              name="keyword"
+              className="border px-4 h-16 w-full md:w-128 bg-white rounded-full"
+              placeholder="검색" />
+            <button
+              type="button"
+              className="flex justify-center items-center w-24 lg:w-full lg:max-w-44 px-4 h-16 border bg-primary text-white rounded-full"
+              onClick={() => setIsPopup(true)}>
+              <IconPlus aria-label="plus" width={24} height={24} />
+              <span className="hidden lg:inline-block">방 만들기</span>
+            </button>
+          </div>
+        </div>
+        <div className="flex flex-col lg:flex-row justify-center items-center size-full">
+          <DashboardSidebar />
+          <div className="flex justify-center size-full pt-4 overflow-y-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mx-auto px-4">
+              {chatrooms.length
+                ? chatrooms.map((chatroom, index) => <ChatroomCard key={index} chatroom={chatroom} />)
+                : <p>채팅방이 존재하지 않습니다.</p>}
             </div>
           </div>
         </div>

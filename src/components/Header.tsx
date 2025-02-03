@@ -32,20 +32,18 @@ export default function Header() {
 
   return (
     <>
-      <div className="absolute top-0 w-full">
-        <div className="flex justify-between items-center bg-white px-4 py-2 h-20 text-right">
-          <Link href="/" className="text-xl font-bold text-primary">ChatForYou.io</Link>
-          {(session && session.data ) && (
-            <div className="flex gap-4">
-              <button
-                type="button"
-                onClick={handleProfile}
-                aria-label="profile">
-                <IconUser aria-label="room" width={36} height={36} className="border-2 border-gray-700 rounded-full" />
-              </button>
-            </div>
-          )}
-        </div>
+      <div className="flex flex-shrink-0 justify-between items-center px-4 w-full h-20 bg-white">
+        <Link href="/" className="text-xl font-bold text-primary">ChatForYou.io</Link>
+        {(session && session.data ) && (
+          <div className="flex gap-4">
+            <button
+              type="button"
+              onClick={handleProfile}
+              aria-label="profile">
+              <IconUser aria-label="room" width={36} height={36} className="border-2 border-gray-700 rounded-full" />
+            </button>
+          </div>
+        )}
       </div>
       <Modal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)}>
         <ProfileCard onActiveUserUpdateForm={() => handleActiveUserUpdateForm()} onSignOut={() => handleSignOut()} />
