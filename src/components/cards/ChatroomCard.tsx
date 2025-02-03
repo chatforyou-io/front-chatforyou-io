@@ -10,7 +10,7 @@ interface ChatroomCardProps {
 
 const ChatroomCard: React.FC<ChatroomCardProps> = ({ chatroom }) => {
   return (
-    <div className="px-4 py-6 w-76 h-52 space-y-4 bg-white rounded-xl">
+    <div className="px-4 py-6 w-sm md:w-90 lg:w-76 h-52 space-y-4 bg-white rounded-xl">
       <div className="flex flex-col justify-between gap-4">
         <h1 className="text-lg font-bold">{chatroom.roomName}</h1>
         <div className="flex justify-between items-center">

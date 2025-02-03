@@ -36,12 +36,12 @@ export default function Home() {
 
   return (
     <>
-      <main className="flex flex-col size-full bg-gray-200">
-        <div className="flex flex-shrink-0 justify-between lg:justify-between items-center p-4 w-full bg-gray-200">
-          <div className="hidden lg:inline-block justify-center items-center w-40">
+      <main className="flex flex-col items-center size-full bg-gray-200">
+        <div className="flex flex-shrink-0 justify-between lg:justify-between items-center lg:px-4 py-4 w-sm md:w-full bg-gray-200">
+          <div className="hidden lg:inline-block justify-center items-center px-4 w-40">
             <h1 className="text-2xl font-bold">대시보드</h1>
           </div>
-          <div className="flex gap-4 justify-center w-full">
+          <div className="flex gap-4 justify-center lg:justify-end w-sm md:w-full">
             <input
               type="text"
               name="keyword"
@@ -56,10 +56,10 @@ export default function Home() {
             </button>
           </div>
         </div>
-        <div className="flex flex-col lg:flex-row justify-center items-center size-full">
+        <div className="flex flex-col lg:flex-row justify-center items-center lg:items-start lg:px-4 w-sm md:w-full h-full">
           <DashboardSidebar />
-          <div className="flex justify-center size-full pt-4 overflow-y-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mx-auto px-4">
+          <div className="flex justify-center size-full pt-4 lg:pt-0 overflow-y-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mx-auto">
               {chatrooms.length
                 ? chatrooms.map((chatroom, index) => <ChatroomCard key={index} chatroom={chatroom} />)
                 : <p>채팅방이 존재하지 않습니다.</p>}

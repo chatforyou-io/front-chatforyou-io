@@ -100,7 +100,7 @@ export default function Page({ params }: PageProps) {
   
   return (
     <div className="flex flex-col justify-center items-center size-full">
-      <div className="flex flex-col justify-center items-center p-8 w-160 space-y-4 bg-white rounded-2xl">
+      <div className="flex flex-col justify-center items-center p-4 md:p-8 w-sm md:w-160 space-y-4 bg-white rounded-2xl">
         <DeviceSelectors />
         <div className="flex w-full space-x-4">
           <div className="flex justify-center items-center">

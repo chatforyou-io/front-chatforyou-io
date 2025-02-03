@@ -52,7 +52,7 @@ export default function DashboardSidebar() {
   const offlineUsers = users.filter(user => !currentUserIds.has(user.idx));
 
   return (
-    <div className="flex justify-center items-center px-4 w-full md:w-160 lg:w-96">
+    <div className="flex justify-center items-center w-full md:w-160 lg:w-88">
       <div className="flex flex-col justify-center items-center gap-4 py-2 w-full text-center bg-white rounded-xl">
         <div className={clsx("flex flex-col gap-4 lg:flex", { hidden: !isOpen })}>
           <div className="flex justify-center items-center gap-2 pt-2">
@@ -60,12 +60,12 @@ export default function DashboardSidebar() {
             <button
               type="button"
               onClick={toggleIsOpen}
-              className="hidden lg:block rotate-180">
+              className={clsx("lg:hidden rotate-180", { hidden: !isOpen})}>
               <IconDown width={24} height={24} />
             </button>
           </div>
           <div className="flex justify-center size-full pt-4 overflow-y-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 mx-auto px-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 mx-auto">
               {currentUsers.map((user) => (<UserItem key={`${user.idx}`} user={user} isCurrent={true} />))}
               {offlineUsers.map((user) => (<UserItem key={`${user.idx}`} user={user} isCurrent={false} />))}
             </div>
@@ -74,7 +74,7 @@ export default function DashboardSidebar() {
         <button
           type="button"
           onClick={toggleIsOpen}
-          className="lg:hidden">
+          className={clsx("lg:hidden", { hidden: isOpen })}>
           <IconDown width={24} height={24} />
         </button>
       </div>
