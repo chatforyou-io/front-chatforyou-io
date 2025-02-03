@@ -50,7 +50,7 @@ const DashboardSidebar: FC<DashboardSidebarProps> = () => {
 
   return (
     <div className="w-full lg:w-72 lg:h-full">
-      <div className="lg:p-4 lg:size-full rounded overflow-y-auto">
+      <div className="lg:p-4 lg:size-full rounded-sm overflow-y-auto">
         <div className="p-4 size-full bg-white">
           <h3 className="text-xl text-center font-semibold">접속 중 ({currentUsers.length}명)</h3>
           <div className="flex flex-col gap-4 py-4 size-full">
