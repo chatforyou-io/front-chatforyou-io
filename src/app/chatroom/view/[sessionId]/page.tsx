@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import OpenviduStream from '@/src/components/openvidu/OpenviduStream';
 import { chatroomToken } from "@/src/libs/chatroom";
 import { OpenviduContext } from "@/src/contexts/OpenviduContext";
-import DeviceSelectors from "@/src/components/sidebars/DeviceSelectors";
+import DeviceSelectors from "@/src/components/bars/DeviceSelectors";
 import { useHandleRequestFail } from "@/src/webhooks/useHandleRequestFail";
 import IconUser from "@/public/images/icon-user.svg";
 
@@ -32,16 +32,12 @@ export default function Page({ params }: PageProps) {
     const fetchChatroom = async () => {
       try {
         const data = await chatroomToken(sessionId, userIdx);
-        if (!data.isSuccess) {
-          const message = handleRequestFail(data);
-          throw new Error(message);
-        }
+        if (!data.isSuccess) throw new Error(handleRequestFail(data));
         
         setChatroom(data.roomInfo);
         setToken(data.joinUserInfo.camera_token);
       } catch (error) {
         console.error(error);
-        alert("채팅방이 존재하지 않습니다.");
         setRedirect(true);
       }
     };
@@ -57,7 +53,6 @@ export default function Page({ params }: PageProps) {
         joinSession(token, userIdx);
       } catch (error) {
         console.error(error);
-        alert("채팅방 정보를 가져오는데 실패했습니다.");
         setLeave(true);
       }
     }
@@ -99,8 +94,8 @@ export default function Page({ params }: PageProps) {
   }, [redirect, router]);
   
   return (
-    <div className="flex flex-col justify-center items-center size-full">
-      <div className="flex flex-col justify-center items-center p-4 md:p-8 w-sm md:w-160 space-y-4 bg-white rounded-2xl">
+    <main className="flex flex-col justify-center items-center size-full bg-gray-200">
+      <div className="flex flex-col justify-center items-center p-4 md:p-8 w-sm md:w-160 space-y-4 bg-white rounded-2xl overflow-y-auto">
         <DeviceSelectors />
         <div className="flex w-full space-x-4">
           <div className="flex justify-center items-center">
@@ -135,6 +130,6 @@ export default function Page({ params }: PageProps) {
           ))}
         </div>
       </div>
-    </div>
+    </main>
   );
 }

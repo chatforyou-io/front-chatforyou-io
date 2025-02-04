@@ -20,7 +20,7 @@ const UserItem = ({ user, isCurrent }: { user: User; isCurrent?: boolean; }) => 
   </div>
 );
 
-export default function DashboardSidebar() {
+export default function UsersBar() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [users, setUsers] = useState<User[]>([]);
   const [currentUsers, setCurrentUsers] = useState<User[]>([]);
@@ -31,10 +31,7 @@ export default function DashboardSidebar() {
   const fetchUsers = useCallback(async (fetchFunc: () => Promise<any>, setFunc: Dispatch<SetStateAction<User[]>>) => {
     try {
       const data = await fetchFunc();
-      if (!data.isSuccess) {
-        const message = handleRequestFail(data);
-        throw new Error(message);
-      }
+      if (!data.isSuccess) throw new Error(handleRequestFail(data));
       
       setFunc(data.userList || []);
     } catch (error) {
@@ -48,11 +45,8 @@ export default function DashboardSidebar() {
     fetchUsers(userCurrentList, setCurrentUsers);
   }, [fetchUsers]);
 
-  const currentUserIds = new Set(currentUsers.map(user => user.idx));
-  const offlineUsers = users.filter(user => !currentUserIds.has(user.idx));
-
   return (
-    <div className="flex justify-center items-center w-full md:w-160 lg:w-88">
+    <div className="flex justify-center items-center pb-4 w-full md:w-160 lg:w-88">
       <div className="flex flex-col justify-center items-center gap-4 py-2 w-full text-center bg-white rounded-xl">
         <div className={clsx("flex flex-col gap-4 lg:flex", { hidden: !isOpen })}>
           <div className="flex justify-center items-center gap-2 pt-2">
@@ -66,8 +60,15 @@ export default function DashboardSidebar() {
           </div>
           <div className="flex justify-center size-full pt-4 overflow-y-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 mx-auto">
-              {currentUsers.map((user) => (<UserItem key={`${user.idx}`} user={user} isCurrent={true} />))}
-              {offlineUsers.map((user) => (<UserItem key={`${user.idx}`} user={user} isCurrent={false} />))}
+              {currentUsers
+                .map((user) => (
+                  <UserItem key={`${user.idx}`} user={user} isCurrent={true} />
+                ))}
+              {users
+                .filter((user) => !currentUsers.find((current) => current.idx === user.idx))
+                .map((user) => (
+                  <UserItem key={`${user.idx}`} user={user} isCurrent={false} />
+                ))}
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
-import { FormEvent, useState } from 'react';
-import clsx from 'clsx';
+import { FormEvent, useEffect, useState } from "react";
+import InputWithError from "@/src/components/items/InputWithError";
 
 interface SignUpEmailValidFormProps {
   validCode: string;
@@ -7,45 +7,33 @@ interface SignUpEmailValidFormProps {
 }
 
 export default function SignUpEmailValidForm({ validCode, onSubmit }: SignUpEmailValidFormProps) {
-  const [error, setError] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
-    const code = formData.get('code') as string;
+    const code = formData.get("code") as string;
     
     // Input 입력 체크
-    if (code === '' || code !== validCode) {
-      setError(true);
-      setErrorMsg('인증번호가 일치하지 않습니다.');
+    const isValidCode = (input: string): boolean => input.trim() !== '' && input === validCode;
+    if (!isValidCode(code)) {
+      setErrorMsg("인증번호가 일치하지 않습니다.");
       return;
     }
+    
+    setErrorMsg(''); // Error 초기화
+    onSubmit(); // 부모 컴포넌트로 id 전달
+  };
 
-    // Error 초기화
-    setError(false);
-    setErrorMsg('');
-
-    // 부모 컴포넌트로 id 전달
-    onSubmit();
-  }
+  useEffect(() => {
+    console.log("validCode:", validCode);
+  }, [validCode]);
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="space-y-4">
-        <input
-          type="text"
-          name="code"
-          className={clsx("border px-4 h-16 w-full bg-white rounded-full", {
-            "border-red-500": error,
-          })}
-          placeholder="4자리 입력"
-          defaultValue={validCode}
-        />
-        { errorMsg && <p className="text-error">{errorMsg}</p> }
-      </div>
-      <button type="submit" className="border mt-4 p-4 w-full h-16 bg-gray-100 rounded-full">계속</button>
+      <InputWithError type="text" name="code" placeholder="8자리 입력" label="인증번호" errorMessage={errorMsg} />
+      <button type="submit" className="border mt-4 p-4 w-full h-16 bg-primary text-white rounded-full">계속</button>
     </form>
   );
 }

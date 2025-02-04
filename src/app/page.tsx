@@ -1,30 +1,25 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import UsersBar from "@/src/components/bars/UsersBar";
 import ChatroomCard from "@/src/components/cards/ChatroomCard";
 import ChatroomCreateForm from "@/src/components/forms/ChatroomCreateForm";
-import DashboardSidebar from "@/src/components/sidebars/DashboardSidebar";
+import Modal from "@/src/components/items/Modal";
 import { chatroomList } from "@/src/libs/chatroom";
-import chatroomMocks from "@/src/mocks/chatrooms.json";
 import { useHandleRequestFail } from "@/src/webhooks/useHandleRequestFail";
 import IconPlus from "@/public/images/icons/plus.svg";
-import Modal from "@/src/components/Modal";
 
 export default function Home() {
   const [isPopup, setIsPopup] = useState<boolean>(false);
-  const [chatrooms, setChatrooms] = useState<Chatroom[]>(chatroomMocks);
+  const [chatrooms, setChatrooms] = useState<Chatroom[]>([]);
   const handleRequestFail = useHandleRequestFail();
 
   const fetchChatrooms = useCallback(async () => {
     try {
       const data = await chatroomList();
-      if (!data.isSuccess) {
-        const message = handleRequestFail(data);
-        throw new Error(message);
-      }
+      if (!data.isSuccess) throw new Error(handleRequestFail(data));
 
-      const newChatrooms = [ ...chatroomMocks, ...(data.roomList || []) ];
-      setChatrooms(newChatrooms);
+      setChatrooms(data.roomList || []);
     } catch (error) {
       console.error("Failed to fetch chatrooms:", error);
     }
@@ -57,8 +52,8 @@ export default function Home() {
           </div>
         </div>
         <div className="flex flex-col lg:flex-row justify-center items-center lg:items-start lg:px-4 w-sm md:w-full h-full">
-          <DashboardSidebar />
-          <div className="flex justify-center size-full pt-4 lg:pt-0 overflow-y-auto">
+          <UsersBar />
+          <div className="flex justify-center size-full lg:pt-0 overflow-y-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mx-auto">
               {chatrooms.length
                 ? chatrooms.map((chatroom, index) => <ChatroomCard key={index} chatroom={chatroom} />)

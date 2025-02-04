@@ -35,10 +35,7 @@ export default function ChatroomCreateForm({ onClose }: ChatroomCreateFormProps)
 
     try {
       const data = await chatroomCreate({ roomName, maxUserCount, usePwd, pwd, userIdx });
-      if (!data.isSuccess) {
-        const message = handleRequestFail(data);
-        throw new Error(message);
-      }
+      if (!data.isSuccess) throw new Error(handleRequestFail(data));
 
       router.push(`/chatroom/view/${data.roomData.sessionId}`);
     } catch (error) {

@@ -28,10 +28,7 @@ export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
     
     try {
       const data = await userUpdate(idx, nickName);
-      if (!data.isSuccess) {
-        const message = handleRequestFail(data);
-        throw new Error(message);
-      }
+      if (!data.isSuccess) throw new Error(handleRequestFail(data));
   
       alert('회원 정보 수정에 성공하였습니다.');
 
