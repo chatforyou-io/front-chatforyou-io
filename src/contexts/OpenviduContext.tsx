@@ -100,8 +100,10 @@ export default function OpenviduProvider({ children }: { children: ReactNode }) 
     setPublisher(newPublisher);
   }, []);
 
-  const leaveSession = useCallback(() => {
+  const leaveSession = useCallback(async () => {
     if (session.current) {
+      if (publisher) await session.current.unpublish(publisher);
+      
       session.current.disconnect();
       session.current = undefined;
     }
