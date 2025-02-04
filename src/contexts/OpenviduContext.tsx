@@ -47,6 +47,8 @@ export default function OpenviduProvider({ children }: { children: ReactNode }) 
   const [videoInputs, setVideoInputs] = useState<Device[]>([]);
 
   const initOpenvidu = async () => {
+    await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+
     if (!ov.current) {
       ov.current = new OpenVidu();
       ov.current.enableProdMode();
