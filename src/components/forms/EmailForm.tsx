@@ -1,6 +1,6 @@
 import { FormEvent, useState } from 'react';
-import { validate } from '@/src/libs/auth';
 import clsx from 'clsx';
+import { validate } from '@/src/libs/auth';
 import { useHandleRequestFail } from '@/src/webhooks/useHandleRequestFail';
 
 interface SignUpEmailFormProps {
@@ -36,10 +36,7 @@ export default function SignUpEmailForm({ onSubmit }: SignUpEmailFormProps) {
     try {
       // id 중복 체크
       const data = await validate(id);
-      if (!data.isSuccess) {
-        const message = handleRequestFail(data);
-        throw new Error(message);
-      }
+      if (!data.isSuccess) throw new Error(handleRequestFail(data));
 
       // 수신받은 인증 번호
       if ('mailCode' in data) {

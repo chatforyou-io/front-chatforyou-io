@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
 import NextAuthProvider from "@/src/contexts/NextAuthContext";
-import Header from "@/src/components/Header";
+import Header from "@/src/components/items/Header";
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "ChatForYou.io",
-  description: "Simple games with WebRTC video chats.",
+  description: "Simple WebRTC Chat Application",
 };
 
 export default function RootLayout({
