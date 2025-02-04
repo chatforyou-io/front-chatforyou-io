@@ -1,13 +1,13 @@
 import { useState } from "react";
 
-interface FormErrors {
+interface LoginErrors {
   username?: string;
   password?: string;
   login?: string;
 };
 
 const useLoginValidation = () => {
-  const [errors, setErrors] = useState<FormErrors>({});
+  const [errors, setErrors] = useState<LoginErrors>({});
   
   const validateUsername = (username: string): boolean => {
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -22,7 +22,7 @@ const useLoginValidation = () => {
   };
 
   const validate = (username: string, password: string): boolean => {
-    const newErrors: FormErrors = {};
+    const newErrors: LoginErrors = {};
 
     if (!username) {
       newErrors.username = "이메일 주소를 입력하세요.";

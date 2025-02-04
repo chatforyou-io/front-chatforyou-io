@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import SocialLoginCard from "@/src/components/cards/SocialLoginCard";
 import EmailForm from "@/src/components/forms/EmailForm";
-import UserInfoForm from "@/src/components/forms/UserInfoForm";
+import SignUpForm from "@/src/components/forms/SignUpForm";
 import ValidForm from "@/src/components/forms/ValidForm";
 import { userCreate } from "@/src/libs/user";
 import { useHandleRequestFail } from "@/src/webhooks/useHandleRequestFail";
@@ -52,7 +52,7 @@ export default function Page() {
       case STEPS.VALIDATION:
         return <ValidForm validCode={validCode} onSubmit={handleSubmitEmailValid} />;
       case STEPS.USER_INFO:
-        return <UserInfoForm onSubmit={handleSubmitUserInfo} />;
+        return <SignUpForm onSubmit={handleSubmitUserInfo} />;
       default:
         return null;
     }
