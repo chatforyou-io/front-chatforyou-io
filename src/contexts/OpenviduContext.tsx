@@ -47,13 +47,12 @@ export default function OpenviduProvider({ children }: { children: ReactNode }) 
   const [videoInputs, setVideoInputs] = useState<Device[]>([]);
 
   const initOpenvidu = async () => {
-    if (!ov.current) {
-      ov.current = new OpenVidu();
-      ov.current.enableProdMode();
-    }
+    if (ov.current) return;
 
+    ov.current = new OpenVidu();
+    ov.current.enableProdMode();
     await ov.current.getUserMedia(publisherProperties.current);
-  }
+  };
 
   const joinSession = useCallback(async (token: string, userIdx: number) => {
     await initOpenvidu();
@@ -79,7 +78,6 @@ export default function OpenviduProvider({ children }: { children: ReactNode }) 
 
     session.current.on("streamCreated", (event) => {
       const streamManager = event.stream.streamManager;
-
       if (streamManager?.stream.connection.connectionId === session.current?.connection.connectionId) return;
     
       const subscriber = session.current!.subscribe(event.stream, undefined);
@@ -100,9 +98,12 @@ export default function OpenviduProvider({ children }: { children: ReactNode }) 
     setPublisher(newPublisher);
   }, []);
 
-  const leaveSession = useCallback(async () => {
+  const leaveSession = useCallback(() => {
     if (session.current) {
-      if (publisher) await session.current.unpublish(publisher);
+      if (publisher) {
+        const stream = publisher.stream.getMediaStream();
+        stream.getTracks().forEach((track) => track.stop());
+      }
       
       session.current.disconnect();
       session.current = undefined;
