@@ -12,7 +12,7 @@ export default function ButtonWithError({ type, name, label, errorMessage }: But
       <button
         type={type}
         name={name}
-        className={clsx("border px-4 h-16 w-full bg-white rounded-full", {
+        className={clsx("border px-4 h-16 w-full bg-primary text-white rounded-full", {
           "border-red-500": errorMessage,
         })}>
         {label}

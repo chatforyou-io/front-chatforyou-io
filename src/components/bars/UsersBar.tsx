@@ -46,7 +46,7 @@ export default function UsersBar() {
   }, [fetchUsers]);
 
   return (
-    <div className="flex justify-center items-center w-full md:w-160 lg:w-88">
+    <div className="flex justify-center items-center pb-4 w-full md:w-160 lg:w-88">
       <div className="flex flex-col justify-center items-center gap-4 py-2 w-full text-center bg-white rounded-xl">
         <div className={clsx("flex flex-col gap-4 lg:flex", { hidden: !isOpen })}>
           <div className="flex justify-center items-center gap-2 pt-2">
