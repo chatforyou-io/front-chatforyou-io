@@ -1,4 +1,4 @@
-import { FC, ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 interface ModalProps {
   isOpen: boolean;
@@ -6,7 +6,7 @@ interface ModalProps {
   children: ReactNode;
 }
 
-const Modal: FC<ModalProps> = ({ isOpen, onClose, children }) => {
+export default function Modal({ isOpen, onClose, children }: ModalProps) {
   if (!isOpen) return null;
 
   return (
@@ -16,6 +16,4 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, children }) => {
       </div>
     </div>
   );
-};
-
-export default Modal;
+}

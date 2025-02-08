@@ -1,24 +1,9 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
+import clsx from "clsx";
 import { userCurrentList, userList } from "@/src/libs/user";
 import { useHandleRequestFail } from "@/src/webhooks/useHandleRequestFail";
 import IconDown from "@/public/images/icons/arrow-down.svg";
-import IconUser from '@/public/images/icon-user.svg';
-import clsx from "clsx";
-
-const UserItem = ({ user, isCurrent }: { user: User; isCurrent?: boolean; }) => (
-  <div className="flex items-center gap-2 px-4 w-full">
-    <IconUser 
-      aria-label="user" 
-      width={36} 
-      height={36} 
-      className={clsx("border-2 rounded-full", {
-        "border-gray-700 text-gray-700 fill-gray-700": isCurrent,
-        "border-gray-400 text-gray-400 fill-gray-400": !isCurrent
-      })} 
-    />
-    <span className={isCurrent ? "text-gray-700" : "text-gray-400"}>{user.name}</span>
-  </div>
-);
+import UserItem from "@/src/components/items/UserItem";
 
 export default function UsersBar() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -46,38 +31,46 @@ export default function UsersBar() {
   }, [fetchUsers]);
 
   return (
-    <div className="flex justify-center items-center pb-4 w-full md:w-160 lg:w-88">
-      <div className="flex flex-col justify-center items-center gap-4 py-2 w-full text-center bg-white rounded-xl">
-        <div className={clsx("flex flex-col gap-4 lg:flex", { hidden: !isOpen })}>
-          <div className="flex justify-center items-center gap-2 pt-2">
-            <h3 className="text-xl text-center font-semibold">접속 중 ({currentUsers.length}명)</h3>
-            <button
-              type="button"
-              onClick={toggleIsOpen}
-              className={clsx("lg:hidden rotate-180", { hidden: !isOpen})}>
-              <IconDown width={24} height={24} />
-            </button>
-          </div>
-          <div className="flex justify-center size-full pt-4 overflow-y-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 mx-auto">
-              {currentUsers
-                .map((user) => (
-                  <UserItem key={`${user.idx}`} user={user} isCurrent={true} />
-                ))}
-              {users
-                .filter((user) => !currentUsers.find((current) => current.idx === user.idx))
-                .map((user) => (
-                  <UserItem key={`${user.idx}`} user={user} isCurrent={false} />
-                ))}
-            </div>
-          </div>
-        </div>
+    <div className="flex flex-col justify-center pb-4 w-full md:w-160 lg:w-80 lg:h-[calc(100%-1rem)] lg:mb-4 bg-white rounded-xl">
+      <div className={clsx("md:hidden justify-center items-center pt-4", {
+        "hidden": isOpen,
+        "flex": !isOpen })}>
+        <button
+          type="button"
+          onClick={toggleIsOpen}>
+          <IconDown width={16} height={16} />
+        </button>
+      </div>
+      <div className={clsx("hidden lg:hidden justify-center items-center gap-4 pt-4", {
+        "hidden": isOpen,
+        "md:flex": !isOpen })}>
+        <h3 className="text-xl text-center font-semibold">접속 중 ({currentUsers.length}명)</h3>
+        <button
+          type="button"
+          onClick={toggleIsOpen}>
+          <IconDown width={16} height={16} />
+        </button>
+      </div>
+      <div className={clsx("lg:hidden justify-center items-center pt-4", {
+        "flex": isOpen,
+        "hidden": !isOpen })}>
         <button
           type="button"
           onClick={toggleIsOpen}
-          className={clsx("lg:hidden", { hidden: isOpen })}>
-          <IconDown width={24} height={24} />
+          className="rotate-180">
+          <IconDown width={16} height={16} />
         </button>
+      </div>
+      <div className="hidden lg:flex justify-center items-center pt-4">
+        <h3 className="text-xl text-center font-semibold">접속 중 ({currentUsers.length}명)</h3>
+      </div>
+      <div className={clsx("lg:flex flex-col pt-4 size-full space-y-4 overflow-y-auto", {
+        "flex": isOpen,
+        "hidden": !isOpen })}>
+        {users.map((user) => {
+          const isCurrent = currentUsers.some((currentUser) => currentUser.idx === user.idx);
+          return <UserItem key={`${user.idx}`} user={user} isCurrent={isCurrent} />;
+        })}
       </div>
     </div>
   );
