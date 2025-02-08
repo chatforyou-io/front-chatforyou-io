@@ -34,7 +34,15 @@ export default function Page({ params }: PageProps) {
         const data = await chatroomToken(sessionId, userIdx);
         if (!data.isSuccess) throw new Error(handleRequestFail(data));
         
-        setChatroom(data.roomInfo);
+        const createDatetime = new Date(data.roomInfo.createDate).toLocaleString("ko-KR", {
+          timeZone: "Asia/Seoul",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+        setChatroom({ ...data.roomInfo, createDatetime });
         setToken(data.joinUserInfo.camera_token);
       } catch (error) {
         console.error(error);
@@ -103,7 +111,7 @@ export default function Page({ params }: PageProps) {
           </div>
           <div className="w-full">
             <h3 className="font-semibold">{chatroom?.roomName}</h3>
-            <span className="text-sm">{chatroom?.createDt}</span>
+            <span className="text-sm">{chatroom?.createDatetime}</span>
           </div>
           <div>
             <button

@@ -128,8 +128,16 @@ body {}
 
 body.dark {}
 
-input {
+input,
+select {
   outline: none;
+  font: inherit;
+  color: inherit;
+  
+  /* 브라우저 기본 appearance 제거 */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
 /* 전체 스크롤바 스타일 */
