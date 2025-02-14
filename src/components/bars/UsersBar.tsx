@@ -67,7 +67,11 @@ export default function UsersBar() {
       <div className={clsx("lg:flex flex-col pt-4 size-full space-y-4 overflow-y-auto", {
         "flex": isOpen,
         "hidden": !isOpen })}>
-        {users.map((user) => {
+        {users.sort((a, b) => {
+          if (a.lastLoginDate === null) return 1;
+          if (b.lastLoginDate === null) return -1;
+          return b.lastLoginDate - a.lastLoginDate
+        }).map((user) => {
           const isCurrent = currentUsers.some((currentUser) => currentUser.idx === user.idx);
           return <UserItem key={`${user.idx}`} user={user} isCurrent={isCurrent} />;
         })}
