@@ -10,4 +10,5 @@ interface User {
   create_date?: Date,
   accessToken?: string,
   refreshToken?: string,
+  lastLoginDate: number | null
 }
