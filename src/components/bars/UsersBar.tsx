@@ -70,7 +70,7 @@ export default function UsersBar() {
         {users.sort((a, b) => {
           if (a.lastLoginDate === null) return 1;
           if (b.lastLoginDate === null) return -1;
-          return b.lastLoginDate - a.lastLoginDate
+          return (b.lastLoginDate ?? 0) - (a.lastLoginDate ?? 0)
         }).map((user) => {
           const isCurrent = currentUsers.some((currentUser) => currentUser.idx === user.idx);
           return <UserItem key={`${user.idx}`} user={user} isCurrent={isCurrent} />;
