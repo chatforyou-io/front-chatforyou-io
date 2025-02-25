@@ -6,14 +6,28 @@ interface LoginErrors {
   login?: string;
 };
 
-const useLoginValidation = () => {
+/**
+ * 로그인 유효성 검사
+ * @returns 
+ */
+export const useLoginValidation = () => {
   const [errors, setErrors] = useState<LoginErrors>({});
   
+  /**
+   * 아이디 유효성 검사
+   * @param username 
+   * @returns 
+   */
   const validateUsername = (username: string): boolean => {
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return regex.test(username);
   };
 
+  /**
+   * 비밀번호 유효성 검사
+   * @param password 
+   * @returns 
+   */
   const validatePassword = (password: string): boolean => {
     const numberReg = /[0-9]/;
     const alphabetsReg = /[a-zA-Z]/;
@@ -21,6 +35,12 @@ const useLoginValidation = () => {
     return password.length >= 8 && numberReg.test(password) && alphabetsReg.test(password) && specialCharReg.test(password);
   };
 
+  /**
+   * 로그인 유효성 검사
+   * @param username 
+   * @param password 
+   * @returns 
+   */
   const validate = (username: string, password: string): boolean => {
     const newErrors: LoginErrors = {};
 
@@ -42,5 +62,3 @@ const useLoginValidation = () => {
 
   return { errors, setErrors, validate };
 };
-
-export { useLoginValidation };

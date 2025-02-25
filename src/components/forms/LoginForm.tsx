@@ -10,6 +10,7 @@ export default function LoginForm() {
   const router = useRouter();
   const { errors, setErrors, validate } = useLoginValidation();
 
+  // 로그인 요청
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -17,6 +18,7 @@ export default function LoginForm() {
     const username = formData.get("username") as string;
     const password = formData.get("password") as string;
 
+    // 유효성 검사
     if (!validate(username, password)) return;
 
     try {
@@ -24,7 +26,7 @@ export default function LoginForm() {
       const response = await instance.post("/chatforyouio/front/api/login", { username, password });
 
       // 로그인 실패 시
-      if (response.status !== 200) throw new Error(response.data.message);
+      if (response.status !== 200) throw new Error(response.data.message || "알 수 없는 오류로 로그인에 실패했습니다. 다시 시도해주세요.");
 
       // 로그인 성공 시
       router.push("/");
@@ -37,6 +39,7 @@ export default function LoginForm() {
     }
   };
   
+  // 로그인 실패 시 오류 처리
   const handleSubmitError = (error: string) => {
     setErrors(prevErrors => ({ ...prevErrors, login: error }));
   };
