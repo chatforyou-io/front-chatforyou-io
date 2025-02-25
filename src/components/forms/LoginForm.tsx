@@ -1,9 +1,10 @@
 import { FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
 import ButtonWithError from "@/src/components/items/ButtonWithError";
 import InputWithError from "@/src/components/items/InputWithError";
 import { useLoginValidation } from "@/src/webhooks/useLoginValidation";
+import instance from "@/src/libs/utils/instance";
+import { AxiosError } from "axios";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -19,22 +20,25 @@ export default function LoginForm() {
     if (!validate(username, password)) return;
 
     try {
-      const response = await signIn("credentials", { redirect: false, username, password });
-      if (response && response.error) throw new Error(response.error);
-      
+      // 로그인 요청
+      const response = await instance.post("/chatforyouio/front/api/login", { username, password });
+
+      // 로그인 실패 시
+      if (response.status !== 200) throw new Error(response.data.message);
+
+      // 로그인 성공 시
       router.push("/");
     } catch (error) {
-      console.log(error);
-      handleSubmitError(error instanceof Error ? error.message : "Unknown error");
+      console.error(error);
+      if (error instanceof AxiosError) {
+        const errorMessage = error.response?.data.message;
+        handleSubmitError(errorMessage);
+      }
     }
   };
   
   const handleSubmitError = (error: string) => {
-    const errorMessages: Record<string, string> = {
-      "CredentialsSignin": "아이디 또는 비밀번호가 잘못되었습니다. 다시 확인해주세요.",
-      "OAuthSignin": "소셜 로그인에 실패했습니다. 다시 시도해주세요.",  
-    };
-    setErrors(prevErrors => ({ ...prevErrors, login: errorMessages[error] || "알 수 없는 오류로 로그인에 실패했습니다. 다시 시도해주세요." }));
+    setErrors(prevErrors => ({ ...prevErrors, login: error }));
   };
 
   return (
