@@ -1,14 +1,16 @@
 import { FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { AxiosError } from "axios";
 import ButtonWithError from "@/src/components/items/ButtonWithError";
 import InputWithError from "@/src/components/items/InputWithError";
+import { useUser } from "@/src/contexts/AuthProvider";
+import apiClient from "@/src/libs/utils/apiClient";
 import { useLoginValidation } from "@/src/webhooks/useLoginValidation";
-import instance from "@/src/libs/utils/instance";
-import { AxiosError } from "axios";
 
 export default function LoginForm() {
-  const router = useRouter();
+  const { setUser } = useUser();
   const { errors, setErrors, validate } = useLoginValidation();
+  const router = useRouter();
 
   // 로그인 요청
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -23,10 +25,13 @@ export default function LoginForm() {
 
     try {
       // 로그인 요청
-      const response = await instance.post("/chatforyouio/front/api/login", { username, password });
+      const response = await apiClient.post("/chatforyouio/front/api/login", { username, password });
 
       // 로그인 실패 시
       if (response.status !== 200) throw new Error(response.data.message || "알 수 없는 오류로 로그인에 실패했습니다. 다시 시도해주세요.");
+
+      // 로그인 성공 시
+      setUser(response.data.userData);
 
       // 로그인 성공 시
       router.push("/");

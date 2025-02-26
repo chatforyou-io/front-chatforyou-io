@@ -1,14 +1,21 @@
 "use server";
 
 import { AxiosError } from "axios";
-import instance from "@/src/libs/utils/instance";
+import apiClient from "@/src/libs/utils/apiClient";
 import { handleAxiosError } from "@/src/libs/utils/serverCommon";
 
-const userCreate = async (user: User) => {
+/**
+ * 사용자 생성
+ * @param {User} user 사용자 정보
+ * @returns {Promise<UserResponse>} 사용자 정보
+ */
+const userCreate = async (user: User): Promise<UserResponse> => {
   try {
-    if (!user.pwd || !user.confirmPwd) throw new AxiosError("비밀번호를 입력해주세요.");
+    if (!user.pwd || !user.confirmPwd) {
+      throw new AxiosError("비밀번호를 입력해주세요.");
+    }
 
-    const { data } = await instance.post("/chatforyouio/user/create", { ...user, pwd: btoa(user.pwd), confirmPwd: btoa(user.confirmPwd) });
+    const { data } = await apiClient.post("/chatforyouio/user/create", { ...user, pwd: btoa(user.pwd), confirmPwd: btoa(user.confirmPwd) });
 
     return { isSuccess: true, ...data };
   } catch (error) {
@@ -16,9 +23,15 @@ const userCreate = async (user: User) => {
   }
 };
 
-const userUpdate = async (idx: number, nickName: string) => {
+/**
+ * 사용자 수정
+ * @param {number} idx 사용자 인덱스
+ * @param {string} nickName 닉네임
+ * @returns {Promise<UserResponse>} 사용자 정보
+ */
+const userUpdate = async (idx: number, nickName: string): Promise<UserResponse> => {
   try {
-    const { data } = await instance.patch("/chatforyouio/user/update", { idx, nickName });
+    const { data } = await apiClient.patch("/chatforyouio/user/update", { idx, nickName });
     
     return { isSuccess: true, ...data };
   } catch (error) {
@@ -26,9 +39,14 @@ const userUpdate = async (idx: number, nickName: string) => {
   }
 };
 
-const userDelete = async (idx: number) => {
+/**
+ * 사용자 삭제
+ * @param {number} idx 사용자 인덱스
+ * @returns {Promise<UserResponse>} 사용자 정보
+ */
+const userDelete = async (idx: number): Promise<UserResponse> => {
   try {
-    const { data } = await instance.delete("/chatforyouio/user/delete", { data: { userIdx: idx } });
+    const { data } = await apiClient.delete("/chatforyouio/user/delete", { data: { userIdx: idx } });
     
     return { isSuccess: true, ...data };
   } catch (error) {
@@ -36,9 +54,15 @@ const userDelete = async (idx: number) => {
   }
 };
 
-const userInfo = async (id: string, pwd: string) => {
+/**
+ * 사용자 정보 조회
+ * @param {string} id 아이디
+ * @param {string} pwd 비밀번호
+ * @returns {Promise<UserResponse>} 사용자 정보
+ */
+const userInfo = async (id: string, pwd: string): Promise<UserResponse> => {
   try {
-    const { data } = await instance.get(`/chatforyouio/user/info`, { params: { id, pwd: btoa(pwd) } });
+    const { data } = await apiClient.get(`/chatforyouio/user/info`, { params: { id, pwd: btoa(pwd) } });
     
     return { isSuccess: true, ...data };
   } catch (error) {
@@ -46,9 +70,14 @@ const userInfo = async (id: string, pwd: string) => {
   }
 };
 
-const userCheckNickname = async (nickname: string) => {
+/**
+ * 사용자 닉네임 중복 체크
+ * @param {string} nickname 닉네임
+ * @returns {Promise<UserResponse>} 사용자 정보
+ */
+const userCheckNickname = async (nickname: string): Promise<UserResponse> => {
   try {
-    const { data } = await instance.get("/chatforyouio/user/check_nick_name", { params: { nickName: nickname } });
+    const { data } = await apiClient.get("/chatforyouio/user/check_nick_name", { params: { nickName: nickname } });
     
     return { isSuccess: true, ...data };
   } catch (error) {
@@ -56,9 +85,13 @@ const userCheckNickname = async (nickname: string) => {
   }
 };
 
-const userList = async () => {
+/**
+ * 사용자 목록 조회
+ * @returns {Promise<UserResponse>} 사용자 정보
+ */
+const userList = async (): Promise<UserResponse> => {
   try {
-    const response = await instance.get("/chatforyouio/user/list");
+    const response = await apiClient.get("/chatforyouio/user/list");
     
     return { isSuccess: true, ...response.data };
   } catch (error) {
@@ -66,9 +99,13 @@ const userList = async () => {
   }
 }
 
-const userCurrentList = async () => {
+/**
+ * 현재 사용자 목록 조회
+ * @returns {Promise<UserResponse>} 사용자 정보
+ */ 
+const userCurrentList = async (): Promise<UserResponse> => {
   try {
-    const response = await instance.get("/chatforyouio/user/list/current");
+    const response = await apiClient.get("/chatforyouio/user/list/current");
     
     return { isSuccess: true, ...response.data };
   } catch (error) {

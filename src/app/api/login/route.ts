@@ -16,18 +16,21 @@ export async function POST(request: Request) {
     }
 
     // 로그인 요청
-    const { isSuccess } = await login(username, password);
+    const { isSuccess, userData } = await login(username, password);
 
     // 로그인 실패 시
     if (!isSuccess) {
       return NextResponse.json({ message: '아이디 또는 비밀번호가 잘못되었습니다. 다시 확인해 주세요.' }, { status: 401 });
     }
 
-    console.log(request.headers);
+    // 사용자 데이터가 존재하지 않을 경우
+    if (!userData) {
+      return NextResponse.json({ message: '사용자 데이터가 존재하지 않습니다.' }, { status: 400 });
+    }
 
     // 토큰 추출
-    const accessToken = request.headers.get('AccessToken');
-    const refreshToken = request.headers.get('RefreshToken');
+    const accessToken = userData.accessToken;
+    const refreshToken = userData.refreshToken;
 
     // 토큰이 존재하지 않을 경우
     if (!accessToken || !refreshToken) {
