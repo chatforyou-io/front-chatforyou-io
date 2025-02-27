@@ -1,8 +1,21 @@
 "use server";
 
 import { AxiosError } from "axios";
-import apiClient from "@/src/libs/utils/apiClient";
 import { handleAxiosError } from "@/src/libs/utils/serverCommon";
+import serverApiInstance from "@/src/libs/utils/serverApiInstance";
+
+// 로그인 응답 타입
+interface LoginResponse extends DefaultResponse {
+  userData?: UserData;
+  accessToken?: string;
+  refreshToken?: string;
+}
+
+// 이메일 유효성 검사 응답 타입
+interface ValidateResponse extends DefaultResponse {
+  result?: boolean;
+  mailCode?: string;
+}
 
 /**
  * 로그인
@@ -12,7 +25,7 @@ import { handleAxiosError } from "@/src/libs/utils/serverCommon";
  */
 const login = async (id: string, pwd: string): Promise<LoginResponse> => {
   try {
-    const { headers, data } = await apiClient.post("/chatforyouio/auth/login", { id, pwd: btoa(pwd) });
+    const { headers, data } = await serverApiInstance.post("/chatforyouio/auth/login", { id, pwd: btoa(pwd) });
 
     const accessToken = headers["accesstoken"];
     const refreshToken = headers["refreshtoken"];
@@ -23,14 +36,11 @@ const login = async (id: string, pwd: string): Promise<LoginResponse> => {
 
     return {
       isSuccess: true,
-      ...data,
-      userData: {
-        ...data.userData,
-        accessToken,
-        refreshToken,
-      },
+      userData: data.userData,
+      accessToken,
+      refreshToken
     };
-  } catch (error) {
+  } catch (error: any) {
     return handleAxiosError(error as AxiosError);
   }
 };
@@ -46,7 +56,7 @@ const login = async (id: string, pwd: string): Promise<LoginResponse> => {
  */ 
 const socialLogin = async (provider: string, providerAccountId: string, id?: string, name?: string, nickName?: string): Promise<LoginResponse> => {
   try {
-    const { headers, data } = await apiClient.post("/chatforyouio/auth/login/social", { provider, providerAccountId, id, name, nickName });
+    const { headers, data } = await serverApiInstance.post("/chatforyouio/auth/login/social", { provider, providerAccountId, id, name, nickName });
 
     const accessToken = headers["accesstoken"];
     const refreshToken = headers["refreshtoken"];
@@ -57,12 +67,7 @@ const socialLogin = async (provider: string, providerAccountId: string, id?: str
 
     return {
       isSuccess: true,
-      ...data,
-      userData: {
-        ...data.userData,
-        accessToken,
-        refreshToken
-      }
+      ...data
     };
   } catch (error) {
     return handleAxiosError(error as AxiosError);
@@ -76,7 +81,7 @@ const socialLogin = async (provider: string, providerAccountId: string, id?: str
  */
 const validate = async (email: string): Promise<ValidateResponse> => {
   try {
-    const { headers, data } = await apiClient.get("/chatforyouio/auth/validate", { params: { email }, withCredentials: true });
+    const { headers, data } = await serverApiInstance.get("/chatforyouio/auth/validate", { params: { email } });
 
     const cookies = headers["set-cookie"];
 

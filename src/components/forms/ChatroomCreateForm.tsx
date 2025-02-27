@@ -1,6 +1,6 @@
+import { useUser } from "@/src/contexts/AuthProvider";
 import { chatroomCreate } from "@/src/libs/chatroom";
 import { useHandleRequestFail } from "@/src/webhooks/useHandleRequestFail";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { FormEvent, useMemo } from "react";
 
@@ -9,8 +9,8 @@ interface ChatroomCreateFormProps {
 }
 
 export default function ChatroomCreateForm({ onClose }: ChatroomCreateFormProps) {
-  const { data: userSession } = useSession();
-  const userIdx = useMemo(() => userSession?.user.idx, [userSession?.user.idx]);
+  const { user } = useUser();
+  const userIdx = useMemo(() => user?.idx, [user?.idx]);
   const router = useRouter();
   const handleRequestFail = useHandleRequestFail();
 

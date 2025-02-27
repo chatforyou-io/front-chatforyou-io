@@ -1,6 +1,5 @@
 "use client";
 
-import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 
@@ -11,7 +10,6 @@ const useHandleRequestFail = () => {
     const { code, message } = data;
 
     if (code === "401") {
-      signOut({ redirect: false });
       router.push("/auth/login");
     }
 

@@ -2,13 +2,13 @@
 
 import { useContext, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import OpenviduStream from '@/src/components/openvidu/OpenviduStream';
 import { chatroomToken } from "@/src/libs/chatroom";
 import { OpenviduContext } from "@/src/contexts/OpenviduContext";
 import DeviceSelectors from "@/src/components/bars/DeviceSelectors";
 import { useHandleRequestFail } from "@/src/webhooks/useHandleRequestFail";
 import IconUser from "@/public/images/icon-user.svg";
+import { useUser } from "@/src/contexts/AuthProvider";
 
 interface PageProps {
   params: {
@@ -19,8 +19,8 @@ interface PageProps {
 export default function Page({ params }: PageProps) {
   const { sessionId } = params;
   const { publisher, subscribers, joinSession, leaveSession } = useContext(OpenviduContext);
-  const { data: userSession } = useSession();
-  const userIdx = useMemo(() => userSession?.user.idx, [userSession?.user.idx]);
+  const { user } = useUser();
+  const userIdx = useMemo(() => user?.idx, [user?.idx]);
   const [chatroom, setChatroom] = useState<Chatroom | undefined>(undefined);
   const [token, setToken] = useState<string | undefined>(undefined);
   const [redirect, setRedirect] = useState(false);
@@ -31,6 +31,8 @@ export default function Page({ params }: PageProps) {
   useEffect(() => {
     const fetchChatroom = async () => {
       try {
+        if (!userIdx) throw new Error("사용자 정보를 가져오는데 실패했습니다.");
+        
         const data = await chatroomToken(sessionId, userIdx);
         if (!data.isSuccess) throw new Error(handleRequestFail(data));
         

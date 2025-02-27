@@ -1,4 +1,4 @@
-import { useSession } from 'next-auth/react';
+import { useUser } from '@/src/contexts/AuthProvider';
 import IconUser from '@/public/images/icon-user.svg';
 
 interface ProfileCardProps {
@@ -7,7 +7,7 @@ interface ProfileCardProps {
 }
 
 export default function ProfileCard({ onActiveUserUpdateForm, onSignOut }: ProfileCardProps) {
-  const session = useSession();
+  const { user } = useUser();
   
   return (
     <div className="w-80 bg-white p-8 space-y-8 rounded-xl">
@@ -15,8 +15,8 @@ export default function ProfileCard({ onActiveUserUpdateForm, onSignOut }: Profi
         <IconUser aria-label="room" width={48} height={48} className="border-2 border-gray-700 rounded-full" />
       </div>
       <div className="flex flex-col items-center space-y-2">
-        <h3 className="font-semibold">{session.data?.user?.name}</h3>
-        <p className="text-sm text-gray-500">{session.data?.user?.id}</p>
+        <h3 className="font-semibold">{user?.name}</h3>
+        <p className="text-sm text-gray-500">{user?.id}</p>
       </div>
       <div className="flex flex-col justify-center">
         <div className="py-2 text-center">

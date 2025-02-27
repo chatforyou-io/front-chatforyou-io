@@ -3,7 +3,7 @@ import { login } from '@/src/libs/auth';
 
 export async function POST(request: Request) {
   try {
-    const { username, password }: credentials = await request.json();
+    const { username, password }: Credentials = await request.json();
 
     // 아이디 입력 여부 체크
     if (!username) {
@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     }
 
     // 로그인 요청
-    const { isSuccess, userData } = await login(username, password);
+    const { isSuccess, userData, accessToken, refreshToken } = await login(username, password);
 
     // 로그인 실패 시
     if (!isSuccess) {
@@ -28,17 +28,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: '사용자 데이터가 존재하지 않습니다.' }, { status: 400 });
     }
 
-    // 토큰 추출
-    const accessToken = userData.accessToken;
-    const refreshToken = userData.refreshToken;
-
     // 토큰이 존재하지 않을 경우
     if (!accessToken || !refreshToken) {
       return NextResponse.json({ message: '토큰이 존재하지 않습니다.' }, { status: 400 });
     }
 
     // 응답 생성 및 HTTP Only 쿠키에 세션 ID 설정
-    const response = NextResponse.json({ message: '로그인 성공' });
+    const response = NextResponse.json({ message: '로그인 성공', userData });
 
     // AccessToken 쿠키 설정
     response.cookies.set('AccessToken', accessToken, {
@@ -60,7 +56,6 @@ export async function POST(request: Request) {
 
     return response;
   } catch (error) {
-    console.error(error);
     return NextResponse.json({ message: '로그인에 실패했습니다.' }, { status: 401 });
   }
 }

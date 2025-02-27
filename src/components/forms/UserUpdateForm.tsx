@@ -1,6 +1,6 @@
 import { FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
+import { useUser } from '@/src/contexts/AuthProvider';
 import { userDelete, userUpdate } from '@/src/libs/user';
 import { useHandleRequestFail } from '@/src/webhooks/useHandleRequestFail';
 
@@ -9,7 +9,7 @@ interface UserUpdateFormProps {
 }
 
 export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
-  const { data: session, update } = useSession();
+  const { user, setUser } = useUser();
   const router = useRouter();
   const handleRequestFail = useHandleRequestFail();
 
@@ -24,16 +24,24 @@ export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
       return;
     }
     
-    const { idx } = session?.user;
-    
     try {
+      if (!user) throw new Error("사용자 정보를 가져오는데 실패했습니다.");
+    
+      const { idx } = user;
+      if (!idx) throw new Error("사용자 정보를 가져오는데 실패했습니다.");
+
       const data = await userUpdate(idx, nickName);
       if (!data.isSuccess) throw new Error(handleRequestFail(data));
   
       alert('회원 정보 수정에 성공하였습니다.');
 
-      const newNickName = data.userData.nickName;
-      updateSession(newNickName);
+      const newNickName = data.userData?.nickName;
+      if (!newNickName) throw new Error("사용자 정보를 가져오는데 실패했습니다.");
+      
+      setUser({
+        ...user,
+        nickName: newNickName,
+      });
     } catch (error) {
       console.error('회원 정보 수정 요청 중 오류 발생:', error);
       alert('회원 정보 수정 중 문제가 발생하였습니다. 나중에 다시 시도해주세요.');
@@ -44,7 +52,11 @@ export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
     event.preventDefault();
     
     try {
-      const { idx } = session?.user;
+      if (!user) throw new Error("사용자 정보를 가져오는데 실패했습니다.");
+    
+      const { idx } = user;
+      if (!idx) throw new Error("사용자 정보를 가져오는데 실패했습니다.");
+
       const data = await userDelete(idx);
       if (!data.isSuccess) {
         const message = handleRequestFail(data);
@@ -59,16 +71,6 @@ export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
     }
   };
 
-  const updateSession = async (nickName: string) => {
-    await update({
-      ...session,
-      user: {
-        ...session?.user,
-        nickName,
-      },
-    });
-  };
-
   return (
     <div className="p-8 w-144 space-y-8 bg-white rounded-xl">
       <h1 className="text-2xl text-primary font-bold">회원 정보 수정</h1>
@@ -80,7 +82,7 @@ export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
             name="name"
             className="border px-4 h-16 w-full bg-gray-100 rounded-full"
             placeholder="이름"
-            defaultValue={session?.user.name}
+            defaultValue={user?.name}
           />
         </div>
         <div className="space-y-2">
@@ -90,7 +92,7 @@ export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
             name="nickName"
             className="border px-4 h-16 w-full bg-gray-100 rounded-full"
             placeholder="닉네임"
-            defaultValue={session?.user.nickName}
+            defaultValue={user?.nickName}
           />
         </div>
         <div className="flex space-x-4">
