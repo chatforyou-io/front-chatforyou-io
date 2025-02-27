@@ -11,6 +11,11 @@ interface LoginResponse extends DefaultResponse {
   refreshToken?: string;
 }
 
+// 로그아웃 응답 타입
+interface LogoutResponse extends DefaultResponse {
+  isSuccess: boolean;
+}
+
 // 이메일 유효성 검사 응답 타입
 interface ValidateResponse extends DefaultResponse {
   result?: boolean;
@@ -75,6 +80,22 @@ const socialLogin = async (provider: string, providerAccountId: string, id?: str
 };
 
 /**
+ * 로그아웃
+ * @returns {Promise<LogoutResponse>} 로그아웃 성공 여부 또는 에러 응답
+ */
+const logout = async (): Promise<LogoutResponse> => {
+  try {
+    const { headers, data } = await serverApiInstance.post("/chatforyouio/auth/logout");
+
+    return {
+      isSuccess: true,
+    };
+  } catch (error) {
+    return handleAxiosError(error as AxiosError);
+  }
+};
+
+/**
  * 이메일 유효성 검사
  * @param {string} email 이메일
  * @returns {Promise<ValidateResponse>} 이메일 유효성 검사 결과 또는 에러 응답
@@ -106,4 +127,4 @@ const validate = async (email: string): Promise<ValidateResponse> => {
   }
 };
 
-export { login, socialLogin, validate };
+export { login, socialLogin, logout, validate };
