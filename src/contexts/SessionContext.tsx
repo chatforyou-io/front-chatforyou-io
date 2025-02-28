@@ -103,7 +103,7 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
       console.error(error);
       return null;
     }
-  }, []);
+  }, [user]);
 
   /**
    * 사용자 정보 수정
