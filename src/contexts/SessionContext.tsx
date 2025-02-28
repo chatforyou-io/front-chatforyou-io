@@ -4,9 +4,9 @@ import { createContext, useContext, useState, useCallback, ReactNode } from 'rea
 import axios from 'axios';
 
 interface SessionContextType {
-  user: User | null;
   signIn: (username: string, password: string) => Promise<{ isSuccess: boolean, message: string }>;
   signOut: () => Promise<{ isSuccess: boolean, message: string }>;
+  getUser: () => Promise<User | null>;
   updateUser: (idx: number, nickName: string) => Promise<{ isSuccess: boolean, message: string }>;
   deleteUser: (idx: number) => Promise<{ isSuccess: boolean, message: string }>;
 }
@@ -30,7 +30,7 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
   const signIn = useCallback(async (username: string, password: string): Promise<{ isSuccess: boolean, message: string }> => {
     try {
       // 로그인 요청
-      const { status, data } = await axios.post("/chatforyouio/front/api/signIn", { username, password });
+      const { status, data } = await axios.post("/chatforyouio/front/api/signin", { username, password });
       const { userData, message } = data;
 
       // 로그인 실패 시
@@ -55,7 +55,7 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
   const signOut = useCallback(async (): Promise<{ isSuccess: boolean, message: string }> => {
     try {
       // 로그아웃 요청
-      const { status, data } = await axios.post("/chatforyouio/front/api/signOut");
+      const { status, data } = await axios.post("/chatforyouio/front/api/signout");
       const { message } = data;
 
       // 로그아웃 실패 시
@@ -75,17 +75,21 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
   }, []);
 
   const getUser = useCallback(async (): Promise<User | null> => {
+    if (user) {
+      return user;
+    }
+
     try {
-      const { status, data } = await axios.get("/chatforyouio/front/api/user");
-      const { userData, message } = data;
+      const { status, data } = await axios.get("/chatforyouio/front/api/me");
+      const { session, message } = data;
 
       if (status !== 200) {
         throw new Error(message || "알 수 없는 오류로 사용자 정보를 가져오지 못했습니다. 다시 시도해주세요.");
       }
 
-      setUser(userData);
+      setUser(session);
 
-      return userData;
+      return session;
     } catch (error) {
       console.error(error);
       return null;
@@ -125,7 +129,7 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
   }, []);
 
   return (
-    <SessionContext.Provider value={{ user, signIn, signOut, updateUser, deleteUser }}>
+    <SessionContext.Provider value={{ signIn, signOut, getUser, updateUser, deleteUser }}>
       {children}
     </SessionContext.Provider>
   );

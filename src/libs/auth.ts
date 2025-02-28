@@ -5,14 +5,14 @@ import { handleAxiosError } from "@/src/libs/utils/serverCommon";
 import serverApiInstance from "@/src/libs/utils/serverApiInstance";
 
 // 로그인 응답 타입
-interface LoginResponse extends DefaultResponse {
+interface SignInResponse extends DefaultResponse {
   userData?: UserData;
   accessToken?: string;
   refreshToken?: string;
 }
 
 // 로그아웃 응답 타입
-interface LogoutResponse extends DefaultResponse {
+interface SignOutResponse extends DefaultResponse {
   isSuccess: boolean;
 }
 
@@ -26,9 +26,9 @@ interface ValidateResponse extends DefaultResponse {
  * 로그인
  * @param {string} id 아이디
  * @param {string} pwd 비밀번호
- * @returns {Promise<LoginResponse>} 사용자 정보, 액세스 토큰, 리프레시 토큰 또는 에러 응답
+ * @returns {Promise<SignInResponse>} 사용자 정보, 액세스 토큰, 리프레시 토큰 또는 에러 응답
  */
-const login = async (id: string, pwd: string): Promise<LoginResponse> => {
+const signIn = async (id: string, pwd: string): Promise<SignInResponse> => {
   try {
     const { headers, data } = await serverApiInstance.post("/chatforyouio/auth/login", { id, pwd: btoa(pwd) });
 
@@ -57,9 +57,9 @@ const login = async (id: string, pwd: string): Promise<LoginResponse> => {
  * @param {string} id 아이디
  * @param {string} name 이름
  * @param {string} nickName 닉네임
- * @returns {Promise<LoginResponse>} 사용자 정보, 액세스 토큰, 리프레시 토큰 또는 에러 응답
+ * @returns {Promise<SignInResponse>} 사용자 정보, 액세스 토큰, 리프레시 토큰 또는 에러 응답
  */ 
-const socialLogin = async (provider: string, providerAccountId: string, id?: string, name?: string, nickName?: string): Promise<LoginResponse> => {
+const socialSignIn = async (provider: string, providerAccountId: string, id?: string, name?: string, nickName?: string): Promise<SignInResponse> => {
   try {
     const { headers, data } = await serverApiInstance.post("/chatforyouio/auth/login/social", { provider, providerAccountId, id, name, nickName });
 
@@ -81,9 +81,9 @@ const socialLogin = async (provider: string, providerAccountId: string, id?: str
 
 /**
  * 로그아웃
- * @returns {Promise<LogoutResponse>} 로그아웃 성공 여부 또는 에러 응답
+ * @returns {Promise<SignOutResponse>} 로그아웃 성공 여부 또는 에러 응답
  */
-const logout = async (): Promise<LogoutResponse> => {
+const logout = async (): Promise<SignOutResponse> => {
   try {
     const { headers, data } = await serverApiInstance.post("/chatforyouio/auth/logout");
 
@@ -127,4 +127,4 @@ const validate = async (email: string): Promise<ValidateResponse> => {
   }
 };
 
-export { login, socialLogin, logout, validate };
+export { signIn, socialSignIn, logout, validate };

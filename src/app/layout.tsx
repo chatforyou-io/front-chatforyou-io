@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Noto_Sans_KR } from "next/font/google";
 import Header from "@/src/components/items/Header";
-import { SessionProvider } from "@/src/contexts/SessionProvider";
+import { SessionProvider } from "@/src/contexts/SessionContext";
 import "./globals.css";
 
 const notoSansKR = Noto_Sans_KR({

@@ -10,7 +10,6 @@ export default function SocialLoginCard({}: SocialLoginCardProps) {
 
   const handleSocialLogin = async (provider: string) => {
     try {
-      console.log(provider);
       router.push("/");
     } catch (error) {
       console.error(error?.toString() || 'Unknown error');

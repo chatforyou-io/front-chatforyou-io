@@ -13,6 +13,9 @@ export async function GET() {
 
     // RefreshToken 쿠키 삭제
     response.headers.set("Set-Cookie", "RefreshToken=; HttpOnly; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT");
+    
+    // SessionToken 쿠키 삭제
+    response.headers.set("Set-Cookie", "SessionToken=; HttpOnly; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT");
 
     return response;
   } catch (error) {

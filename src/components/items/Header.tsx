@@ -6,17 +6,24 @@ import { useRouter } from "next/navigation";
 import ProfileCard from "@/src/components/cards/ProfileCard";
 import UserUpdateForm from "@/src/components/forms/UserUpdateForm";
 import Modal from "@/src/components/items/Modal";
-import { useSession } from "@/src/contexts/SessionProvider";
+import { useSession } from "@/src/contexts/SessionContext";
 import IconUser from "@/public/images/icon-user.svg";
 
 export default function Header() {
-  const { user, signOut } = useSession();
-  const router = useRouter();
+  const { getUser, signOut } = useSession();
+  const [user, setUser] = useState<User | null>(null);
 	const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
   const [isUserUpdateFormOpen, setIsUserUpdateFormOpen] = useState<boolean>(false);
+  const router = useRouter();
 
-  console.log(user);
-  
+  useEffect(() => {
+    const fetchUser = async () => {
+      const user = await getUser();
+      setUser(user);
+    }
+    fetchUser();
+  }, [getUser]);
+
   const handleProfile = () => {
     setIsProfileOpen(!isProfileOpen);
   }
@@ -29,7 +36,7 @@ export default function Header() {
   const handleSignOut = async () => {
     await signOut();
     setIsProfileOpen(false);
-    router.push("/auth/login");
+    router.push("/auth/signin");
   }
 
   return (

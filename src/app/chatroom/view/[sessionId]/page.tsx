@@ -8,7 +8,7 @@ import { OpenviduContext } from "@/src/contexts/OpenviduContext";
 import DeviceSelectors from "@/src/components/bars/DeviceSelectors";
 import { useHandleRequestFail } from "@/src/webhooks/useHandleRequestFail";
 import IconUser from "@/public/images/icon-user.svg";
-import { useSession } from "@/src/contexts/SessionProvider";
+import { useSession } from "@/src/contexts/SessionContext";
 
 interface PageProps {
   params: {

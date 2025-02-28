@@ -1,4 +1,4 @@
-import { useSession } from "@/src/contexts/SessionProvider";
+import { useSession } from "@/src/contexts/SessionContext";
 import { chatroomCreate } from "@/src/libs/chatroom";
 import { useHandleRequestFail } from "@/src/webhooks/useHandleRequestFail";
 import { useRouter } from "next/navigation";

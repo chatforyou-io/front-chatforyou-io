@@ -1,4 +1,4 @@
-import { useSession } from '@/src/contexts/SessionProvider';
+import { useSession } from '@/src/contexts/SessionContext';
 import IconUser from '@/public/images/icon-user.svg';
 
 interface ProfileCardProps {

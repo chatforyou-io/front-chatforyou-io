@@ -1,5 +1,8 @@
-import { NextResponse } from 'next/server';
-import { login } from '@/src/libs/auth';
+import { NextResponse } from "next/server";
+import jwt from "jsonwebtoken";
+import { signIn } from "@/src/libs/auth";
+
+const JWT_SECRET = process.env.JWT_SECRET || '';
 
 export async function POST(request: Request) {
   try {
@@ -16,7 +19,7 @@ export async function POST(request: Request) {
     }
 
     // 로그인 요청
-    const { isSuccess, userData, accessToken, refreshToken } = await login(username, password);
+    const { isSuccess, userData, accessToken, refreshToken } = await signIn(username, password);
 
     // 로그인 실패 시
     if (!isSuccess) {
@@ -32,6 +35,9 @@ export async function POST(request: Request) {
     if (!accessToken || !refreshToken) {
       return NextResponse.json({ message: '토큰이 존재하지 않습니다.' }, { status: 400 });
     }
+
+    // session 토큰 생성
+    const sessionToken = jwt.sign(userData, JWT_SECRET, { expiresIn: '1h' });
 
     // 응답 생성 및 HTTP Only 쿠키에 세션 ID 설정
     const response = NextResponse.json({ message: '로그인 성공', userData });
@@ -52,6 +58,15 @@ export async function POST(request: Request) {
       sameSite: 'lax', // 쿠키 동작 방식
       path: '/', // 쿠키 적용 범위
       expires: new Date(Date.now() + 60 * 60 * 24 * 1000), // 1일
+    });
+
+    // SessionToken 쿠키 설정
+    response.cookies.set('SessionToken', sessionToken, {
+      httpOnly: true, // 자바스크립트에서 접근 불가능
+      secure: process.env.NODE_ENV === 'production', // 프로덕션 환경에서만 쿠키 전송
+      sameSite: 'lax', // 쿠키 동작 방식
+      path: '/', // 쿠키 적용 범위
+      expires: new Date(Date.now() + 60 * 60 * 1000), // 1시간
     });
 
     return response;

@@ -17,7 +17,7 @@ export async function middleware(req: NextRequest) {
   
   // 인증되지 않은 사용자가 보호된 경로에 접근할 경우 로그인 페이지로 리다이렉트
   if (!accessToken && !isPublicPath) {
-    const loginUrl = new URL(`${basePath}/auth/login`, origin);
+    const loginUrl = new URL(`${basePath}/auth/signin`, origin);
     loginUrl.searchParams.set('callbackUrl', `${basePath}${pathname}`);
     return NextResponse.redirect(loginUrl);
   }

@@ -1,6 +1,6 @@
 import { FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSession } from '@/src/contexts/SessionProvider';
+import { useSession } from '@/src/contexts/SessionContext';
 import { userDelete, userUpdate } from '@/src/libs/user';
 import { useHandleRequestFail } from '@/src/webhooks/useHandleRequestFail';
 
@@ -66,7 +66,7 @@ export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
         throw new Error(message || "알 수 없는 오류로 회원 탈퇴에 실패했습니다. 다시 시도해주세요.");
       }
   
-      router.push('/auth/login');
+      router.push('/auth/signin');
     } catch (error) {
       console.error('회원 탈퇴 요청 중 오류 발생:', error);
       alert('회원 탈퇴 중 문제가 발생하였습니다. 나중에 다시 시도해주세요.');

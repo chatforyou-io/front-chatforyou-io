@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import axios, { AxiosError } from "axios";
 import ButtonWithError from "@/src/components/items/ButtonWithError";
 import InputWithError from "@/src/components/items/InputWithError";
-import { useSession } from "@/src/contexts/SessionProvider";
+import { useSession } from "@/src/contexts/SessionContext";
 import { useLoginValidation } from "@/src/webhooks/useLoginValidation";
 
 export default function LoginForm() {

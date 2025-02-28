@@ -10,7 +10,7 @@ const useHandleRequestFail = () => {
     const { code, message } = data;
 
     if (code === "401") {
-      router.push("/auth/login");
+      router.push("/auth/signin");
     }
 
     return message;
