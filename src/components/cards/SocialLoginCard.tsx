@@ -9,6 +9,7 @@ export default function SocialLoginCard({}: SocialLoginCardProps) {
   const router = useRouter();
 
   const handleSocialLogin = async (provider: string) => {
+    console.log(provider);
     try {
       router.push("/");
     } catch (error) {

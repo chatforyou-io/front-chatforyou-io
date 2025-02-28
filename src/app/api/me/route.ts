@@ -32,6 +32,7 @@ export async function GET() {
     // 응답 생성
     return NextResponse.json({ message: "로그인에 성공했습니다.", session });
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ message: "로그인에 실패했습니다." }, { status: 401 });
   }
 }
@@ -46,6 +47,7 @@ export async function PATCH(request: Request) {
 
     return NextResponse.json({ message: "사용자 정보 수정에 성공했습니다." }, { status: 200 });
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ message: "사용자 정보 수정에 실패했습니다." }, { status: 400 });
   }
 }
@@ -53,7 +55,10 @@ export async function PATCH(request: Request) {
 export async function DELETE() {
   try {
     await serverApiInstance.delete("/chatforyouio/user/delete");
+
+    return NextResponse.json({ message: "사용자 정보 삭제에 성공했습니다." }, { status: 200 });
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ message: "사용자 정보 삭제에 실패했습니다." }, { status: 400 });
   }
 }

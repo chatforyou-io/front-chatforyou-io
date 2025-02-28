@@ -1,11 +1,8 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { logout } from "@/src/libs/auth";
 
 export async function GET() {
   try {
-    // const { isSuccess } = await logout();
-
     // 응답 생성 및 HTTP Only 쿠키에 세션 ID 설정
     const response = NextResponse.json({ message: "로그아웃 성공" });
 
@@ -20,6 +17,7 @@ export async function GET() {
 
     return response;
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ message: "로그아웃에 실패했습니다." }, { status: 401 });
   }
 }

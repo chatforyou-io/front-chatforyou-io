@@ -40,9 +40,10 @@ export default function SignUpEmailForm({ onSubmit }: SignUpEmailFormProps) {
         const { mailCode } = data;
         // Error 초기화
         setErrorMsg('');
+        
 
         // 부모 컴포넌트로 id 전달
-        onSubmit(id, mailCode);
+        onSubmit(id, mailCode!);
       } else {
         throw new Error("Unexpected response format");
       }
