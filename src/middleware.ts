@@ -6,7 +6,7 @@ export async function middleware(req: NextRequest) {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
   const { pathname, origin } = req.nextUrl;
 
-  const isPublicPath = pathname.startsWith('/auth/');
+  const isPublicPath = pathname.startsWith("/auth/");
   const accessToken = cookies().get("AccessToken")?.value;
   const refreshToken = cookies().get("RefreshToken")?.value;
 
@@ -17,8 +17,8 @@ export async function middleware(req: NextRequest) {
   
   // 인증되지 않은 사용자가 보호된 경로에 접근할 경우 로그인 페이지로 리다이렉트
   if (!accessToken && !isPublicPath) {
-    const loginUrl = new URL(`${basePath}/auth/signin`, origin);
-    loginUrl.searchParams.set('callbackUrl', `${basePath}${pathname}`);
+    const loginUrl = new URL(`${basePath}/auth/login`, origin);
+    loginUrl.searchParams.set("callbackUrl", `${basePath}${pathname}`);
     return NextResponse.redirect(loginUrl);
   }
   
@@ -37,7 +37,7 @@ export const config = {
       * - Favicon file (/favicon.ico)
       * - Public images (/images/...)
      */
-    '/chatforyouio/front',
-    '/((?!api|_next/static|_next/image|favicon.ico|images).*)',
+    "/chatforyouio/front",
+    "/((?!api|_next/static|_next/image|favicon.ico|images).*)",
   ],
 };

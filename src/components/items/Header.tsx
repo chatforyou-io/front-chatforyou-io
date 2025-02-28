@@ -10,19 +10,10 @@ import { useSession } from "@/src/contexts/SessionContext";
 import IconUser from "@/public/images/icon-user.svg";
 
 export default function Header() {
-  const { getUser, signOut } = useSession();
-  const [user, setUser] = useState<User | null>(null);
+  const { user, signOut } = useSession();
 	const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
   const [isUserUpdateFormOpen, setIsUserUpdateFormOpen] = useState<boolean>(false);
   const router = useRouter();
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const user = await getUser();
-      setUser(user);
-    }
-    fetchUser();
-  }, [getUser]);
 
   const handleProfile = () => {
     setIsProfileOpen(!isProfileOpen);
@@ -36,7 +27,7 @@ export default function Header() {
   const handleSignOut = async () => {
     await signOut();
     setIsProfileOpen(false);
-    router.push("/auth/signin");
+    router.push("/auth/login");
   }
 
   return (

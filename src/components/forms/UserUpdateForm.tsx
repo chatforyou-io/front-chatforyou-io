@@ -1,8 +1,6 @@
 import { FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from '@/src/contexts/SessionContext';
-import { userDelete, userUpdate } from '@/src/libs/user';
-import { useHandleRequestFail } from '@/src/webhooks/useHandleRequestFail';
 
 interface UserUpdateFormProps {
   onClose: () => void;
@@ -66,7 +64,7 @@ export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
         throw new Error(message || "알 수 없는 오류로 회원 탈퇴에 실패했습니다. 다시 시도해주세요.");
       }
   
-      router.push('/auth/signin');
+      router.push('/auth/login');
     } catch (error) {
       console.error('회원 탈퇴 요청 중 오류 발생:', error);
       alert('회원 탈퇴 중 문제가 발생하였습니다. 나중에 다시 시도해주세요.');
@@ -77,16 +75,6 @@ export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
     <div className="p-8 w-144 space-y-8 bg-white rounded-xl">
       <h1 className="text-2xl text-primary font-bold">회원 정보 수정</h1>
       <form className="space-y-4" onSubmit={handleUpdate}>
-        <div className="space-y-2">
-          <h3 className="font-semibold">이름</h3>
-          <input
-            type="text"
-            name="name"
-            className="border px-4 h-16 w-full bg-gray-100 rounded-full"
-            placeholder="이름"
-            defaultValue={user?.name}
-          />
-        </div>
         <div className="space-y-2">
           <h3 className="font-semibold">닉네임</h3>
           <input

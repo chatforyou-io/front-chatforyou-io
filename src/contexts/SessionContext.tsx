@@ -1,14 +1,19 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
 import axios from 'axios';
 
 interface SessionContextType {
+  user: User | null;
   signIn: (username: string, password: string) => Promise<{ isSuccess: boolean, message: string }>;
   signOut: () => Promise<{ isSuccess: boolean, message: string }>;
-  getUser: () => Promise<User | null>;
   updateUser: (idx: number, nickName: string) => Promise<{ isSuccess: boolean, message: string }>;
   deleteUser: (idx: number) => Promise<{ isSuccess: boolean, message: string }>;
+}
+
+interface SessionResultType {
+  isSuccess: boolean;
+  message: string;
 }
 
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
@@ -25,9 +30,9 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
    * 로그인
    * @param {string} username 사용자 이름
    * @param {string} password 사용자 비밀번호
-   * @returns {Promise<{ isSuccess: boolean, message: string }>} 로그인 결과
+   * @returns {Promise<SessionResultType>} 로그인 결과
    */
-  const signIn = useCallback(async (username: string, password: string): Promise<{ isSuccess: boolean, message: string }> => {
+  const signIn = useCallback(async (username: string, password: string): Promise<SessionResultType> => {
     try {
       // 로그인 요청
       const { status, data } = await axios.post("/chatforyouio/front/api/signin", { username, password });
@@ -52,10 +57,10 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
   /**
    * 로그아웃
    */
-  const signOut = useCallback(async (): Promise<{ isSuccess: boolean, message: string }> => {
+  const signOut = useCallback(async (): Promise<SessionResultType> => {
     try {
       // 로그아웃 요청
-      const { status, data } = await axios.post("/chatforyouio/front/api/signout");
+      const { status, data } = await axios.get("/chatforyouio/front/api/signout");
       const { message } = data;
 
       // 로그아웃 실패 시
@@ -74,6 +79,10 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
     }
   }, []);
 
+  /**
+   * 사용자 정보 가져오기
+   * @returns {Promise<User | null>} 사용자 정보
+   */
   const getUser = useCallback(async (): Promise<User | null> => {
     if (user) {
       return user;
@@ -96,9 +105,15 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
     }
   }, []);
 
-  const updateUser = useCallback(async (idx: number, nickName: string): Promise<{ isSuccess: boolean, message: string }> => {
+  /**
+   * 사용자 정보 수정
+   * @param {number} idx 사용자 인덱스
+   * @param {string} nickName 사용자 닉네임
+   * @returns {Promise<SessionResultType>} 사용자 정보 수정 결과
+   */
+  const updateUser = useCallback(async (idx: number, nickName: string): Promise<SessionResultType> => {
     try {
-      const { status, data } = await axios.put("/chatforyouio/front/api/user", { idx, nickName });
+      const { status, data } = await axios.patch("/chatforyouio/front/api/me", { idx, nickName });
       const { message } = data;
 
       if (status !== 200) {
@@ -112,9 +127,14 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
     }
   }, []);
 
-  const deleteUser = useCallback(async (idx: number): Promise<{ isSuccess: boolean, message: string }> => {
+  /**
+   * 사용자 정보 삭제
+   * @param {number} idx 사용자 인덱스
+   * @returns {Promise<SessionResultType>} 사용자 정보 삭제 결과
+   */
+  const deleteUser = useCallback(async (): Promise<SessionResultType> => {
     try {
-      const { status, data } = await axios.delete("/chatforyouio/front/api/user", { params: { idx } });
+      const { status, data } = await axios.delete("/chatforyouio/front/api/me");
       const { message } = data;
 
       if (status !== 200) { 
@@ -128,8 +148,23 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
     }
   }, []);
 
+  /**
+   * 사용자 정보 가져오기
+   */
+  useEffect(() => {
+    if (user) {
+      return;
+    }
+
+    const fetchUser = async () => {
+      const user = await getUser();
+      setUser(user);
+    };
+    fetchUser();
+  }, [getUser, user]);
+
   return (
-    <SessionContext.Provider value={{ signIn, signOut, getUser, updateUser, deleteUser }}>
+    <SessionContext.Provider value={{ user, signIn, signOut, updateUser, deleteUser }}>
       {children}
     </SessionContext.Provider>
   );

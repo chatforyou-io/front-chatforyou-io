@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
+import serverApiInstance from "@/src/libs/utils/serverApiInstance";
 
-const JWT_SECRET = process.env.JWT_SECRET || '';
-
-export async function GET(request: Request) {
+export async function GET() {
   try {
     // 토큰 쿠키 가져오기
     const accessToken = cookies().get("AccessToken")?.value;
@@ -28,21 +27,33 @@ export async function GET(request: Request) {
     }
 
     // 세션 토큰 데이터 생성
-    const session = {
-      idx,
-      id,
-      pwd,
-      name,
-      nickName,
-      provider,
-      friendList,
-      createDate,
-      lastLoginDate
-    }
+    const session = { idx, id, pwd, name, nickName, provider, friendList, createDate, lastLoginDate }
 
     // 응답 생성
     return NextResponse.json({ message: "로그인에 성공했습니다.", session });
   } catch (error) {
     return NextResponse.json({ message: "로그인에 실패했습니다." }, { status: 401 });
+  }
+}
+
+export async function PATCH(request: Request) {
+  const { idx, nickName } = await request.json();
+
+  console.log(idx, nickName);
+
+  try {
+    await serverApiInstance.patch("/chatforyouio/user/update", { idx, nickName });
+
+    return NextResponse.json({ message: "사용자 정보 수정에 성공했습니다." }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ message: "사용자 정보 수정에 실패했습니다." }, { status: 400 });
+  }
+}
+
+export async function DELETE() {
+  try {
+    await serverApiInstance.delete("/chatforyouio/user/delete");
+  } catch (error) {
+    return NextResponse.json({ message: "사용자 정보 삭제에 실패했습니다." }, { status: 400 });
   }
 }

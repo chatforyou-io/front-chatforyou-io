@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { logout } from "@/src/libs/auth";
 
 export async function GET() {
@@ -9,13 +10,13 @@ export async function GET() {
     const response = NextResponse.json({ message: "로그아웃 성공" });
 
     // AccessToken 쿠키 삭제
-    response.headers.set("Set-Cookie", "AccessToken=; HttpOnly; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT");
+    cookies().delete("AccessToken");
 
     // RefreshToken 쿠키 삭제
-    response.headers.set("Set-Cookie", "RefreshToken=; HttpOnly; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT");
+    cookies().delete("RefreshToken");
     
     // SessionToken 쿠키 삭제
-    response.headers.set("Set-Cookie", "SessionToken=; HttpOnly; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT");
+    cookies().delete("SessionToken");
 
     return response;
   } catch (error) {

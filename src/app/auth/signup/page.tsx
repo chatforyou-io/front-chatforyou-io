@@ -39,7 +39,7 @@ export default function Page() {
       const data = await userCreate({ id, name, pwd, confirmPwd, usePwd: true});
       if (!data.isSuccess) throw new Error(handleRequestFail(data));
   
-      router.push("/auth/signin");
+      router.push("/auth/login");
     } catch (error) {
       console.error("가입 요청 중 오류 발생:", error);
     }
