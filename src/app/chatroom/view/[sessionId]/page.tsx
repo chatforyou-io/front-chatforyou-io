@@ -8,7 +8,7 @@ import { OpenviduContext } from "@/src/contexts/OpenviduContext";
 import DeviceSelectors from "@/src/components/bars/DeviceSelectors";
 import { useHandleRequestFail } from "@/src/webhooks/useHandleRequestFail";
 import IconUser from "@/public/images/icon-user.svg";
-import { useUser } from "@/src/contexts/AuthProvider";
+import { useSession } from "@/src/contexts/SessionProvider";
 
 interface PageProps {
   params: {
@@ -19,7 +19,7 @@ interface PageProps {
 export default function Page({ params }: PageProps) {
   const { sessionId } = params;
   const { publisher, subscribers, joinSession, leaveSession } = useContext(OpenviduContext);
-  const { user } = useUser();
+  const { user } = useSession();
   const userIdx = useMemo(() => user?.idx, [user?.idx]);
   const [chatroom, setChatroom] = useState<Chatroom | undefined>(undefined);
   const [token, setToken] = useState<string | undefined>(undefined);

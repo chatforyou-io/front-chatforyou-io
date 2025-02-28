@@ -1,6 +1,6 @@
 import { FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { useUser } from '@/src/contexts/AuthProvider';
+import { useSession } from '@/src/contexts/SessionProvider';
 import { userDelete, userUpdate } from '@/src/libs/user';
 import { useHandleRequestFail } from '@/src/webhooks/useHandleRequestFail';
 
@@ -9,10 +9,13 @@ interface UserUpdateFormProps {
 }
 
 export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
-  const { user, setUser } = useUser();
+  const { user, updateUser, deleteUser } = useSession();
   const router = useRouter();
-  const handleRequestFail = useHandleRequestFail();
-
+  
+  /**
+   * 회원 정보 수정
+   * @param event 이벤트
+   */
   const handleUpdate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -30,24 +33,22 @@ export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
       const { idx } = user;
       if (!idx) throw new Error("사용자 정보를 가져오는데 실패했습니다.");
 
-      const data = await userUpdate(idx, nickName);
-      if (!data.isSuccess) throw new Error(handleRequestFail(data));
-  
-      alert('회원 정보 수정에 성공하였습니다.');
+      // 회원 정보 수정
+      const { isSuccess, message } = await updateUser(idx, nickName);
 
-      const newNickName = data.userData?.nickName;
-      if (!newNickName) throw new Error("사용자 정보를 가져오는데 실패했습니다.");
-      
-      setUser({
-        ...user,
-        nickName: newNickName,
-      });
+      // 회원 정보 수정 실패 시
+      if (!isSuccess) {
+        throw new Error(message || "알 수 없는 오류로 회원 정보 수정에 실패했습니다. 다시 시도해주세요.");
+      }
     } catch (error) {
-      console.error('회원 정보 수정 요청 중 오류 발생:', error);
-      alert('회원 정보 수정 중 문제가 발생하였습니다. 나중에 다시 시도해주세요.');
+      console.error(error);
     }
   };
 
+  /**
+   * 회원 탈퇴
+   * @param event 이벤트
+   */
   const handleDelete = async (event: FormEvent<HTMLButtonElement>) => {
     event.preventDefault();
     
@@ -57,13 +58,14 @@ export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
       const { idx } = user;
       if (!idx) throw new Error("사용자 정보를 가져오는데 실패했습니다.");
 
-      const data = await userDelete(idx);
-      if (!data.isSuccess) {
-        const message = handleRequestFail(data);
-        throw new Error(message);
+      // 회원 탈퇴
+      const { isSuccess, message } = await deleteUser(idx);
+
+      // 회원 탈퇴 실패 시
+      if (!isSuccess) {
+        throw new Error(message || "알 수 없는 오류로 회원 탈퇴에 실패했습니다. 다시 시도해주세요.");
       }
   
-      alert('회원 탈퇴에 성공하였습니다.');
       router.push('/auth/login');
     } catch (error) {
       console.error('회원 탈퇴 요청 중 오류 발생:', error);

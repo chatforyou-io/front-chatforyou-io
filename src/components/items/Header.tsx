@@ -6,11 +6,11 @@ import { useRouter } from "next/navigation";
 import ProfileCard from "@/src/components/cards/ProfileCard";
 import UserUpdateForm from "@/src/components/forms/UserUpdateForm";
 import Modal from "@/src/components/items/Modal";
-import { useUser } from "@/src/contexts/AuthProvider";
+import { useSession } from "@/src/contexts/SessionProvider";
 import IconUser from "@/public/images/icon-user.svg";
 
 export default function Header() {
-  const { user, logout } = useUser();
+  const { user, signOut } = useSession();
   const router = useRouter();
 	const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
   const [isUserUpdateFormOpen, setIsUserUpdateFormOpen] = useState<boolean>(false);
@@ -27,9 +27,9 @@ export default function Header() {
   }
 
   const handleSignOut = async () => {
-    logout();
+    await signOut();
     setIsProfileOpen(false);
-    router.push("/");
+    router.push("/auth/login");
   }
 
   return (

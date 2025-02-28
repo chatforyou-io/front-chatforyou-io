@@ -42,7 +42,7 @@ export async function POST(request: Request) {
       secure: process.env.NODE_ENV === 'production', // 프로덕션 환경에서만 쿠키 전송
       sameSite: 'lax', // 쿠키 동작 방식
       path: '/', // 쿠키 적용 범위
-      maxAge: 3600, // 1시간
+      expires: new Date(Date.now() + 60 * 60 * 1000), // 1시간
     });
 
     // RefreshToken 쿠키 설정
@@ -51,7 +51,7 @@ export async function POST(request: Request) {
       secure: process.env.NODE_ENV === 'production', // 프로덕션 환경에서만 쿠키 전송
       sameSite: 'lax', // 쿠키 동작 방식
       path: '/', // 쿠키 적용 범위
-      maxAge: 60 * 60 * 24 * 1, // 1일
+      expires: new Date(Date.now() + 60 * 60 * 24 * 1000), // 1일
     });
 
     return response;

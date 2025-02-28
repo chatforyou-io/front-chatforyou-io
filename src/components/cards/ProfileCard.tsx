@@ -1,4 +1,4 @@
-import { useUser } from '@/src/contexts/AuthProvider';
+import { useSession } from '@/src/contexts/SessionProvider';
 import IconUser from '@/public/images/icon-user.svg';
 
 interface ProfileCardProps {
@@ -7,7 +7,7 @@ interface ProfileCardProps {
 }
 
 export default function ProfileCard({ onActiveUserUpdateForm, onSignOut }: ProfileCardProps) {
-  const { user } = useUser();
+  const { user } = useSession();
   
   return (
     <div className="w-80 bg-white p-8 space-y-8 rounded-xl">

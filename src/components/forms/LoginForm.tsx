@@ -3,11 +3,11 @@ import { useRouter } from "next/navigation";
 import axios, { AxiosError } from "axios";
 import ButtonWithError from "@/src/components/items/ButtonWithError";
 import InputWithError from "@/src/components/items/InputWithError";
-import { useUser } from "@/src/contexts/AuthProvider";
+import { useSession } from "@/src/contexts/SessionProvider";
 import { useLoginValidation } from "@/src/webhooks/useLoginValidation";
 
 export default function LoginForm() {
-  const { setUser } = useUser();
+  const { signIn } = useSession();
   const { errors, setErrors, validate } = useLoginValidation();
   const router = useRouter();
 
@@ -24,26 +24,19 @@ export default function LoginForm() {
 
     try {
       // 로그인 요청
-      const { status, data } = await axios.post("/chatforyouio/front/api/login", { username, password });
-      const { userData, message } = data;
+      const { isSuccess, message } = await signIn(username, password);
 
       // 로그인 실패 시
-      if (status !== 200) {
-        throw new Error(message || "알 수 없는 오류로 로그인에 실패했습니다. 다시 시도해주세요.");
+      if (!isSuccess) {
+        throw new Error(message);
       }
-
-      console.log(userData);
-
-      // 로그인 성공 시
-      setUser(userData);
 
       // 로그인 성공 시
       router.push("/");
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        const errorMessage = error.response?.data.message;
-        handleSubmitError(errorMessage);
-      }
+    } catch (error: unknown) {
+      console.error(error);
+      const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
+      handleSubmitError(errorMessage);
     }
   };
   
