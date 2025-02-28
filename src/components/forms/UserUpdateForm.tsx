@@ -1,18 +1,19 @@
 import { FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
-import { userDelete, userUpdate } from '@/src/libs/user';
-import { useHandleRequestFail } from '@/src/webhooks/useHandleRequestFail';
+import { useSession } from '@/src/contexts/SessionContext';
 
 interface UserUpdateFormProps {
   onClose: () => void;
 }
 
 export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
-  const { data: session, update } = useSession();
+  const { user, updateUser, deleteUser } = useSession();
   const router = useRouter();
-  const handleRequestFail = useHandleRequestFail();
-
+  
+  /**
+   * 회원 정보 수정
+   * @param event 이벤트
+   */
   const handleUpdate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -24,34 +25,45 @@ export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
       return;
     }
     
-    const { idx } = session?.user;
-    
     try {
-      const data = await userUpdate(idx, nickName);
-      if (!data.isSuccess) throw new Error(handleRequestFail(data));
-  
-      alert('회원 정보 수정에 성공하였습니다.');
+      if (!user) throw new Error("사용자 정보를 가져오는데 실패했습니다.");
+    
+      const { idx } = user;
+      if (!idx) throw new Error("사용자 정보를 가져오는데 실패했습니다.");
 
-      const newNickName = data.userData.nickName;
-      updateSession(newNickName);
+      // 회원 정보 수정
+      const { isSuccess, message } = await updateUser(idx, nickName);
+
+      // 회원 정보 수정 실패 시
+      if (!isSuccess) {
+        throw new Error(message || "알 수 없는 오류로 회원 정보 수정에 실패했습니다. 다시 시도해주세요.");
+      }
     } catch (error) {
-      console.error('회원 정보 수정 요청 중 오류 발생:', error);
-      alert('회원 정보 수정 중 문제가 발생하였습니다. 나중에 다시 시도해주세요.');
+      console.error(error);
     }
   };
 
+  /**
+   * 회원 탈퇴
+   * @param event 이벤트
+   */
   const handleDelete = async (event: FormEvent<HTMLButtonElement>) => {
     event.preventDefault();
     
     try {
-      const { idx } = session?.user;
-      const data = await userDelete(idx);
-      if (!data.isSuccess) {
-        const message = handleRequestFail(data);
-        throw new Error(message);
+      if (!user) throw new Error("사용자 정보를 가져오는데 실패했습니다.");
+    
+      const { idx } = user;
+      if (!idx) throw new Error("사용자 정보를 가져오는데 실패했습니다.");
+
+      // 회원 탈퇴
+      const { isSuccess, message } = await deleteUser(idx);
+
+      // 회원 탈퇴 실패 시
+      if (!isSuccess) {
+        throw new Error(message || "알 수 없는 오류로 회원 탈퇴에 실패했습니다. 다시 시도해주세요.");
       }
   
-      alert('회원 탈퇴에 성공하였습니다.');
       router.push('/auth/login');
     } catch (error) {
       console.error('회원 탈퇴 요청 중 오류 발생:', error);
@@ -59,30 +71,10 @@ export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
     }
   };
 
-  const updateSession = async (nickName: string) => {
-    await update({
-      ...session,
-      user: {
-        ...session?.user,
-        nickName,
-      },
-    });
-  };
-
   return (
     <div className="p-8 w-144 space-y-8 bg-white rounded-xl">
       <h1 className="text-2xl text-primary font-bold">회원 정보 수정</h1>
       <form className="space-y-4" onSubmit={handleUpdate}>
-        <div className="space-y-2">
-          <h3 className="font-semibold">이름</h3>
-          <input
-            type="text"
-            name="name"
-            className="border px-4 h-16 w-full bg-gray-100 rounded-full"
-            placeholder="이름"
-            defaultValue={session?.user.name}
-          />
-        </div>
         <div className="space-y-2">
           <h3 className="font-semibold">닉네임</h3>
           <input
@@ -90,7 +82,7 @@ export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
             name="nickName"
             className="border px-4 h-16 w-full bg-gray-100 rounded-full"
             placeholder="닉네임"
-            defaultValue={session?.user.nickName}
+            defaultValue={user?.nickName}
           />
         </div>
         <div className="flex space-x-4">

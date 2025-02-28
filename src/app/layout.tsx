@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import NextAuthProvider from "@/src/contexts/NextAuthContext";
+import { Noto_Sans_KR } from "next/font/google";
 import Header from "@/src/components/items/Header";
+import { SessionProvider } from "@/src/contexts/SessionContext";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const notoSansKR = Noto_Sans_KR({
+  weight: ["100", "300", "400", "500", "700", "900"],
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: "ChatForYou.io",
@@ -18,11 +21,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <NextAuthProvider>
+      <body className={notoSansKR.className}>
+        <SessionProvider>
           <Header />
           {children}
-        </NextAuthProvider>
+        </SessionProvider>
       </body>
     </html>
   );

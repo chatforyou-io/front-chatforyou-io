@@ -1,5 +1,4 @@
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
 import IconKakao from "@/public/images/icon-kakao.svg";
 import IconNaver from "@/public/images/icon-naver.svg";
 import IconGoogle from "@/public/images/icon-google.svg";
@@ -10,8 +9,8 @@ export default function SocialLoginCard({}: SocialLoginCardProps) {
   const router = useRouter();
 
   const handleSocialLogin = async (provider: string) => {
+    console.log(provider);
     try {
-      await signIn(provider, { redirect: false });
       router.push("/");
     } catch (error) {
       console.error(error?.toString() || 'Unknown error');

@@ -1,14 +1,16 @@
 import { FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
 import ButtonWithError from "@/src/components/items/ButtonWithError";
 import InputWithError from "@/src/components/items/InputWithError";
+import { useSession } from "@/src/contexts/SessionContext";
 import { useLoginValidation } from "@/src/webhooks/useLoginValidation";
 
 export default function LoginForm() {
-  const router = useRouter();
+  const { signIn } = useSession();
   const { errors, setErrors, validate } = useLoginValidation();
+  const router = useRouter();
 
+  // 로그인 요청
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -16,25 +18,30 @@ export default function LoginForm() {
     const username = formData.get("username") as string;
     const password = formData.get("password") as string;
 
+    // 유효성 검사
     if (!validate(username, password)) return;
 
     try {
-      const response = await signIn("credentials", { redirect: false, username, password });
-      if (response && response.error) throw new Error(response.error);
-      
+      // 로그인 요청
+      const { isSuccess, message } = await signIn(username, password);
+
+      // 로그인 실패 시
+      if (!isSuccess) {
+        throw new Error(message);
+      }
+
+      // 로그인 성공 시
       router.push("/");
-    } catch (error) {
-      console.log(error);
-      handleSubmitError(error instanceof Error ? error.message : "Unknown error");
+    } catch (error: unknown) {
+      console.error(error);
+      const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
+      handleSubmitError(errorMessage);
     }
   };
   
+  // 로그인 실패 시 오류 처리
   const handleSubmitError = (error: string) => {
-    const errorMessages: Record<string, string> = {
-      "CredentialsSignin": "아이디 또는 비밀번호가 잘못되었습니다. 다시 확인해주세요.",
-      "OAuthSignin": "소셜 로그인에 실패했습니다. 다시 시도해주세요.",  
-    };
-    setErrors(prevErrors => ({ ...prevErrors, login: errorMessages[error] || "알 수 없는 오류로 로그인에 실패했습니다. 다시 시도해주세요." }));
+    setErrors(prevErrors => ({ ...prevErrors, login: error }));
   };
 
   return (

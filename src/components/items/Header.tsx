@@ -2,19 +2,19 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import ProfileCard from "@/src/components/cards/ProfileCard";
 import UserUpdateForm from "@/src/components/forms/UserUpdateForm";
+import Modal from "@/src/components/items/Modal";
+import { useSession } from "@/src/contexts/SessionContext";
 import IconUser from "@/public/images/icon-user.svg";
-import Modal from "./Modal";
-import { useRouter } from "next/navigation";
 
 export default function Header() {
-  const session = useSession();
-  const router = useRouter();
+  const { user, signOut } = useSession();
 	const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
   const [isUserUpdateFormOpen, setIsUserUpdateFormOpen] = useState<boolean>(false);
-  
+  const router = useRouter();
+
   const handleProfile = () => {
     setIsProfileOpen(!isProfileOpen);
   }
@@ -25,16 +25,16 @@ export default function Header() {
   }
 
   const handleSignOut = async () => {
-    await signOut({ redirect: false });
+    await signOut();
     setIsProfileOpen(false);
-    router.push("/");
+    router.push("/auth/login");
   }
 
   return (
     <>
       <div className="flex flex-shrink-0 justify-between items-center px-4 w-full h-20 bg-white">
         <Link href="/" className="text-xl font-bold text-primary">ChatForYou.io</Link>
-        {(session && session.data ) && (
+        {user && (
           <div className="flex gap-4">
             <button
               type="button"

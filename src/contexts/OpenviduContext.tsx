@@ -113,7 +113,7 @@ export default function OpenviduProvider({ children }: { children: ReactNode }) 
     setSubscribers([]);
 
     ov.current = undefined;
-  }, []);
+  }, [publisher]);
 
   const getDevices = useCallback(async () => {
     await initOpenvidu();
