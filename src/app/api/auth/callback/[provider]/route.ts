@@ -44,8 +44,6 @@ export async function GET(request: NextRequest, { params }: { params: RequestPar
         throw new Error(userInfo.message);
       }
 
-      console.log(provider, userInfo.response.id, userInfo.response.email, userInfo.response.name, userInfo.response.nickname);
-
       // 로그인 요청
       const { isSuccess, userData, accessToken, refreshToken } = await socialSignIn(provider, userInfo.response.id, userInfo.response.email, userInfo.response.name, userInfo.response.nickname);
 

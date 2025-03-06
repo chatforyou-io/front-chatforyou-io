@@ -72,7 +72,9 @@ const socialSignIn = async (provider: string, providerAccountId: string, id?: st
 
     return {
       isSuccess: true,
-      ...data
+      userData: data.userData,
+      accessToken,
+      refreshToken
     };
   } catch (error) {
     return handleAxiosError(error as AxiosError);
@@ -104,13 +106,13 @@ const validate = async (email: string): Promise<ValidateResponse> => {
   try {
     const { headers, data } = await serverApiInstance.get("/chatforyouio/auth/validate", { params: { email } });
 
-    const cookies = headers["set-cookie"];
+    const cookies = headers["Set-Cookie"];
 
     if (!cookies) {
       throw new AxiosError("메일코드를 가져오는데 실패했습니다.");
     }
 
-    const mailCodeCookie = cookies.find(cookie => cookie.startsWith("mailCode="));
+    const mailCodeCookie = cookies.find((cookie: string) => cookie.startsWith("mailCode="));
     const mailCode = mailCodeCookie ? mailCodeCookie.split("=")[1].split(";")[0] : '';
 
     if (!mailCode) {
