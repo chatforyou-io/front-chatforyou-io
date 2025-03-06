@@ -1,10 +1,16 @@
+import { NextRequest, NextResponse } from 'next/server';
 import axios from "axios";
+import jwt from "jsonwebtoken";
+import { socialSignIn } from "@/src/libs/auth";
+import { cookies } from "next/headers";
+
+const JWT_SECRET = process.env.JWT_SECRET || '';
 
 interface RequestParams {
   provider: string;
 }
 
-export async function GET(request: Request, { params }: { params: RequestParams }) {
+export async function GET(request: NextRequest, { params }: { params: RequestParams }) {
   const { provider } = params;
 
   // URL에서 'code' 파라미터 추출
@@ -38,15 +44,53 @@ export async function GET(request: Request, { params }: { params: RequestParams 
         throw new Error(userInfo.message);
       }
 
-      // 사용자 정보 추출
-      /*
-      const { isSuccess, userData } = await socialLogin(userInfo.response.provider, userInfo.response.id, userInfo.response.email, userInfo.response.name, userInfo.response.nickname);
+      console.log(provider, userInfo.response.id, userInfo.response.email, userInfo.response.name, userInfo.response.nickname);
 
+      // 로그인 요청
+      const { isSuccess, userData, accessToken, refreshToken } = await socialSignIn(provider, userInfo.response.id, userInfo.response.email, userInfo.response.name, userInfo.response.nickname);
+
+      console.log(isSuccess, userData, accessToken, refreshToken);
+
+      // 로그인 실패 시
       if (!isSuccess) {
-        return Response.json({ error: '로그인에 실패했습니다.' }, { status: 400 });
+        return NextResponse.json({ error: '로그인에 실패했습니다.' }, { status: 400 });
       }
-      */
-      return Response.json(userInfo, { status: 200 });
+
+      // 사용자 데이터가 존재하지 않을 경우
+      if (!userData) {
+        return NextResponse.json({ error: '사용자 데이터가 존재하지 않습니다.' }, { status: 400 });
+      }
+
+      // 토큰이 존재하지 않을 경우
+      if (!accessToken || !refreshToken) {
+        return NextResponse.json({ error: '토큰이 존재하지 않습니다.' }, { status: 400 });
+      }
+
+      // session 토큰 생성
+      const sessionToken = jwt.sign(userData, JWT_SECRET, { expiresIn: "1h" });
+
+      // AccessToken 쿠키 설정
+      cookies().set("AccessToken", accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+      });
+
+      // RefreshToken 쿠키 설정
+      cookies().set("RefreshToken", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+      });
+
+      // SessionToken 쿠키 설정
+      cookies().set("SessionToken", sessionToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+      });
+
+      return NextResponse.redirect(new URL('/', request.url));
     case "kakao":
       break;
     case "google":

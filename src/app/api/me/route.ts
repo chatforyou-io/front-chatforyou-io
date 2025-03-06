@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import serverApiInstance from "@/src/libs/utils/serverApiInstance";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     // 토큰 쿠키 가져오기
     const accessToken = cookies().get("AccessToken")?.value;
@@ -36,7 +36,7 @@ export async function GET() {
   }
 }
 
-export async function PATCH(request: Request) {
+export async function PATCH(request: NextRequest) {
   const { idx, nickName } = await request.json();
 
   console.log(idx, nickName);
@@ -50,9 +50,11 @@ export async function PATCH(request: Request) {
   }
 }
 
-export async function DELETE() {
+export async function DELETE(request: NextRequest) {
   try {
     await serverApiInstance.delete("/chatforyouio/user/delete");
+
+    return NextResponse.json({ message: "사용자 정보 삭제에 성공했습니다." }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ message: "사용자 정보 삭제에 실패했습니다." }, { status: 400 });
   }

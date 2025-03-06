@@ -1,10 +1,11 @@
 import { cookies } from 'next/headers';
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function middleware(req: NextRequest) {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-  const { pathname, origin } = req.nextUrl;
+
+  const url = new URL(req.url);
+  const { pathname, origin } = url;
 
   const isPublicPath = pathname.startsWith("/auth/");
   const accessToken = cookies().get("AccessToken")?.value;
