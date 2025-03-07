@@ -1,4 +1,3 @@
-import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function middleware(req: NextRequest) {
@@ -8,7 +7,6 @@ export async function middleware(req: NextRequest) {
 
   const isPublicPath = pathname.startsWith("/auth/");
   const accessToken = req.cookies.get("AccessToken")?.value;
-  const refreshToken = req.cookies.get("RefreshToken")?.value;
 
   // 인증된 사용자가 인증 페이지에 접근할 경우 홈으로 리다이렉트
   if (accessToken && isPublicPath) {
