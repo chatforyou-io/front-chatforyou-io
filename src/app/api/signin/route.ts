@@ -69,6 +69,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ message: "로그인 성공", userData }, { status: 200 });
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ message: "로그인에 실패했습니다." }, { status: 401 });
   }
 }

@@ -32,6 +32,7 @@ export async function GET(request: NextRequest) {
     // 응답 생성
     return NextResponse.json({ message: "로그인에 성공했습니다.", session });
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ message: "로그인에 실패했습니다." }, { status: 401 });
   }
 }
@@ -46,6 +47,7 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({ message: "사용자 정보 수정에 성공했습니다." }, { status: 200 });
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ message: "사용자 정보 수정에 실패했습니다." }, { status: 400 });
   }
 }
@@ -56,6 +58,7 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json({ message: "사용자 정보 삭제에 성공했습니다." }, { status: 200 });
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ message: "사용자 정보 삭제에 실패했습니다." }, { status: 400 });
   }
 }

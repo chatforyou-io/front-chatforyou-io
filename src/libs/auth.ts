@@ -87,7 +87,7 @@ const socialSignIn = async (provider: string, providerAccountId: string, id?: st
  */
 const logout = async (): Promise<SignOutResponse> => {
   try {
-    const { headers, data } = await serverApiInstance.post("/chatforyouio/auth/logout");
+    await serverApiInstance.post("/chatforyouio/auth/logout");
 
     return {
       isSuccess: true,
