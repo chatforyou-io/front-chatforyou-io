@@ -28,7 +28,7 @@ interface ValidateResponse extends DefaultResponse {
  * @param {string} pwd 비밀번호
  * @returns {Promise<SignInResponse>} 사용자 정보, 액세스 토큰, 리프레시 토큰 또는 에러 응답
  */
-const signIn = async (id: string, pwd: string): Promise<SignInResponse> => {
+async function signIn(id: string, pwd: string): Promise<SignInResponse> {
   try {
     const { headers, data } = await serverApiInstance.post("/chatforyouio/auth/login", { id, pwd: btoa(pwd) });
 
@@ -48,7 +48,7 @@ const signIn = async (id: string, pwd: string): Promise<SignInResponse> => {
   } catch (error: any) {
     return handleAxiosError(error as AxiosError);
   }
-};
+}
 
 /**
  * 소셜 로그인
@@ -59,7 +59,7 @@ const signIn = async (id: string, pwd: string): Promise<SignInResponse> => {
  * @param {string} nickName 닉네임
  * @returns {Promise<SignInResponse>} 사용자 정보, 액세스 토큰, 리프레시 토큰 또는 에러 응답
  */ 
-const socialSignIn = async (provider: string, providerAccountId: string, id?: string, name?: string, nickName?: string): Promise<SignInResponse> => {
+async function socialSignIn(provider: string, providerAccountId: string, id?: string, name?: string, nickName?: string): Promise<SignInResponse> {
   try {
     const { headers, data } = await serverApiInstance.post("/chatforyouio/auth/login/social", { provider, providerAccountId, id, name, nickName });
 
@@ -72,18 +72,20 @@ const socialSignIn = async (provider: string, providerAccountId: string, id?: st
 
     return {
       isSuccess: true,
-      ...data
+      userData: data.userData,
+      accessToken,
+      refreshToken
     };
   } catch (error) {
     return handleAxiosError(error as AxiosError);
   }
-};
+}
 
 /**
  * 로그아웃
  * @returns {Promise<SignOutResponse>} 로그아웃 성공 여부 또는 에러 응답
  */
-const logout = async (): Promise<SignOutResponse> => {
+async function logout(): Promise<SignOutResponse> {
   try {
     await serverApiInstance.post("/chatforyouio/auth/logout");
 
@@ -93,24 +95,24 @@ const logout = async (): Promise<SignOutResponse> => {
   } catch (error) {
     return handleAxiosError(error as AxiosError);
   }
-};
+}
 
 /**
  * 이메일 유효성 검사
  * @param {string} email 이메일
  * @returns {Promise<ValidateResponse>} 이메일 유효성 검사 결과 또는 에러 응답
  */
-const validate = async (email: string): Promise<ValidateResponse> => {
+async function validate(email: string): Promise<ValidateResponse> {
   try {
     const { headers, data } = await serverApiInstance.get("/chatforyouio/auth/validate", { params: { email } });
 
-    const cookies = headers["set-cookie"];
+    const cookies = headers["Set-Cookie"];
 
     if (!cookies) {
       throw new AxiosError("메일코드를 가져오는데 실패했습니다.");
     }
 
-    const mailCodeCookie = cookies.find(cookie => cookie.startsWith("mailCode="));
+    const mailCodeCookie = cookies.find((cookie: string) => cookie.startsWith("mailCode="));
     const mailCode = mailCodeCookie ? mailCodeCookie.split("=")[1].split(";")[0] : '';
 
     if (!mailCode) {
@@ -125,6 +127,6 @@ const validate = async (email: string): Promise<ValidateResponse> => {
   } catch (error) {
     return handleAxiosError(error as AxiosError);
   }
-};
+}
 
 export { signIn, socialSignIn, logout, validate };

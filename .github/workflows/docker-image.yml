@@ -33,24 +33,40 @@ jobs:
       - name: Set environment variables
         run: |
           echo "API_DOMAIN=$API_DOMAIN" >> .env
-          echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" >> .env
+          echo "NEXT_PUBLIC_GOOGLE_CLIENT_ID=$NEXT_PUBLIC_GOOGLE_CLIENT_ID" >> .env
           echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET" >> .env
-          echo "KAKAO_CLIENT_ID=$KAKAO_CLIENT_ID" >> .env
+          echo "NEXT_PUBLIC_GOOGLE_REDIRECT_URI=$NEXT_PUBLIC_GOOGLE_REDIRECT_URI" >> .env
+          echo "NEXT_PUBLIC_GOOGLE_STATE=$NEXT_PUBLIC_GOOGLE_STATE" >> .env
+          echo "NEXT_PUBLIC_KAKAO_CLIENT_ID=$NEXT_PUBLIC_KAKAO_CLIENT_ID" >> .env
           echo "KAKAO_CLIENT_SECRET=$KAKAO_CLIENT_SECRET" >> .env
-          echo "NAVER_CLIENT_ID=$NAVER_CLIENT_ID" >> .env
+          echo "NEXT_PUBLIC_KAKAO_REDIRECT_URI=$NEXT_PUBLIC_KAKAO_REDIRECT_URI" >> .env
+          echo "NEXT_PUBLIC_KAKAO_STATE=$NEXT_PUBLIC_KAKAO_STATE" >> .env
+          echo "NEXT_PUBLIC_NAVER_CLIENT_ID=$NEXT_PUBLIC_NAVER_CLIENT_ID" >> .env
           echo "NAVER_CLIENT_SECRET=$NAVER_CLIENT_SECRET" >> .env
-          echo "JWT_SECRET=$JWT_SECRET" >> .env
+          echo "NEXT_PUBLIC_NAVER_REDIRECT_URI=$NEXT_PUBLIC_NAVER_REDIRECT_URI" >> .env
+          echo "NEXT_PUBLIC_NAVER_STATE=$NEXT_PUBLIC_NAVER_STATE" >> .env
+          echo "NEXTAUTH_SECRET=$NEXTAUTH_SECRET" >> .env
+          echo "NEXTAUTH_URL=$NEXTAUTH_URL" >> .env
           echo "NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH" >> .env
+          echo "JWT_SECRET=$JWT_SECRET" >> .env
         env:
           API_DOMAIN: ${{ secrets.API_DOMAIN }}
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
+          NEXT_PUBLIC_GOOGLE_REDIRECT_URI: ${{ secrets.NEXT_PUBLIC_GOOGLE_REDIRECT_URI }}
+          NEXT_PUBLIC_GOOGLE_STATE: ${{ secrets.NEXT_PUBLIC_GOOGLE_STATE }}
+          NEXT_PUBLIC_KAKAO_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_KAKAO_CLIENT_ID }}
           KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
-          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NEXT_PUBLIC_KAKAO_REDIRECT_URI: ${{ secrets.NEXT_PUBLIC_KAKAO_REDIRECT_URI }}
+          NEXT_PUBLIC_KAKAO_STATE: ${{ secrets.NEXT_PUBLIC_KAKAO_STATE }}
+          NEXT_PUBLIC_NAVER_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_NAVER_CLIENT_ID }}
           NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          NEXT_PUBLIC_NAVER_REDIRECT_URI: ${{ secrets.NEXT_PUBLIC_NAVER_REDIRECT_URI }}
+          NEXT_PUBLIC_NAVER_STATE: ${{ secrets.NEXT_PUBLIC_NAVER_STATE }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
           NEXT_PUBLIC_BASE_PATH: ${{ secrets.NEXT_PUBLIC_BASE_PATH }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
       # 4. TIMESTAMP 생성 (한국 시간으로) && IMAGE_URI 로 이미지명:태크명 공통화
       # IMAGE_URI = chatforyou-io/chatforyou-io-frontend:시간

@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
 import axios from 'axios';
-
+import { usePathname } from 'next/navigation';
 interface SessionContextType {
   user: User | null;
   signIn: (username: string, password: string) => Promise<{ isSuccess: boolean, message: string }>;
@@ -25,6 +25,7 @@ const SessionContext = createContext<SessionContextType | undefined>(undefined);
  */
 export function SessionProvider({ children }: { children: ReactNode }): ReactNode {
   const [user, setUser] = useState<User | null>(null);
+  const pathname = usePathname();
 
   /**
    * 로그인
@@ -152,10 +153,17 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
    * 사용자 정보 가져오기
    */
   useEffect(() => {
+    // 인증 페이지일 경우 실행하지 않음
+    if (pathname.startsWith("/auth/")) {
+      return;
+    }
+
+    // 사용자 정보가 있을 경우 실행하지 않음
     if (user) {
       return;
     }
 
+    // 사용자 정보 가져오기
     const fetchUser = async () => {
       const user = await getUser();
       setUser(user);

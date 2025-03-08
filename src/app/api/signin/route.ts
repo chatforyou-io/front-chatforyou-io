@@ -1,11 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { signIn } from "@/src/libs/auth";
 import { cookies } from "next/headers";
 
 const JWT_SECRET = process.env.JWT_SECRET || '';
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const { username, password }: Credentials = await request.json();
 
@@ -67,7 +67,7 @@ export async function POST(request: Request) {
       expires: new Date(Date.now() + 60 * 60 * 1000), // 1시간
     });
 
-    return NextResponse.json({ message: "로그인 성공", userData });
+    return NextResponse.json({ message: "로그인 성공", userData }, { status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ message: "로그인에 실패했습니다." }, { status: 401 });
