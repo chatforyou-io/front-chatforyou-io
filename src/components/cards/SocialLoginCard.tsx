@@ -26,7 +26,7 @@ export default function SocialLoginCard({}: SocialLoginCardProps) {
         const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
         const googleRedirectUri = process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI;
         const googleState = process.env.NEXT_PUBLIC_GOOGLE_STATE;
-        router.push(`https://accounts.google.com/o/oauth2/v2/auth?response_type=token&client_id=${googleClientId}&redirect_uri=${googleRedirectUri}&state=${googleState}&include_granted_scopes=true&scope=email profile`);
+        router.push(`https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${googleClientId}&redirect_uri=${googleRedirectUri}&state=${googleState}&include_granted_scopes=true&scope=email profile`);
         break;
     }
   };

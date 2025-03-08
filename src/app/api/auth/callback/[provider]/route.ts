@@ -14,12 +14,13 @@ export async function GET(request: NextRequest, { params }: { params: RequestPar
   const { provider } = params;
 
   // URL에서 'code' 파라미터 추출
-  const { searchParams } = new URL(request.url);
+  const { searchParams } = request.nextUrl;
 
   switch (provider) {
     case "naver":
       const naverClientId = process.env.NEXT_PUBLIC_NAVER_CLIENT_ID;
-      const naverClientSecret = process.env.NEXT_PUBLIC_NAVER_CLIENT_SECRET;
+      const naverClientSecret = process.env.NAVER_CLIENT_SECRET;
+      const naverRedirectUri = process.env.NEXT_PUBLIC_NAVER_REDIRECT_URI;
       const naverCode = searchParams.get('code');
       const naverState = searchParams.get('state');
 
@@ -29,6 +30,7 @@ export async function GET(request: NextRequest, { params }: { params: RequestPar
           grant_type: 'authorization_code',
           client_id: naverClientId,
           client_secret: naverClientSecret,
+          redirect_uri: naverRedirectUri,
           code: naverCode,
           state: naverState,
         },
@@ -40,9 +42,6 @@ export async function GET(request: NextRequest, { params }: { params: RequestPar
           Authorization: `Bearer ${naverTokenInfo.access_token}`,
         },
       });
-      if (naverUserInfo.resultcode !== '00') {
-        throw new Error(naverUserInfo.message);
-      }
 
       // 로그인 요청
       const { isSuccess: naverIsSuccess, userData: naverUserData, accessToken: naverAccessToken, refreshToken: naverRefreshToken } = await socialSignIn(provider, naverUserInfo.response.id, naverUserInfo.response.email, naverUserInfo.response.name, naverUserInfo.response.nickname);
@@ -89,7 +88,8 @@ export async function GET(request: NextRequest, { params }: { params: RequestPar
       return NextResponse.redirect(new URL('/chatforyouio/front', request.url));
     case "kakao":
       const kakaoClientId = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;
-      const kakaoClientSecret = process.env.NEXT_PUBLIC_KAKAO_CLIENT_SECRET;
+      const kakaoClientSecret = process.env.KAKAO_CLIENT_SECRET;
+      const kakaoRedirectUri = process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI;
       const kakaoCode = searchParams.get('code');
       const kakaoState = searchParams.get('state');
 
@@ -99,6 +99,7 @@ export async function GET(request: NextRequest, { params }: { params: RequestPar
           grant_type: 'authorization_code',
           client_id: kakaoClientId,
           client_secret: kakaoClientSecret,
+          redirect_uri: kakaoRedirectUri,
           code: kakaoCode,
           state: kakaoState,
         },
@@ -156,30 +157,30 @@ export async function GET(request: NextRequest, { params }: { params: RequestPar
       return NextResponse.redirect(new URL('/chatforyouio/front', request.url));
     case "google":
       const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-      const googleClientSecret = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET;
-      const googleTokenType = searchParams.get('token_type');
-      const googleToken = searchParams.get('access_token');
+      const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+      const googleRedirectUri = process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI;
+      const googleCode = searchParams.get('code');
+      const googleState = searchParams.get('state');
 
       // 토큰 발급  
       const { data: googleTokenInfo } = await axios.post('https://oauth2.googleapis.com/token', {
+        grant_type: 'authorization_code',
         client_id: googleClientId,
         client_secret: googleClientSecret,
-        redirect_uri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI,
+        redirect_uri: googleRedirectUri,
+        code: googleCode,
+        state: googleState,
       });
-
-      console.log(googleTokenInfo);
 
       // 사용자 정보 조회
       const { data: googleUserInfo } = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
         headers: {
-          Authorization: `${googleTokenType} ${googleToken}`,
+          Authorization: `Bearer ${googleTokenInfo.access_token}`,
         },
       });
 
-      return;
-
       // 로그인 요청
-      const { isSuccess: googleIsSuccess, userData: googleUserData, accessToken: googleAccessToken, refreshToken: googleRefreshToken } = await socialSignIn(provider, googleUserInfo.id, googleUserInfo.email, googleUserInfo.name, googleUserInfo.nickname);
+      const { isSuccess: googleIsSuccess, userData: googleUserData, accessToken: googleAccessToken, refreshToken: googleRefreshToken } = await socialSignIn(provider, googleUserInfo.sub, googleUserInfo.email, googleUserInfo.name, '');
 
       // 로그인 실패 시
       if (!googleIsSuccess) {
@@ -197,7 +198,11 @@ export async function GET(request: NextRequest, { params }: { params: RequestPar
       }
 
       // session 토큰 생성
-      const googleSessionToken = jwt.sign(googleUserData, JWT_SECRET, { expiresIn: "1h" });
+      if (!googleUserData || !googleAccessToken || !googleRefreshToken) {
+        return NextResponse.json({ error: '토큰이 존재하지 않습니다.' }, { status: 400 });
+      }
+
+      const googleSessionToken = jwt.sign(googleUserData as object, JWT_SECRET, { expiresIn: "1h" });
 
       // AccessToken 쿠키 설정
       cookies().set("AccessToken", googleAccessToken, {
