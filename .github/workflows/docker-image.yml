@@ -45,8 +45,6 @@ jobs:
           echo "NAVER_CLIENT_SECRET=$NAVER_CLIENT_SECRET" >> .env
           echo "NEXT_PUBLIC_NAVER_REDIRECT_URI=$NEXT_PUBLIC_NAVER_REDIRECT_URI" >> .env
           echo "NEXT_PUBLIC_NAVER_STATE=$NEXT_PUBLIC_NAVER_STATE" >> .env
-          echo "NEXTAUTH_SECRET=$NEXTAUTH_SECRET" >> .env
-          echo "NEXTAUTH_URL=$NEXTAUTH_URL" >> .env
           echo "NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH" >> .env
           echo "JWT_SECRET=$JWT_SECRET" >> .env
         env:
@@ -63,8 +61,6 @@ jobs:
           NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
           NEXT_PUBLIC_NAVER_REDIRECT_URI: ${{ secrets.NEXT_PUBLIC_NAVER_REDIRECT_URI }}
           NEXT_PUBLIC_NAVER_STATE: ${{ secrets.NEXT_PUBLIC_NAVER_STATE }}
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
           NEXT_PUBLIC_BASE_PATH: ${{ secrets.NEXT_PUBLIC_BASE_PATH }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
