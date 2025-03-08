@@ -53,8 +53,7 @@ ChatForYou.io는 실시간 화상 채팅 서비스를 제공하는 웹 애플리
 
 - `NEXT_PUBLIC_OPENVIDU_URL`: OpenVidu 서버 URL
 - `NEXT_PUBLIC_OPENVIDU_SECRET`: OpenVidu 비밀키
-- `NEXTAUTH_URL`: Next-Auth 콜백 URL
-- `NEXTAUTH_SECRET`: Next-Auth 비밀키
+- `JWT_SECRET`: JWT 비밀키
 
 ## 테스팅
 
