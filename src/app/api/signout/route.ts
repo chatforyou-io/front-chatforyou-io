@@ -15,7 +15,7 @@ export async function GET() {
     // SessionToken 쿠키 삭제
     cookies().delete("SessionToken");
 
-    return response;
+    return NextResponse.json({ message: "로그아웃에 성공했습니다." }, { status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ message: "로그아웃에 실패했습니다." }, { status: 401 });

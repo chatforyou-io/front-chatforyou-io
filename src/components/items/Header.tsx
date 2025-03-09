@@ -25,9 +25,12 @@ export default function Header() {
   }
 
   const handleSignOut = async () => {
-    await signOut();
-    setIsProfileOpen(false);
-    router.push("/auth/login");
+    const { isSuccess } = await signOut();
+
+    if (isSuccess) {
+      setIsProfileOpen(false);
+      router.push("/auth/login");
+    }
   }
 
   return (
