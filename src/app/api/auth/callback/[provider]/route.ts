@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { socialSignIn } from "@/src/libs/auth";
 import { cookies } from "next/headers";
 
+const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN || "";
 const JWT_SECRET = process.env.JWT_SECRET || "";
 
 interface RequestParams {
@@ -67,7 +68,7 @@ export async function GET(request: NextRequest, { params }: { params: RequestPar
       // 쿠키 설정
       setAuthCookies(naverUserData, naverAccessToken, naverRefreshToken, naverSessionToken);
 
-      return NextResponse.redirect(new URL("/chatforyouio/front", request.url));
+      return NextResponse.redirect(new URL(`${DOMAIN}/chatforyouio/front`, request.url));
     case "kakao":
       const kakaoClientId = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;
       const kakaoClientSecret = process.env.KAKAO_CLIENT_SECRET;
@@ -118,7 +119,7 @@ export async function GET(request: NextRequest, { params }: { params: RequestPar
       // 쿠키 설정
       setAuthCookies(kakaoUserData, kakaoAccessToken, kakaoRefreshToken, kakaoSessionToken);
 
-      return NextResponse.redirect(new URL("/chatforyouio/front", request.url));
+      return NextResponse.redirect(new URL(`${DOMAIN}/chatforyouio/front`, request.url));
     case "google":
       const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
       const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
@@ -171,7 +172,7 @@ export async function GET(request: NextRequest, { params }: { params: RequestPar
       // 쿠키 설정
       setAuthCookies(googleUserData, googleAccessToken, googleRefreshToken, googleSessionToken);
 
-      return NextResponse.redirect(new URL("/chatforyouio/front", request.url));
+      return NextResponse.redirect(new URL(`${DOMAIN}/chatforyouio/front`, request.url));
   }    
 }
 

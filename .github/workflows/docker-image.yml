@@ -32,6 +32,7 @@ jobs:
       # 3. Set environment variables
       - name: Set environment variables
         run: |
+          echo "NEXT_PUBLIC_DOMAIN=$NEXT_PUBLIC_DOMAIN" >> .env
           echo "API_DOMAIN=$API_DOMAIN" >> .env
           echo "NEXT_PUBLIC_GOOGLE_CLIENT_ID=$NEXT_PUBLIC_GOOGLE_CLIENT_ID" >> .env
           echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET" >> .env
@@ -48,6 +49,7 @@ jobs:
           echo "NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH" >> .env
           echo "JWT_SECRET=$JWT_SECRET" >> .env
         env:
+          NEXT_PUBLIC_DOMAIN: ${{ secrets.NEXT_PUBLIC_DOMAIN }}
           API_DOMAIN: ${{ secrets.API_DOMAIN }}
           NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
