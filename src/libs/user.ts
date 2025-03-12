@@ -52,7 +52,7 @@ const userUpdate = async (idx: number, nickName: string): Promise<UserResponse> 
  */
 const userDelete = async (idx: number): Promise<UserResponse> => {
   try {
-    const { data } = await serverApiInstance.delete("/chatforyouio/user/delete", { data: { userIdx: idx } });
+    const { data } = await serverApiInstance.delete("/chatforyouio/user/delete", { data: { idx } });
     
     return { isSuccess: true, ...data };
   } catch (error) {

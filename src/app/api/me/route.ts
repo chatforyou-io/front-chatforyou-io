@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import serverApiInstance from "@/src/libs/utils/serverApiInstance";
+import { userUpdate, userDelete } from "@/src/libs/user";
 
-export async function GET(request: NextRequest) {
+async function GET(request: NextRequest) {
   try {
     // 토큰 쿠키 가져오기
     const accessToken = cookies().get("AccessToken")?.value;
@@ -37,24 +38,59 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function PATCH(request: NextRequest) {
+async function PATCH(request: NextRequest) {
   const { idx, nickName } = await request.json();
 
-  console.log(idx, nickName);
-
   try {
-    await serverApiInstance.patch("/chatforyouio/user/update", { idx, nickName });
+    const { isSuccess, userData } = await userUpdate(idx, nickName);
 
-    return NextResponse.json({ message: "사용자 정보 수정에 성공했습니다." }, { status: 200 });
+    if (!isSuccess) {
+      return NextResponse.json({ message: "사용자 정보 수정에 실패했습니다." }, { status: 400 });
+    }
+    
+    if (!userData) {
+      return NextResponse.json({ message: "사용자 정보 수정에 실패했습니다." }, { status: 400 });
+    }
+
+    // 세션 토큰 데이터 생성
+    const session = {
+      idx: userData.idx,
+      id: userData.id,
+      pwd: userData.pwd,
+      name: userData.name,
+      nickName: userData.nickName,
+      provider: userData.provider,
+      friendList: userData.friendList,
+      createDate: userData.createDate,
+      lastLoginDate: userData.lastLoginDate
+    }
+
+    return NextResponse.json({ message: "사용자 정보 수정에 성공했습니다.", session }, { status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ message: "사용자 정보 수정에 실패했습니다." }, { status: 400 });
   }
 }
 
-export async function DELETE(request: NextRequest) {
+async function DELETE(request: NextRequest) {
+  const { idx } = await request.json();
+  console.log(idx);
+  
   try {
-    await serverApiInstance.delete("/chatforyouio/user/delete");
+    const { isSuccess } = await userDelete(idx);
+
+    if (!isSuccess) {
+      return NextResponse.json({ message: "사용자 정보 삭제에 실패했습니다." }, { status: 400 });
+    }
+
+    // AccessToken 쿠키 삭제
+    cookies().delete("AccessToken");
+
+    // RefreshToken 쿠키 삭제
+    cookies().delete("RefreshToken");
+    
+    // SessionToken 쿠키 삭제
+    cookies().delete("SessionToken");
 
     return NextResponse.json({ message: "사용자 정보 삭제에 성공했습니다." }, { status: 200 });
   } catch (error) {
@@ -62,3 +98,5 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ message: "사용자 정보 삭제에 실패했습니다." }, { status: 400 });
   }
 }
+
+export { GET, PATCH, DELETE };

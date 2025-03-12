@@ -7,8 +7,7 @@ interface User {
   usePwd?: boolean,
   name?: string,
   nickName?: string,
-  create_date?: Date,
-  accessToken?: string,
-  refreshToken?: string,
-  lastLoginDate?: number | null
+  friendList?: string[],
+  createDate?: Date,
+  lastLoginDate?: Date,
 }
