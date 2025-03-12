@@ -102,7 +102,8 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
 
       return { isSuccess: true, message: "사용자 정보 조회에 성공했습니다.", session };
     } catch (error) {
-      return { isSuccess: false, message: "알 수 없는 오류로 사용자 정보를 가져오지 못했습니다. 다시 시도해주세요." };
+      const errorMessage = error instanceof AxiosError ? error.response?.data.message : "알 수 없는 오류로 사용자 정보를 가져오지 못했습니다. 다시 시도해주세요.";
+      return { isSuccess: false, message: errorMessage };
     }
   }, [user]);
 

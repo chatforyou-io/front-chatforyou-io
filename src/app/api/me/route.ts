@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
-import serverApiInstance from "@/src/libs/utils/serverApiInstance";
 import { userUpdate, userDelete } from "@/src/libs/user";
 
-async function GET(request: NextRequest) {
+async function GET() {
   try {
     // 토큰 쿠키 가져오기
     const accessToken = cookies().get("AccessToken")?.value;
