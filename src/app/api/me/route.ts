@@ -10,7 +10,7 @@ async function GET() {
     const sessionToken = cookies().get("SessionToken")?.value;
     
     if (!accessToken || !sessionToken) {
-      return NextResponse.json({ message: "토큰이 존재하지 않습니다." }, { status: 401 });
+      return NextResponse.json({ message: "토큰이 존재하지 않습니다." }, { status: 200 });
     }
 
     // 액세스 토큰 디코딩
@@ -30,7 +30,7 @@ async function GET() {
     const session = { idx, id, pwd, name, nickName, provider, friendList, createDate, lastLoginDate }
 
     // 응답 생성
-    return NextResponse.json({ message: "로그인에 성공했습니다.", session });
+    return NextResponse.json({ message: "로그인에 성공했습니다.", session }, { status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ message: "로그인에 실패했습니다." }, { status: 401 });
