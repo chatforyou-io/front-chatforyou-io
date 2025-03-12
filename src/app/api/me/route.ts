@@ -73,7 +73,6 @@ async function PATCH(request: NextRequest) {
 
 async function DELETE(request: NextRequest) {
   const { idx } = await request.json();
-  console.log(idx);
   
   try {
     const { isSuccess } = await userDelete(idx);
