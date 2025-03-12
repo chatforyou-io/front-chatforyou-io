@@ -27,15 +27,7 @@ export async function middleware(req: NextRequest) {
 // 미들웨어가 적용될 경로 설정
 export const config = {
   matcher: [
-    /*
-      * Match all request paths except for:
-      * - API routes (/api/...)
-      * - Static files (/_next/static/...)
-      * - Image optimization files (/_next/image/...)
-      * - Favicon file (/favicon.ico)
-      * - Public images (/images/...)
-     */
-    "/chatforyouio/front",
+    "/",
     "/((?!api|_next/static|_next/image|favicon.ico|images).*)",
   ],
 };
