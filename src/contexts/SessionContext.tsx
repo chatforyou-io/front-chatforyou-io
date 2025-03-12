@@ -61,17 +61,17 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
    */
   const signOut = useCallback(async (): Promise<SessionResultType> => {
     try {
-      // 사용자 정보 초기화
-      setUser(null);
-
       // 로그아웃 요청
-      const { status, data } = await axios.get("/chatforyouio/front/api/signout");
+      const { status, data } = await axios.post("/chatforyouio/front/api/signout");
       const { message } = data;
 
       // 로그아웃 실패 시
       if (status !== 200) {
         throw new AxiosError(message || "알 수 없는 오류로 로그아웃에 실패했습니다. 다시 시도해주세요.");
       }
+
+      // 사용자 정보 초기화
+      setUser(null);
 
       // 로그아웃 성공 시
       return { isSuccess: true, message: "로그아웃에 성공했습니다." };
@@ -102,7 +102,8 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
 
       return { isSuccess: true, message: "사용자 정보 조회에 성공했습니다.", session };
     } catch (error) {
-      return { isSuccess: false, message: "알 수 없는 오류로 사용자 정보를 가져오지 못했습니다. 다시 시도해주세요." };
+      const errorMessage = error instanceof AxiosError ? error.response?.data.message : "알 수 없는 오류로 사용자 정보를 가져오지 못했습니다. 다시 시도해주세요.";
+      return { isSuccess: false, message: errorMessage };
     }
   }, [user]);
 

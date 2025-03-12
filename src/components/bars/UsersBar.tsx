@@ -68,9 +68,9 @@ export default function UsersBar() {
         "flex": isOpen,
         "hidden": !isOpen })}>
         {users.sort((a, b) => {
-          if (a.lastLoginDate === null) return 1;
-          if (b.lastLoginDate === null) return -1;
-          return (b.lastLoginDate ?? 0) - (a.lastLoginDate ?? 0)
+          if (!a.lastLoginDate) return 1;
+          if (!b.lastLoginDate) return -1;
+          return b.lastLoginDate - a.lastLoginDate;
         }).map((user) => {
           const isCurrent = currentUsers.some((currentUser) => currentUser.idx === user.idx);
           return <UserItem key={`${user.idx}`} user={user} isCurrent={isCurrent} />;

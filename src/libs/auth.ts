@@ -106,7 +106,7 @@ async function validate(email: string): Promise<ValidateResponse> {
   try {
     const { headers, data } = await serverApiInstance.get("/chatforyouio/auth/validate", { params: { email } });
 
-    const cookies = headers["Set-Cookie"];
+    const cookies = headers["set-cookie"];
 
     if (!cookies) {
       throw new AxiosError("메일코드를 가져오는데 실패했습니다.");
@@ -125,6 +125,7 @@ async function validate(email: string): Promise<ValidateResponse> {
       mailCode
     };
   } catch (error) {
+    console.error(error);
     return handleAxiosError(error as AxiosError);
   }
 }
