@@ -3,9 +3,6 @@ import { cookies } from "next/headers";
 
 export async function GET() {
   try {
-    // 응답 생성 및 HTTP Only 쿠키에 세션 ID 설정
-    const response = NextResponse.json({ message: "로그아웃 성공" });
-
     // AccessToken 쿠키 삭제
     cookies().delete("AccessToken");
 

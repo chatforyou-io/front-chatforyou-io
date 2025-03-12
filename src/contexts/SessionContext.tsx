@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { usePathname } from 'next/navigation';
 interface SessionContextType {
   user: User | null;
@@ -14,6 +14,7 @@ interface SessionContextType {
 interface SessionResultType {
   isSuccess: boolean;
   message: string;
+  session?: User;
 }
 
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
@@ -41,7 +42,7 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
 
       // 로그인 실패 시
       if (status !== 200) {
-        throw new Error(message || "알 수 없는 오류로 로그인에 실패했습니다. 다시 시도해주세요.");
+        throw new AxiosError(message || "알 수 없는 오류로 로그인에 실패했습니다. 다시 시도해주세요.");
       }
 
       // 로그인 성공 시
@@ -50,8 +51,8 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
       // 로그인 성공 시
       return { isSuccess: true, message: "로그인에 성공했습니다." };
     } catch (error) {
-      console.error(error);
-      return { isSuccess: false, message: "로그인에 실패했습니다. 다시 시도해주세요." };
+      const errorMessage = error instanceof AxiosError ? error.response?.data.message : "알 수 없는 오류로 로그인에 실패했습니다. 다시 시도해주세요.";
+      return { isSuccess: false, message: errorMessage };
     }
   }, []);
 
@@ -69,24 +70,24 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
 
       // 로그아웃 실패 시
       if (status !== 200) {
-        throw new Error(message || "알 수 없는 오류로 로그아웃에 실패했습니다. 다시 시도해주세요.");
+        throw new AxiosError(message || "알 수 없는 오류로 로그아웃에 실패했습니다. 다시 시도해주세요.");
       }
 
       // 로그아웃 성공 시
       return { isSuccess: true, message: "로그아웃에 성공했습니다." };
     } catch (error) {
-      console.error(error);
-      return { isSuccess: false, message: "로그아웃에 실패했습니다. 다시 시도해주세요." };
+      const errorMessage = error instanceof AxiosError ? error.response?.data.message : "알 수 없는 오류로 로그아웃에 실패했습니다. 다시 시도해주세요.";
+      return { isSuccess: false, message: errorMessage };
     }
   }, []);
 
   /**
    * 사용자 정보 가져오기
-   * @returns {Promise<User | null>} 사용자 정보
+   * @returns {Promise<SessionResultType>} 사용자 정보
    */
-  const getUser = useCallback(async (): Promise<User | null> => {
+  const getUser = useCallback(async (): Promise<SessionResultType> => {
     if (user) {
-      return user;
+      return { isSuccess: true, message: "사용자 정보 조회에 성공했습니다.", session: user };
     }
 
     try {
@@ -94,15 +95,14 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
       const { session, message } = data;
 
       if (status !== 200) {
-        throw new Error(message || "알 수 없는 오류로 사용자 정보를 가져오지 못했습니다. 다시 시도해주세요.");
+        throw new AxiosError(message || "알 수 없는 오류로 사용자 정보를 가져오지 못했습니다. 다시 시도해주세요.");
       }
 
       setUser(session);
 
-      return session;
+      return { isSuccess: true, message: "사용자 정보 조회에 성공했습니다.", session };
     } catch (error) {
-      console.error(error);
-      return null;
+      return { isSuccess: false, message: "알 수 없는 오류로 사용자 정보를 가져오지 못했습니다. 다시 시도해주세요." };
     }
   }, [user]);
 
@@ -118,13 +118,13 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
       const { message } = data;
 
       if (status !== 200) {
-        throw new Error(message || "알 수 없는 오류로 사용자 정보를 수정하지 못했습니다. 다시 시도해주세요.");
+        throw new AxiosError(message || "알 수 없는 오류로 사용자 정보를 수정하지 못했습니다. 다시 시도해주세요.");
       }
 
       return { isSuccess: true, message: "사용자 정보를 수정하였습니다." };
     } catch (error) {
-      console.error(error);
-      return { isSuccess: false, message: "사용자 정보를 수정하지 못했습니다. 다시 시도해주세요." };
+      const errorMessage = error instanceof AxiosError ? error.response?.data.message : "알 수 없는 오류로 사용자 정보를 수정하지 못했습니다. 다시 시도해주세요.";
+      return { isSuccess: false, message: errorMessage };
     }
   }, []);
 
@@ -133,19 +133,19 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
    * @param {number} idx 사용자 인덱스
    * @returns {Promise<SessionResultType>} 사용자 정보 삭제 결과
    */
-  const deleteUser = useCallback(async (): Promise<SessionResultType> => {
+  const deleteUser = useCallback(async (idx: number): Promise<SessionResultType> => {
     try {
-      const { status, data } = await axios.delete("/chatforyouio/front/api/me");
+      const { status, data } = await axios.delete("/chatforyouio/front/api/me", { data: { idx } });
       const { message } = data;
 
       if (status !== 200) { 
-        throw new Error(message || "알 수 없는 오류로 사용자 정보를 삭제하지 못했습니다. 다시 시도해주세요.");
+        throw new AxiosError(message || "알 수 없는 오류로 사용자 정보를 삭제하지 못했습니다. 다시 시도해주세요.");
       }
 
       return { isSuccess: true, message: "사용자 정보를 삭제하였습니다." };
     } catch (error) {
-      console.error(error); 
-      return { isSuccess: false, message: "사용자 정보를 삭제하지 못했습니다. 다시 시도해주세요." };
+      const errorMessage = error instanceof AxiosError ? error.response?.data.message : "알 수 없는 오류로 사용자 정보를 삭제하지 못했습니다. 다시 시도해주세요.";
+      return { isSuccess: false, message: errorMessage };
     }
   }, []);
 
@@ -165,8 +165,11 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
 
     // 사용자 정보 가져오기
     const fetchUser = async () => {
-      const user = await getUser();
-      setUser(user);
+      const { isSuccess, session } = await getUser();
+
+      if (isSuccess && session) {
+        setUser(session);
+      }
     };
     fetchUser();
   }, [getUser, pathname, user]);
@@ -185,7 +188,7 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
 export function useSession(): SessionContextType {
   const context = useContext(SessionContext);
   if (context === undefined) {
-    throw new Error('useSession must be used within a SessionProvider');
+    throw new AxiosError('useSession must be used within a SessionProvider');
   }
   return context;
 }
