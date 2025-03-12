@@ -65,7 +65,7 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
       setUser(null);
 
       // 로그아웃 요청
-      const { status, data } = await axios.get("/chatforyouio/front/api/signout");
+      const { status, data } = await axios.post("/chatforyouio/front/api/signout");
       const { message } = data;
 
       // 로그아웃 실패 시

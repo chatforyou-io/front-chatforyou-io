@@ -30,6 +30,10 @@ export default function UsersBar() {
     fetchUsers(userCurrentList, setCurrentUsers);
   }, [fetchUsers]);
 
+  useEffect(() => {
+    console.log(users);
+  }, [users]);
+
   return (
     <div className="flex flex-col justify-center pb-4 w-full md:w-160 lg:w-80 lg:h-[calc(100%-1rem)] lg:mb-4 bg-white rounded-xl">
       <div className={clsx("md:hidden justify-center items-center pt-4", {
@@ -70,7 +74,7 @@ export default function UsersBar() {
         {users.sort((a, b) => {
           if (!a.lastLoginDate) return 1;
           if (!b.lastLoginDate) return -1;
-          return b.lastLoginDate.getTime() - a.lastLoginDate.getTime();
+          return b.lastLoginDate - a.lastLoginDate;
         }).map((user) => {
           const isCurrent = currentUsers.some((currentUser) => currentUser.idx === user.idx);
           return <UserItem key={`${user.idx}`} user={user} isCurrent={isCurrent} />;

@@ -8,6 +8,6 @@ interface User {
   name?: string,
   nickName?: string,
   friendList?: string[],
-  createDate?: Date,
-  lastLoginDate?: Date,
+  createDate?: number,
+  lastLoginDate?: number,
 }
