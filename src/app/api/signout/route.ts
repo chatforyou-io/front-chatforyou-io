@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
-export async function GET() {
+export async function POST() {
   try {
     // AccessToken 쿠키 삭제
     cookies().delete("AccessToken");

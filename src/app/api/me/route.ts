@@ -1,17 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
-import serverApiInstance from "@/src/libs/utils/serverApiInstance";
 import { userUpdate, userDelete } from "@/src/libs/user";
 
-async function GET(request: NextRequest) {
+async function GET() {
   try {
     // 토큰 쿠키 가져오기
     const accessToken = cookies().get("AccessToken")?.value;
     const sessionToken = cookies().get("SessionToken")?.value;
     
     if (!accessToken || !sessionToken) {
-      return NextResponse.json({ message: "토큰이 존재하지 않습니다." }, { status: 401 });
+      return NextResponse.json({ message: "토큰이 존재하지 않습니다." }, { status: 200 });
     }
 
     // 액세스 토큰 디코딩
@@ -31,7 +30,7 @@ async function GET(request: NextRequest) {
     const session = { idx, id, pwd, name, nickName, provider, friendList, createDate, lastLoginDate }
 
     // 응답 생성
-    return NextResponse.json({ message: "로그인에 성공했습니다.", session });
+    return NextResponse.json({ message: "로그인에 성공했습니다.", session }, { status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ message: "로그인에 실패했습니다." }, { status: 401 });
@@ -74,7 +73,6 @@ async function PATCH(request: NextRequest) {
 
 async function DELETE(request: NextRequest) {
   const { idx } = await request.json();
-  console.log(idx);
   
   try {
     const { isSuccess } = await userDelete(idx);
