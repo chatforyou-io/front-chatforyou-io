@@ -8,10 +8,12 @@ import Modal from "@/src/components/items/Modal";
 import { chatroomList } from "@/src/libs/chatroom";
 import { useHandleRequestFail } from "@/src/webhooks/useHandleRequestFail";
 import IconPlus from "@/public/images/icons/plus.svg";
+import { connectChatroomListSSE } from "../libs/sses/chatroomList";
 
 export default function Home() {
   const [isPopup, setIsPopup] = useState<boolean>(false);
   const [chatrooms, setChatrooms] = useState<Chatroom[]>([]);
+  const [connectionStatus, setConnectionStatus] = useState<string>("Disconnected");
   const handleRequestFail = useHandleRequestFail();
 
   const fetchChatrooms = useCallback(async () => {
@@ -26,8 +28,22 @@ export default function Home() {
   }, [handleRequestFail]);
 
   useEffect(() => {
-    fetchChatrooms();
-  }, [fetchChatrooms]);
+    const eventSource = connectChatroomListSSE(1, {
+      onConnectionStatus: setConnectionStatus,
+      onKeepAlive: (message) => console.log("keep alive:", message),
+      onUpdateChatroomList: setChatrooms,
+      onError: (error) => console.error("Error:", error),
+    });
+
+    return () => {
+      eventSource.close();
+      setConnectionStatus("Disconnected");
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log("connectionStatus:", connectionStatus);
+  }, [connectionStatus]);
 
   return (
     <>
