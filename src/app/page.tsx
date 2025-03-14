@@ -6,7 +6,7 @@ import ChatroomCard from "@/src/components/cards/ChatroomCard";
 import ChatroomCreateForm from "@/src/components/forms/ChatroomCreateForm";
 import Modal from "@/src/components/items/Modal";
 import IconPlus from "@/public/images/icons/plus.svg";
-import { connectChatroomListSSE } from "../libs/sses/chatroomList";
+import { connectChatroomListSSE } from "@/src/libs/sses/chatroomList";
 import { useSession } from "@/src/contexts/SessionContext";
 
 export default function Home() {
@@ -21,19 +21,15 @@ export default function Home() {
     const eventSource = connectChatroomListSSE(user.idx, {
       onConnectionStatus: (status) => {
         setConnectionStatus(status);
-        console.log("connectionStatus:", status);
       },
-      onKeepAlive: (message) => {
-        console.log("keep alive:", message);
+      onKeepAlive: () => {
         setConnectionStatus("Connected");
       },
       onUpdateChatroomList: (chatrooms) => {
         setChatrooms(chatrooms);
         setConnectionStatus("Connected");
-        console.log("chatrooms:", chatrooms);
       },
-      onError: (error) => {
-        console.error("Error:", error);
+      onError: () => {
         setConnectionStatus("Disconnected");
       },
     });
@@ -43,10 +39,6 @@ export default function Home() {
       setConnectionStatus("Disconnected");
     };
   }, [user?.idx]);
-
-  useEffect(() => {
-    console.log("connectionStatus:", connectionStatus);
-  }, [connectionStatus]);
 
   return (
     <>
