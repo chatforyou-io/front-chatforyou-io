@@ -1,7 +1,7 @@
 import axios from "axios";
 import { cookies } from "next/headers";
 
-const authHost = process.env.API_DOMAIN;
+const authHost = process.env.NEXT_PUBLIC_API_DOMAIN;
 
 const serverApiInstance = axios.create({
   baseURL: authHost,
