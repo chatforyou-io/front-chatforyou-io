@@ -1,9 +1,10 @@
+const apiDomain = process.env.NEXT_PUBLIC_API_DOMAIN;
 export const connectChatroomInfoSSE = (
   sessionId: string,
   idx: number,
   callbacks: ChatroomInfoSSECallbacks
 ) => {
-  const eventSource = new EventSource(`/chatroom/${sessionId}/user/${idx}`);
+  const eventSource = new EventSource(`${apiDomain}/chatforyouio/sse/chatroom/${sessionId}/user/${idx}`);
 
   eventSource.addEventListener("connectionStatus", (event) => {
     const { data } = JSON.parse(event.data);

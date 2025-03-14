@@ -1,45 +1,48 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import UsersBar from "@/src/components/bars/UsersBar";
 import ChatroomCard from "@/src/components/cards/ChatroomCard";
 import ChatroomCreateForm from "@/src/components/forms/ChatroomCreateForm";
 import Modal from "@/src/components/items/Modal";
-import { chatroomList } from "@/src/libs/chatroom";
-import { useHandleRequestFail } from "@/src/webhooks/useHandleRequestFail";
 import IconPlus from "@/public/images/icons/plus.svg";
 import { connectChatroomListSSE } from "../libs/sses/chatroomList";
+import { useSession } from "@/src/contexts/SessionContext";
 
 export default function Home() {
+  const { user } = useSession();
   const [isPopup, setIsPopup] = useState<boolean>(false);
   const [chatrooms, setChatrooms] = useState<Chatroom[]>([]);
   const [connectionStatus, setConnectionStatus] = useState<string>("Disconnected");
-  const handleRequestFail = useHandleRequestFail();
-
-  const fetchChatrooms = useCallback(async () => {
-    try {
-      const data = await chatroomList();
-      if (!data.isSuccess) throw new Error(handleRequestFail(data));
-
-      setChatrooms(data.roomList || []);
-    } catch (error) {
-      console.error("Failed to fetch chatrooms:", error);
-    }
-  }, [handleRequestFail]);
 
   useEffect(() => {
-    const eventSource = connectChatroomListSSE(1, {
-      onConnectionStatus: setConnectionStatus,
-      onKeepAlive: (message) => console.log("keep alive:", message),
-      onUpdateChatroomList: setChatrooms,
-      onError: (error) => console.error("Error:", error),
+    if (!user?.idx) return;
+
+    const eventSource = connectChatroomListSSE(user.idx, {
+      onConnectionStatus: (status) => {
+        setConnectionStatus(status);
+        console.log("connectionStatus:", status);
+      },
+      onKeepAlive: (message) => {
+        console.log("keep alive:", message);
+        setConnectionStatus("Connected");
+      },
+      onUpdateChatroomList: (chatrooms) => {
+        setChatrooms(chatrooms);
+        setConnectionStatus("Connected");
+        console.log("chatrooms:", chatrooms);
+      },
+      onError: (error) => {
+        console.error("Error:", error);
+        setConnectionStatus("Disconnected");
+      },
     });
 
     return () => {
       eventSource.close();
       setConnectionStatus("Disconnected");
     };
-  }, []);
+  }, [user?.idx]);
 
   useEffect(() => {
     console.log("connectionStatus:", connectionStatus);
