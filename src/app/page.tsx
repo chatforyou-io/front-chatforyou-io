@@ -72,7 +72,7 @@ export default function Home() {
         </div>
         <div className="flex flex-col lg:flex-row justify-center items-center lg:items-start lg:px-4 w-sm md:w-full h-full">
           <UsersBar />
-          <div className="flex justify-center size-full pt-4 lg:p-0 overflow-y-auto">
+          <div className="flex items-start size-full pt-4 lg:p-0 overflow-y-auto">
             {chatrooms.length === 0
               ? <div className="flex justify-center items-center size-full"><p>채팅방이 존재하지 않습니다.</p></div>
               : (<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mx-auto">
