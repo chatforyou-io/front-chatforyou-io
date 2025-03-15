@@ -20,8 +20,10 @@ export const connectChatroomListSSE = (
 
   eventSource.addEventListener("updateChatroomList", (event) => {
     console.log("updateChatroomList:", event);
-    const { data } = JSON.parse(event.data);
-    callbacks.onUpdateChatroomList?.(data);
+    const { response } = JSON.parse(event.data);
+    const { data } = response;
+    const { chatrooms } = data;
+    callbacks.onUpdateChatroomList?.(chatrooms);
   });
 
   eventSource.onerror = (error) => {

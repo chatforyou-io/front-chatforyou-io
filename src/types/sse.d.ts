@@ -5,7 +5,7 @@ interface SSECallbacks {
 }
 
 interface ChatroomListSSECallbacks extends SSECallbacks {
-  onUpdateChatroomList?: (data: { chatrooms: Chatroom[] }) => void;
+  onUpdateChatroomList?: (chatrooms: Chatroom[]) => void;
 }
 
 interface ChatroomInfoSSECallbacks extends SSECallbacks {
