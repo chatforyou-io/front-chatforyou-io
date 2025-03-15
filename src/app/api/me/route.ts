@@ -3,7 +3,9 @@ import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import { userUpdate, userDelete } from "@/src/libs/user";
 
-async function GET() {
+const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
+
+async function GET(request: NextRequest) {
   try {
     // 토큰 쿠키 가져오기
     const accessToken = cookies().get("AccessToken")?.value;
@@ -23,7 +25,7 @@ async function GET() {
 
     // 액세스 토큰 만료 시간 체크
     if (exp < Date.now() / 1000) {
-      return NextResponse.json({ message: "토큰이 만료되었습니다." }, { status: 401 });
+      return NextResponse.redirect(new URL(`${DOMAIN}/chatforyouio/front`, request.url));
     }
 
     // 세션 토큰 데이터 생성
@@ -33,7 +35,7 @@ async function GET() {
     return NextResponse.json({ message: "로그인에 성공했습니다.", session }, { status: 200 });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ message: "로그인에 실패했습니다." }, { status: 401 });
+    return NextResponse.redirect(new URL(`${DOMAIN}/chatforyouio/front`, request.url));
   }
 }
 

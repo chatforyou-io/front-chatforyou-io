@@ -1,7 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
-export async function POST() {
+const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
+
+export async function POST(request: NextRequest) {
   try {
     // AccessToken 쿠키 삭제
     cookies().delete("AccessToken");
@@ -12,9 +14,9 @@ export async function POST() {
     // SessionToken 쿠키 삭제
     cookies().delete("SessionToken");
 
-    return NextResponse.json({ message: "로그아웃에 성공했습니다." }, { status: 200 });
+    return NextResponse.redirect(new URL(`${DOMAIN}/chatforyouio/front`, request.url));
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ message: "로그아웃에 실패했습니다." }, { status: 401 });
+    return NextResponse.redirect(new URL(`${DOMAIN}/chatforyouio/front`, request.url));
   }
 }
