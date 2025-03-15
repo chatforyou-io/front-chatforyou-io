@@ -1,42 +1,50 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import UsersBar from "@/src/components/bars/UsersBar";
 import ChatroomCard from "@/src/components/cards/ChatroomCard";
 import ChatroomCreateForm from "@/src/components/forms/ChatroomCreateForm";
 import Modal from "@/src/components/items/Modal";
-import IconPlus from "@/public/images/icons/plus.svg";
-import { connectChatroomListSSE } from "@/src/libs/sses/chatroomList";
 import { useSession } from "@/src/contexts/SessionContext";
+import IconPlus from "@/public/images/icons/plus.svg";
+import { chatroomList } from "@/src/libs/chatroom";
+import { connectChatroomListSSE } from "@/src/libs/sses/chatroomList";
+import { useHandleRequestFail } from "@/src/webhooks/useHandleRequestFail";
 
 export default function Home() {
   const { user } = useSession();
   const [isPopup, setIsPopup] = useState<boolean>(false);
   const [chatrooms, setChatrooms] = useState<Chatroom[]>([]);
-  const [connectionStatus, setConnectionStatus] = useState<string>("Disconnected");
+  const handleRequestFail = useHandleRequestFail();
+
+  useEffect(() => {
+    const fetchChatrooms = async () => {
+      try {
+        const data = await chatroomList();
+        if (!data.isSuccess) throw new Error(handleRequestFail(data));
+  
+        setChatrooms(data.roomList || []);
+      } catch (error) {
+        console.error("Failed to fetch chatrooms:", error);
+      }
+    };
+
+    fetchChatrooms();
+  }, [handleRequestFail]);
 
   useEffect(() => {
     if (!user?.idx) return;
 
     const eventSource = connectChatroomListSSE(user.idx, {
-      onConnectionStatus: (status) => {
-        setConnectionStatus(status);
-      },
-      onKeepAlive: () => {
-        setConnectionStatus("Connected");
-      },
-      onUpdateChatroomList: (chatrooms) => {
-        setChatrooms(chatrooms);
-        setConnectionStatus("Connected");
-      },
-      onError: () => {
-        setConnectionStatus("Disconnected");
-      },
+      onConnectionStatus: (status) => console.log(status),
+      onKeepAlive: (message) => console.log(message),
+      onUpdateChatroomList: (chatrooms) => setChatrooms(chatrooms),
+      onError: (error) => console.warn(error),
     });
 
     return () => {
       eventSource.close();
-      setConnectionStatus("Disconnected");
+      console.warn("Disconnected");
     };
   }, [user?.idx]);
 
@@ -65,11 +73,12 @@ export default function Home() {
         <div className="flex flex-col lg:flex-row justify-center items-center lg:items-start lg:px-4 w-sm md:w-full h-full">
           <UsersBar />
           <div className="flex justify-center size-full pt-4 lg:p-0 overflow-y-auto">
-            {chatrooms.length
-              ? (<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mx-auto">
+            {chatrooms.length === 0
+              ? <div className="flex justify-center items-center size-full"><p>채팅방이 존재하지 않습니다.</p></div>
+              : (<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mx-auto">
                   {chatrooms.map((chatroom, index) => <ChatroomCard key={index} chatroom={chatroom} />)}
-                </div>)
-              : <div className="flex justify-center items-center size-full"><p>채팅방이 존재하지 않습니다.</p></div>}
+                </div>
+              )}
           </div>
         </div>
       </main>
