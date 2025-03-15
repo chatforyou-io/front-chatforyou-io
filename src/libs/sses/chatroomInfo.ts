@@ -18,7 +18,8 @@ export const connectChatroomInfoSSE = (
 
   eventSource.addEventListener("updateChatroomInfo", (event) => {
     const { data } = JSON.parse(event.data);
-    callbacks.onUpdateChatroomInfo?.(data);
+    const chatroom = typeof data === "string" ? JSON.parse(data) : data;
+    callbacks.onUpdateChatroomInfo?.(chatroom);
   });
 
   eventSource.onerror = (error) => {

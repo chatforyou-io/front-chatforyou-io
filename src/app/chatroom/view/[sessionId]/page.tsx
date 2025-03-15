@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import OpenviduStream from '@/src/components/openvidu/OpenviduStream';
 import { chatroomToken } from "@/src/libs/chatroom";
@@ -9,6 +9,7 @@ import DeviceSelectors from "@/src/components/bars/DeviceSelectors";
 import { useHandleRequestFail } from "@/src/webhooks/useHandleRequestFail";
 import IconUser from "@/public/images/icon-user.svg";
 import { useSession } from "@/src/contexts/SessionContext";
+import { connectChatroomInfoSSE } from "@/src/libs/sses/chatroomInfo";
 
 interface PageProps {
   params: {
@@ -20,7 +21,6 @@ export default function Page({ params }: PageProps) {
   const { sessionId } = params;
   const { publisher, subscribers, joinSession, leaveSession } = useContext(OpenviduContext);
   const { user } = useSession();
-  const userIdx = useMemo(() => user?.idx, [user?.idx]);
   const [chatroom, setChatroom] = useState<Chatroom | undefined>(undefined);
   const [token, setToken] = useState<string | undefined>(undefined);
   const [redirect, setRedirect] = useState(false);
@@ -29,11 +29,13 @@ export default function Page({ params }: PageProps) {
   const handleRequestFail = useHandleRequestFail();
 
   useEffect(() => {
+    if (!user?.idx) throw new Error("사용자 정보를 가져오는데 실패했습니다.");
+
     const fetchChatroom = async () => {
-      try {
-        if (!userIdx) throw new Error("사용자 정보를 가져오는데 실패했습니다.");
-        
-        const data = await chatroomToken(sessionId, userIdx);
+      if (!user?.idx) return;
+
+      try {        
+        const data = await chatroomToken(sessionId, user.idx);
         if (!data.isSuccess) throw new Error(handleRequestFail(data));
         
         const createDatetime = new Date(data.roomInfo.createDate).toLocaleString("ko-KR", {
@@ -53,22 +55,33 @@ export default function Page({ params }: PageProps) {
     };
 
     fetchChatroom();
-  }, [sessionId, userIdx, handleRequestFail]);
+  }, [sessionId, user?.idx, handleRequestFail]);
 
   useEffect(() => {
-    const fetchOpenvidu = async () => {
-      if (!token || !userIdx) return;
+    if (!user?.idx) return;
 
-      try {
-        joinSession(token, userIdx);
-      } catch (error) {
-        console.error(error);
-        setLeave(true);
-      }
+    const eventSource = connectChatroomInfoSSE(sessionId, user.idx, {
+      onConnectionStatus: (status) => console.log(status),
+      onKeepAlive: (message) => console.log(message),
+      onUpdateChatroomInfo: (chatroom) => setChatroom(chatroom),
+      onError: (error) => console.error(error),
+    });
+
+    return () => {
+      eventSource.close();
+    };
+  }, [sessionId, user?.idx]);
+
+  useEffect(() => {
+    if (!token || !user?.idx) return;
+
+    try {
+      joinSession(token, user.idx);
+    } catch (error) {
+      console.error(error);
+      setLeave(true);
     }
-    
-    fetchOpenvidu();
-  }, [token, userIdx, joinSession]);
+  }, [token, user?.idx, joinSession]);
 
   const handleClick = () => {
     setLeave(true);
@@ -91,10 +104,10 @@ export default function Page({ params }: PageProps) {
   }, []);
 
   useEffect(() => {
-    if (leave) {
-      leaveSession();
-      setRedirect(true);
-    }
+    if (!leave) return;
+
+    leaveSession();
+    setRedirect(true);
   }, [leave, leaveSession]);
 
   useEffect(() => {
