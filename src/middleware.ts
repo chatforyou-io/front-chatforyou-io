@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function middleware(req: NextRequest) {
+export async function middleware(request: NextRequest) {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-
-  const { pathname, origin } = req.nextUrl;
+  const { pathname, origin } = request.nextUrl;
 
   const isPublicPath = pathname.startsWith("/auth/");
-  const accessToken = req.cookies.get("AccessToken")?.value;
+  const accessToken = request.cookies.get("AccessToken")?.value;
 
   // 인증된 사용자가 인증 페이지에 접근할 경우 홈으로 리다이렉트
   if (accessToken && isPublicPath) {
