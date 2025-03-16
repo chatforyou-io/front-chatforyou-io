@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import clsx from "clsx";
 import { userCurrentList, userList } from "@/src/libs/user";
 import { useHandleRequestFail } from "@/src/webhooks/useHandleRequestFail";
@@ -9,26 +9,44 @@ export default function UsersBar() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [users, setUsers] = useState<User[]>([]);
   const [currentUsers, setCurrentUsers] = useState<User[]>([]);
-  const handleRequestFail = useHandleRequestFail();
-
-  const toggleIsOpen = useCallback(() => setIsOpen(prevIsOpen => !prevIsOpen), []);
-
-  const fetchUsers = useCallback(async (fetchFunc: () => Promise<any>, setFunc: Dispatch<SetStateAction<User[]>>) => {
-    try {
-      const data = await fetchFunc();
-      if (!data.isSuccess) throw new Error(handleRequestFail(data));
-      
-      setFunc(data.userList || []);
-    } catch (error) {
-      console.error("Failed to fetch users:", error);
-      setFunc([]);
-    }
-  }, [handleRequestFail]);
+  const handleRequestFail = useHandleRequestFail();    
 
   useEffect(() => {
-    fetchUsers(userList, setUsers);
-    fetchUsers(userCurrentList, setCurrentUsers);
-  }, [fetchUsers]);
+    const fetchUsers = async () => {
+      try {
+        const userData = await userList();
+  
+        if (!userData.isSuccess) {
+          throw new Error(handleRequestFail(userData));
+        }
+
+        setUsers(userData.userList || []);
+      } catch (error) {
+        console.error("Failed to fetch users:", error);
+      }
+    };
+
+    const fetchCurrentUsers = async () => {
+      try {
+        const currentUserData = await userCurrentList();
+
+        if (!currentUserData.isSuccess) {
+          throw new Error(handleRequestFail(currentUserData));
+        }
+
+        setCurrentUsers(currentUserData.userList || []);
+      } catch (error) {
+        console.error("Failed to fetch current users:", error);
+      }
+    };
+
+    fetchUsers();
+    fetchCurrentUsers();
+  }, [handleRequestFail]);
+
+  const toggleIsOpen = () => {
+    setIsOpen(prevIsOpen => !prevIsOpen);
+  };
 
   return (
     <div className="flex flex-col justify-center pb-4 w-full md:w-160 lg:w-80 lg:h-[calc(100%-1rem)] lg:mb-4 bg-white rounded-xl">
