@@ -8,6 +8,7 @@ import { handleAxiosError } from "@/src/libs/utils/serverCommon";
 interface UserResponse extends DefaultResponse {
   result?: string,
   userData?: User,
+  userList?: User[],
 }
 
 /**
