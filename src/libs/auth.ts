@@ -136,7 +136,7 @@ async function validate(email: string): Promise<ValidateResponse> {
  */
 async function refreshToken(idx: number, id: string): Promise<SignInResponse> {
   try {
-    const { headers } = await serverApiInstance.post("/chatforyouio/auth/refresh", { idx, id });
+    const { headers } = await serverApiInstance.post("/chatforyouio/auth/refresh_token", { idx, id });
 
     const accessToken = headers["accesstoken"];
     const refreshToken = headers["refreshtoken"];
