@@ -128,10 +128,6 @@ export default function Page({ params }: PageProps) {
       router.push("/");
     }
   }, [redirect, router]);
-
-  useEffect(() => {
-    console.log({ chatroom });
-  }, [chatroom]);
   
   return (
     <main className="flex flex-col justify-center items-center size-full bg-gray-200">

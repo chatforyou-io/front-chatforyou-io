@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 
 interface MediaDeviceInfo {
-  deviceId: string;
+  deviceId: string | undefined;
   kind: MediaDeviceKind;
-  label: string;
-  groupId: string;
+  label: string | undefined;
+  groupId: string | undefined;
 }
 
 interface UseMediaDevicesReturn {
