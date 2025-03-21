@@ -62,7 +62,22 @@ export default function Page({ params }: PageProps) {
     if (!user?.idx) return;
 
     const eventSource = connectChatroomInfoSSE(sessionId, user.idx, {
-      onUpdateChatroomInfo: (chatroom) => setChatroom(chatroom)
+      onUpdateChatroomInfo: (chatroom) => {
+        if (chatroom.createDate) {
+          const createDatetime = new Date(chatroom.createDate).toLocaleString("ko-KR", {
+            timeZone: "Asia/Seoul",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit"
+          });
+
+          chatroom.createDatetime = createDatetime;
+        }
+
+        setChatroom(chatroom);
+      }
     });
 
     return () => {
