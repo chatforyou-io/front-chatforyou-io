@@ -130,4 +130,29 @@ async function validate(email: string): Promise<ValidateResponse> {
   }
 }
 
-export { signIn, socialSignIn, logout, validate };
+/**
+ * 토큰 갱신
+ * @returns {Promise<SignInResponse>} 액세스 토큰, 리프레시 토큰 또는 에러 응답
+ */
+async function refreshToken(idx: number, id: string): Promise<SignInResponse> {
+  try {
+    const { headers } = await serverApiInstance.post("/chatforyouio/auth/refresh_token", { idx, id });
+
+    const accessToken = headers["accesstoken"];
+    const refreshToken = headers["refreshtoken"];
+    
+    if (!accessToken || !refreshToken) {
+      throw new AxiosError("토큰을 가져오는데 실패했습니다.");
+    }
+
+    return {
+      isSuccess: true,
+      accessToken,
+      refreshToken
+    };
+  } catch (error) {
+    return handleAxiosError(error as AxiosError);
+  }
+}
+
+export { signIn, socialSignIn, logout, validate, refreshToken };

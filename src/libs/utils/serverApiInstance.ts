@@ -10,12 +10,18 @@ const serverApiInstance = axios.create({
 
 serverApiInstance.interceptors.request.use(
   (config) => {
+    const url = config.url;
+
     const accessToken = cookies().get("AccessToken")?.value;
     const refreshToken = cookies().get("RefreshToken")?.value;
 
     if (accessToken || refreshToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
-      config.headers.RefreshToken = `Bearer ${refreshToken}`;
+      if (url === "/chatforyouio/auth/refresh_token") {
+        config.headers.Authorization = `Bearer ${refreshToken}`;
+      } else {
+        config.headers.Authorization = `Bearer ${accessToken}`;
+        config.headers.RefreshToken = `Bearer ${refreshToken}`;
+      }
     }
 
     return config;
