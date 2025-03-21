@@ -36,10 +36,7 @@ export default function Home() {
     if (!user?.idx) return;
 
     const eventSource = connectChatroomListSSE(user.idx, {
-      onConnectionStatus: (status) => console.log(status),
-      onKeepAlive: (message) => console.log(message),
-      onUpdateChatroomList: (chatrooms) => setChatrooms(chatrooms),
-      onError: (error) => console.warn(error),
+      onUpdateChatroomList: (chatrooms) => setChatrooms(chatrooms)
     });
 
     return () => {

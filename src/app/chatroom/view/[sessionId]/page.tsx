@@ -46,6 +46,7 @@ export default function Page({ params }: PageProps) {
           hour: "2-digit",
           minute: "2-digit"
         });
+
         setChatroom({ ...data.roomInfo, createDatetime });
         setToken(data.joinUserInfo.camera_token);
       } catch (error) {
@@ -61,10 +62,7 @@ export default function Page({ params }: PageProps) {
     if (!user?.idx) return;
 
     const eventSource = connectChatroomInfoSSE(sessionId, user.idx, {
-      onConnectionStatus: (status) => console.log(status),
-      onKeepAlive: (message) => console.log(message),
-      onUpdateChatroomInfo: (chatroom) => setChatroom(chatroom),
-      onError: (error) => console.error(error),
+      onUpdateChatroomInfo: (chatroom) => setChatroom(chatroom)
     });
 
     return () => {
@@ -115,6 +113,10 @@ export default function Page({ params }: PageProps) {
       router.push("/");
     }
   }, [redirect, router]);
+
+  useEffect(() => {
+    console.log({ chatroom });
+  }, [chatroom]);
   
   return (
     <main className="flex flex-col justify-center items-center size-full bg-gray-200">
