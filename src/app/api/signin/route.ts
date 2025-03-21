@@ -68,9 +68,9 @@ export async function POST(request: NextRequest) {
       expires: new Date(Date.now() + 60 * 60 * 1000), // 1시간
     });
 
-    return NextResponse.json({ message: "로그인 성공", userData }, { status: 200 });
+    return NextResponse.json({ isSuccess: true, message: "로그인 성공", userData }, { status: 200 });
   } catch (error) {
     console.error(error);
-    return NextResponse.redirect(new URL(`${DOMAIN}/chatforyouio/front`, request.url));
+    return NextResponse.json({ isSuccess: false, message: "로그인 실패" }, { status: 400 });
   }
 }

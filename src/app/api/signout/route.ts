@@ -14,9 +14,9 @@ export async function POST(request: NextRequest) {
     // SessionToken 쿠키 삭제
     cookies().delete("SessionToken");
 
-    return NextResponse.redirect(new URL(`${DOMAIN}/chatforyouio/front`, request.url));
+    return NextResponse.json({ isSuccess: true });
   } catch (error) {
     console.error(error);
-    return NextResponse.redirect(new URL(`${DOMAIN}/chatforyouio/front`, request.url));
+    return NextResponse.json({ isSuccess: false });
   }
 }

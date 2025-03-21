@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
+import { refreshToken } from "@/src/libs/auth";
 import { userUpdate, userDelete } from "@/src/libs/user";
 
 const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
@@ -25,7 +26,33 @@ async function GET(request: NextRequest) {
 
     // 액세스 토큰 만료 시간 체크
     if (exp < Date.now() / 1000) {
-      return NextResponse.redirect(new URL(`${DOMAIN}/chatforyouio/front`, request.url));
+      const { isSuccess, accessToken: newAccessToken, refreshToken: newRefreshToken } = await refreshToken(idx, id);
+
+      if (!isSuccess) {
+        return NextResponse.redirect(new URL(`${DOMAIN}/chatforyouio/front`, request.url));
+      }
+
+      if (!newAccessToken || !newRefreshToken) {
+        return NextResponse.redirect(new URL(`${DOMAIN}/chatforyouio/front`, request.url));
+      }
+
+      // AccessToken 쿠키 설정
+      cookies().set("AccessToken", newAccessToken, {
+        httpOnly: true, // 자바스크립트에서 접근 불가능
+        secure: process.env.NODE_ENV === "production", // 프로덕션 환경에서만 쿠키 전송
+        sameSite: "lax", // 쿠키 동작 방식
+        path: "/", // 쿠키 적용 범위
+        expires: new Date(Date.now() + 60 * 60 * 1000), // 1시간
+      });
+
+      // RefreshToken 쿠키 설정
+      cookies().set("RefreshToken", newRefreshToken, {
+        httpOnly: true, // 자바스크립트에서 접근 불가능
+        secure: process.env.NODE_ENV === "production", // 프로덕션 환경에서만 쿠키 전송
+        sameSite: "lax", // 쿠키 동작 방식
+        path: "/", // 쿠키 적용 범위
+        expires: new Date(Date.now() + 60 * 60 * 24 * 1000), // 1일
+      });
     }
 
     // 세션 토큰 데이터 생성

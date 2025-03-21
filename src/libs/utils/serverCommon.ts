@@ -8,7 +8,7 @@ interface AxiosErrorData {
 }
 
 const handleAxiosError = (error: AxiosError) => {
-  const { code, message} = error.response?.data as AxiosErrorData;
+  const { code, message} = error.response?.data as AxiosErrorData || {};
   return { isSuccess: false, code, message };
 };
 
