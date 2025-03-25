@@ -11,3 +11,7 @@ interface ChatroomListSSECallbacks extends SSECallbacks {
 interface ChatroomInfoSSECallbacks extends SSECallbacks {
   onUpdateChatroomInfo?: (chatroom: Chatroom) => void;
 }
+
+interface UserListSSECallbacks extends SSECallbacks {
+  onUpdateUserList?: (users: { userList: User[], loginUserList: User[] }) => void;
+}
