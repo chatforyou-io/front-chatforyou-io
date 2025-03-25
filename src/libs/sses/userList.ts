@@ -17,11 +17,9 @@ export const connectUserListSSE = (
   });
 
   eventSource.addEventListener("updateUserList", (event) => {
-    console.log(event);
-    console.log(event.data);
-    console.log(JSON.parse(event.data));
-    const { userList, loginUserList } = JSON.parse(event.data);
-    callbacks.onUpdateUserList?.({ userList, loginUserList });
+    const data = JSON.parse(event.data);
+    console.log(data);
+    callbacks.onUpdateUserList?.(data);
   });
 
   eventSource.onerror = (error) => {

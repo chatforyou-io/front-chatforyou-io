@@ -32,6 +32,7 @@ export default function UsersBar() {
       // SSE 연결
       const eventSource = connectUserListSSE(user.idx, {
         onUpdateUserList: (users) => {
+          console.log(users);
           setUsers(users.userList || []);
           setCurrentUsers(users.loginUserList || []);
         }
