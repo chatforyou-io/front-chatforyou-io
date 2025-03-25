@@ -17,6 +17,7 @@ export const connectUserListSSE = (
   });
 
   eventSource.addEventListener("updateUserList", (event) => {
+    console.log("updateUserList", event);
     const { data } = JSON.parse(event.data);
     console.log("data", data);
     const users = typeof data === "string" ? JSON.parse(data) : data;
