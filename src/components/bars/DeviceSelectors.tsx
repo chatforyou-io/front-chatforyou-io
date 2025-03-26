@@ -29,6 +29,13 @@ export default function DeviceSelectors() {
    */
   const handleAudioChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
+
+    // 동시에 오디오/비디오 모두 비활성화 방지
+    if (value === '' && selectedVideoId === '') {
+      alert('오디오와 비디오를 동시에 비활성화할 수 없습니다.');
+      return;
+    }
+
     setSelectedAudioId(value);
     handleChange(audioInputs, value, 'audioinput');
   };
@@ -39,6 +46,13 @@ export default function DeviceSelectors() {
    */
   const handleVideoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
+
+    // 동시에 오디오/비디오 모두 비활성화 방지
+    if (value === '' && selectedAudioId === '') {
+      alert('오디오와 비디오를 동시에 비활성화할 수 없습니다.');
+      return;
+    }
+
     setSelectedVideoId(value);
     handleChange(videoInputs, value, 'videoinput');
   };
