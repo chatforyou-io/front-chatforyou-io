@@ -8,10 +8,10 @@ interface UseOpenViduProps {
 }
 
 interface UseOpenViduReturn {
-  session?: Session;
-  publisher?: Publisher;
+  session: Session | undefined;
+  publisher: Publisher | undefined;
   subscribers: Subscriber[];
-  joinSession: () => void;
+  joinSession: () => Promise<void>;
   leaveSession: () => void;
 }
 
@@ -28,35 +28,32 @@ export const useOpenvidu = ({ sessionId, userIdx }: UseOpenViduProps): UseOpenVi
   const joinSession = useCallback(async () => {
     try {
       if (!sessionId || !userIdx) {
-        throw new Error('세션 정보와 사용자 정보가 필요합니다.');
+        throw new Error('sessionId and userIdx must be provided');
       }
 
       const token = await getToken();
       
       if (!token) {
-        throw new Error('토큰이 없습니다.');
+        throw new Error('Token is empty');
       }
       
       if (!ovRef.current) {
         ovRef.current = new OpenVidu();
-        ovRef.current.enableProdMode();
       }
 
-      const session = ovRef.current.initSession();
-      sessionRef.current = session;
+      sessionRef.current = ovRef.current.initSession();
+      ovRef.current.enableProdMode(); // 프로덕션 모드 활성화
 
-      session.on('streamCreated', (event) => {
-        const subscriber = session.subscribe(event.stream, undefined);
-        setSubscribers((prev) => [...prev, subscriber]);
+      sessionRef.current.on('streamCreated', (event) => {
+        const subscriber = sessionRef.current!.subscribe(event.stream, undefined);
+        setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
       });
 
-      session.on('streamDestroyed', (event) => {
-        setSubscribers((prev) =>
-          prev.filter((subscriber) => subscriber !== event.stream.streamManager)
-        );
+      sessionRef.current.on('streamDestroyed', (event) => {
+        setSubscribers((prevSubscribers) => prevSubscribers.filter((subscriber) => subscriber !== event.stream.streamManager));
       });
 
-      await session.connect(token, { clientData: sessionId });
+      await sessionRef.current.connect(token, { clientData: sessionId });
 
       const newPublisher = ovRef.current.initPublisher(undefined, {
         audioSource: undefined,
@@ -68,12 +65,12 @@ export const useOpenvidu = ({ sessionId, userIdx }: UseOpenViduProps): UseOpenVi
         insertMode: 'APPEND',
       });
 
-      await session.publish(newPublisher);
+      await sessionRef.current.publish(newPublisher);
 
-      setSession(session);
+      setSession(sessionRef.current);
       setPublisher(newPublisher);
     } catch (error) {
-      console.error('세션 참여에 실패했습니다.', error);
+      console.error('Error joining session:', error);
     }
   }, [sessionId, userIdx, getToken]);
 
@@ -89,17 +86,16 @@ export const useOpenvidu = ({ sessionId, userIdx }: UseOpenViduProps): UseOpenVi
   }, []);
 
   useEffect(() => {
-    return () => leaveSession();
+    return () => {
+      leaveSession();
+    };
   }, [leaveSession]);
 
-  return useMemo(
-    () => ({
-      session,
-      publisher,
-      subscribers,
-      joinSession,
-      leaveSession,
-    }),
-    [session, publisher, subscribers, joinSession, leaveSession]
-  );
+  return useMemo(() => ({
+    session,
+    publisher,
+    subscribers,
+    joinSession,
+    leaveSession,
+  }), [session, publisher, subscribers, joinSession, leaveSession]);
 };
