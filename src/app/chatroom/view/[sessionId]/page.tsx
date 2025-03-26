@@ -18,19 +18,19 @@ interface PageProps {
   };
 }
 
-export default function Page({ params }: PageProps) {
-  const { sessionId } = params;
-  const { publisher, subscribers, joinSession, leaveSession } = useContext(OpenviduContext);
-  const { user } = useSession();
-  const [chatroom, setChatroom] = useState<Chatroom | undefined>(undefined);
-  const [token, setToken] = useState<string | undefined>(undefined);
-  const [state, setState] = useState({
-    redirect: false,
-    leave: false,
-  });
+export default function Page({ params: { sessionId } }: PageProps) {
   const router = useRouter();
+  const { user } = useSession();
+  const { publisher, subscribers, joinSession, leaveSession } = useContext(OpenviduContext);
+
+  const [chatroom, setChatroom] = useState<Chatroom>();
+  const [token, setToken] = useState<string>();
+  const [shouldRedirect, setShouldRedirect] = useState(false);
   const handleRequestFail = useHandleRequestFail();
 
+  /**
+   * 채팅방 정보 가져오기
+   */
   const fetchChatroom = useCallback(async () => {
     if (!user?.idx) return;
 
@@ -44,7 +44,6 @@ export default function Page({ params }: PageProps) {
 
       // 채팅방 생성일자 포맷팅
       const createDatetime = formatDateTime(data.roomInfo.createDate);
-
       setChatroom({ ...data.roomInfo, createDatetime });
       setToken(data.joinUserInfo.camera_token);
 
@@ -58,12 +57,10 @@ export default function Page({ params }: PageProps) {
         }
       });
 
-      return () => {
-        eventSource.close();
-      };
+      return () => eventSource.close();
     } catch (error) {
       console.error(error);
-      setState((prev) => ({ ...prev, redirect: true }));
+      setShouldRedirect(true);
     }
   }, [user?.idx, sessionId, handleRequestFail]);
 
@@ -72,46 +69,37 @@ export default function Page({ params }: PageProps) {
   }, [fetchChatroom]);
 
   useEffect(() => {
-    if (!token || !user?.idx) return;
-
-    try {
-      joinSession(token, user.idx);
-    } catch (error) {
-      console.error(error);
-      setState((prev) => ({ ...prev, leave: true }));
+    if (token && user?.idx) {
+      try {
+        joinSession(token, user.idx);
+      } catch (error) {
+        console.error(error);
+        setShouldRedirect(true);
+      }
     }
   }, [token, user?.idx, joinSession]);
 
-  const handleClick = () => {
-    setState((prev) => ({ ...prev, leave: true, redirect: true }));
-  };
-
   useEffect(() => {
-    const beforeUnload = (event: BeforeUnloadEvent) => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       event.preventDefault();
-      setState((prev) => ({ ...prev, leave: true, redirect: true }));
+      leaveSession();
+      setShouldRedirect(true);
       event.returnValue = '';
     };
 
-    window.addEventListener("beforeunload", beforeUnload);
+    window.addEventListener("beforeunload", handleBeforeUnload);
 
-    return () => {
-      window.removeEventListener("beforeunload", beforeUnload);
-    };
-  }, []);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [leaveSession]);
 
   useEffect(() => {
-    if (state.leave) {
+    if (shouldRedirect) {
       leaveSession();
-      setState((prev) => ({ ...prev, redirect: true }));
-    }
-  }, [state.leave, leaveSession]);
-
-  useEffect(() => {
-    if (state.redirect) {
       router.push("/");
     }
-  }, [state.redirect, router]);
+  }, [shouldRedirect, router, leaveSession]);
+
+  const handleLeaveClick = () => setShouldRedirect(true);
   
   return (
     <main className="flex flex-col justify-center items-center size-full bg-gray-200">
@@ -131,7 +119,7 @@ export default function Page({ params }: PageProps) {
           <div>
             <button
               type="button"
-              onClick={handleClick}
+              onClick={handleLeaveClick}
               className="w-20 h-10 text-sm text-white bg-blue-500 rounded-xl">
               나가기
             </button>
