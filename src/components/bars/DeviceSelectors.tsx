@@ -59,7 +59,7 @@ export default function DeviceSelectors() {
 
   useEffect(() => {
     getDevices();
-  }, []);
+  }, [getDevices]);
 
   useEffect(() => {
     if (audioInputs && audioInputs.length > 0) {
@@ -71,7 +71,7 @@ export default function DeviceSelectors() {
       setSelectedVideoId(videoInputs[0].deviceId);
       setDevice(videoInputs[0]);
     }
-  }, [audioInputs, videoInputs]);
+  }, [audioInputs, videoInputs, setDevice]);
 
   return (
     <div className="flex gap-4 w-full bg-white">

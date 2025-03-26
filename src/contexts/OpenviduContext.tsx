@@ -187,7 +187,7 @@ export default function OpenviduProvider({ children }: { children: ReactNode }) 
 
     await session.current.publish(newPublisher);
     setPublisher(newPublisher);
-  }, [publisher]);
+  }, [publisher, initOpenvidu]);
 
   return (
     <OpenviduContext.Provider
