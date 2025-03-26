@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import UsersBar from "@/src/components/bars/UsersBar";
 import ChatroomCard from "@/src/components/cards/ChatroomCard";
 import ChatroomCreateForm from "@/src/components/forms/ChatroomCreateForm";
@@ -17,33 +17,35 @@ export default function Home() {
   const [chatrooms, setChatrooms] = useState<Chatroom[]>([]);
   const handleRequestFail = useHandleRequestFail();
 
-  useEffect(() => {
-    const fetchChatrooms = async () => {
-      try {
-        const data = await chatroomList();
-        if (!data.isSuccess) throw new Error(handleRequestFail(data));
-  
-        setChatrooms(data.roomList || []);
-      } catch (error) {
-        console.error("Failed to fetch chatrooms:", error);
-      }
-    };
-
-    fetchChatrooms();
-  }, [handleRequestFail]);
-
-  useEffect(() => {
+  const fetchChatrooms = useCallback(async () => {
     if (!user?.idx) return;
 
-    const eventSource = connectChatroomListSSE(user.idx, {
-      onUpdateChatroomList: (chatrooms) => setChatrooms(chatrooms)
-    });
+    try {
+      // 채팅방 목록 조회
+      const data = await chatroomList();
 
-    return () => {
-      eventSource.close();
-      console.warn("Disconnected");
-    };
-  }, [user?.idx]);
+      if (!data.isSuccess) {
+        throw new Error(handleRequestFail(data));
+      }
+
+      setChatrooms(data.roomList || []);
+
+      // SSE 연결
+      const eventSource = connectChatroomListSSE(user.idx, {
+        onUpdateChatroomList: (chatrooms) => setChatrooms(chatrooms)
+      });
+
+      return () => {
+        eventSource.close();
+      };
+    } catch (error) {
+      console.error("Failed to fetch chatrooms:", error);
+    }
+  }, [user?.idx, handleRequestFail]);
+
+  useEffect(() => {
+    fetchChatrooms();
+  }, [fetchChatrooms]);
 
   return (
     <>
@@ -68,7 +70,10 @@ export default function Home() {
           </div>
         </div>
         <div className="flex flex-col lg:flex-row justify-center items-center lg:items-start lg:px-4 w-sm md:w-full h-full">
+          {/* 인원 목록 */}
           <UsersBar />
+
+          {/* 채팅방 목록 */}
           <div className="flex items-start size-full pt-4 lg:p-0 overflow-y-auto">
             {chatrooms.length === 0
               ? <div className="flex justify-center items-center size-full"><p>채팅방이 존재하지 않습니다.</p></div>
