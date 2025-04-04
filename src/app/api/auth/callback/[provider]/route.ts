@@ -66,9 +66,9 @@ export async function GET(request: NextRequest, { params }: { params: RequestPar
       const naverSessionToken = jwt.sign(naverUserData, JWT_SECRET, { expiresIn: "1h" });
 
       // 쿠키 설정
-      setAuthCookies(naverUserData, naverAccessToken, naverRefreshToken, naverSessionToken);
+      setAuthCookies(naverAccessToken, naverRefreshToken, naverSessionToken);
 
-      return NextResponse.redirect(new URL(`${DOMAIN}/chatforyouio/front`, request.url));
+      return NextResponse.redirect(new URL('/chatforyouio/front', request.url));
     case "kakao":
       const kakaoClientId = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;
       const kakaoClientSecret = process.env.KAKAO_CLIENT_SECRET;
@@ -117,9 +117,9 @@ export async function GET(request: NextRequest, { params }: { params: RequestPar
       const kakaoSessionToken = jwt.sign(kakaoUserData, JWT_SECRET, { expiresIn: "1h" });
 
       // 쿠키 설정
-      setAuthCookies(kakaoUserData, kakaoAccessToken, kakaoRefreshToken, kakaoSessionToken);
+      setAuthCookies(kakaoAccessToken, kakaoRefreshToken, kakaoSessionToken);
 
-      return NextResponse.redirect(new URL(`${DOMAIN}/chatforyouio/front`, request.url));
+      return NextResponse.redirect(new URL('/chatforyouio/front', request.url));
     case "google":
       const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
       const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
@@ -167,16 +167,16 @@ export async function GET(request: NextRequest, { params }: { params: RequestPar
         return NextResponse.json({ error: "토큰이 존재하지 않습니다." }, { status: 400 });
       }
 
-      const googleSessionToken = jwt.sign(googleUserData as object, JWT_SECRET, { expiresIn: "1h" });
+      const googleSessionToken = jwt.sign(googleUserData, JWT_SECRET, { expiresIn: "1h" });
 
       // 쿠키 설정
-      setAuthCookies(googleUserData, googleAccessToken, googleRefreshToken, googleSessionToken);
+      setAuthCookies(googleAccessToken, googleRefreshToken, googleSessionToken);
 
-      return NextResponse.redirect(new URL(`${DOMAIN}/chatforyouio/front`, request.url));
+      return NextResponse.redirect(new URL('/chatforyouio/front', request.url));
   }    
 }
 
-function setAuthCookies(userData: any, accessToken: string, refreshToken: string, sessionToken: string) {
+function setAuthCookies(accessToken: string, refreshToken: string, sessionToken: string) {
   cookies().set("AccessToken", accessToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
