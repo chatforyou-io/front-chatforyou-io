@@ -4,7 +4,6 @@ import ButtonWithError from "@/src/components/items/ButtonWithError";
 import InputWithError from "@/src/components/items/InputWithError";
 import { useSession } from "@/src/contexts/SessionContext";
 import { useLoginValidation } from "@/src/webhooks/useLoginValidation";
-import { env } from "process";
 
 export default function LoginForm() {
   const { signIn } = useSession();

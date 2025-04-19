@@ -4,7 +4,6 @@ import jwt from "jsonwebtoken";
 import { socialSignIn } from "@/src/libs/auth";
 import { cookies } from "next/headers";
 
-const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN || "";
 const JWT_SECRET = process.env.JWT_SECRET || "";
 
 interface RequestParams {
