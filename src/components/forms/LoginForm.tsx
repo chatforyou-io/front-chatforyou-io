@@ -1,9 +1,10 @@
-import { FormEvent } from "react";
+import { FormEvent, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import ButtonWithError from "@/src/components/items/ButtonWithError";
 import InputWithError from "@/src/components/items/InputWithError";
 import { useSession } from "@/src/contexts/SessionContext";
 import { useLoginValidation } from "@/src/webhooks/useLoginValidation";
+import { env } from "process";
 
 export default function LoginForm() {
   const { signIn } = useSession();
@@ -43,6 +44,27 @@ export default function LoginForm() {
   const handleSubmitError = (error: string) => {
     setErrors(prevErrors => ({ ...prevErrors, login: error }));
   };
+
+  useEffect(() => {
+    console.log({
+      NEXT_PUBLIC_DOMAIN: process.env.NEXT_PUBLIC_DOMAIN,
+      NEXT_PUBLIC_BASE_PATH: process.env.NEXT_PUBLIC_BASE_PATH,
+      NEXT_PUBLIC_API_DOMAIN: process.env.NEXT_PUBLIC_API_DOMAIN,
+      JST_SECRET: process.env.JWT_SECRET,
+      GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+      KAKAO_CLIENT_SECRET: process.env.KAKAO_CLIENT_SECRET,
+      NAVER_CLIENT_SECRET: process.env.NAVER_CLIENT_SECRET,
+      NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+      NEXT_PUBLIC_GOOGLE_REDIRECT_URI: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI,
+      NEXT_PUBLIC_GOOGLE_STATE: process.env.NEXT_PUBLIC_GOOGLE_STATE,
+      NEXT_PUBLIC_KAKAO_CLIENT_ID: process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID,
+      NEXT_PUBLIC_KAKAO_REDIRECT_URI: process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI,
+      NEXT_PUBLIC_KAKAO_STATE: process.env.NEXT_PUBLIC_KAKAO_STATE,
+      NEXT_PUBLIC_NAVER_CLIENT_ID: process.env.NEXT_PUBLIC_NAVER_CLIENT_ID,
+      NEXT_PUBLIC_NAVER_REDIRECT_URI: process.env.NEXT_PUBLIC_NAVER_REDIRECT_URI,
+      NEXT_PUBLIC_NAVER_STATE: process.env.NEXT_PUBLIC_NAVER_STATE
+    })
+  }, []);
 
   return (
     <form onSubmit={handleSubmit} className="w-full">
