@@ -3,6 +3,7 @@ import axios from "axios";
 import jwt from "jsonwebtoken";
 import { socialSignIn } from "@/src/libs/auth";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 interface RequestParams {
   provider: string;
@@ -75,7 +76,7 @@ export async function GET(request: NextRequest, { params }: { params: RequestPar
       // 쿠키 설정
       setAuthCookies(naverAccessToken, naverRefreshToken, naverSessionToken);
 
-      return NextResponse.redirect(new URL('/chatforyouio/front', request.url));
+      redirect('/chatforyouio/front');
     case "kakao":
       const kakaoCode = searchParams.get("code");
       const kakaoState = searchParams.get("state");
@@ -123,7 +124,7 @@ export async function GET(request: NextRequest, { params }: { params: RequestPar
       // 쿠키 설정
       setAuthCookies(kakaoAccessToken, kakaoRefreshToken, kakaoSessionToken);
 
-      return NextResponse.redirect(new URL('/chatforyouio/front', request.url));
+      redirect('/chatforyouio/front');
     case "google":
       const googleCode = searchParams.get("code");
       const googleState = searchParams.get("state");
@@ -173,7 +174,7 @@ export async function GET(request: NextRequest, { params }: { params: RequestPar
       // 쿠키 설정
       setAuthCookies(googleAccessToken, googleRefreshToken, googleSessionToken);
 
-      return NextResponse.redirect(new URL('/chatforyouio/front', request.url));
+      redirect('/chatforyouio/front');
   }    
 }
 
