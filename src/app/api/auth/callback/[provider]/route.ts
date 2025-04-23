@@ -4,8 +4,6 @@ import jwt from "jsonwebtoken";
 import { socialSignIn } from "@/src/libs/auth";
 import { cookies } from "next/headers";
 
-const JWT_SECRET = process.env.JWT_SECRET || "";
-
 interface RequestParams {
   provider: string;
 }
@@ -16,11 +14,21 @@ export async function GET(request: NextRequest, { params }: { params: RequestPar
   // URL에서 "code" 파라미터 추출
   const { searchParams } = request.nextUrl;
 
+  const {
+    JWT_SECRET: jwtSecret = "",
+    NEXT_PUBLIC_NAVER_CLIENT_ID: naverClientId = "",
+    NAVER_CLIENT_SECRET: naverClientSecret = "",
+    NEXT_PUBLIC_NAVER_REDIRECT_URI: naverRedirectUri = "",
+    NEXT_PUBLIC_KAKAO_CLIENT_ID: kakaoClientId = "",
+    KAKAO_CLIENT_SECRET: kakaoClientSecret = "",
+    NEXT_PUBLIC_KAKAO_REDIRECT_URI: kakaoRedirectUri = "",
+    NEXT_PUBLIC_GOOGLE_CLIENT_ID: googleClientId = "", 
+    GOOGLE_CLIENT_SECRET: googleClientSecret = "",
+    NEXT_PUBLIC_GOOGLE_REDIRECT_URI: googleRedirectUri = "",
+  } = process.env;
+
   switch (provider) {
     case "naver":
-      const naverClientId = process.env.NEXT_PUBLIC_NAVER_CLIENT_ID;
-      const naverClientSecret = process.env.NAVER_CLIENT_SECRET;
-      const naverRedirectUri = process.env.NEXT_PUBLIC_NAVER_REDIRECT_URI;
       const naverCode = searchParams.get("code");
       const naverState = searchParams.get("state");
 
@@ -62,16 +70,13 @@ export async function GET(request: NextRequest, { params }: { params: RequestPar
       }
 
       // session 토큰 생성
-      const naverSessionToken = jwt.sign(naverUserData, JWT_SECRET, { expiresIn: "1h" });
+      const naverSessionToken = jwt.sign(naverUserData, jwtSecret, { expiresIn: "1h" });
 
       // 쿠키 설정
       setAuthCookies(naverAccessToken, naverRefreshToken, naverSessionToken);
 
       return NextResponse.redirect(new URL('/chatforyouio/front', request.url));
     case "kakao":
-      const kakaoClientId = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;
-      const kakaoClientSecret = process.env.KAKAO_CLIENT_SECRET;
-      const kakaoRedirectUri = process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI;
       const kakaoCode = searchParams.get("code");
       const kakaoState = searchParams.get("state");
 
@@ -113,16 +118,13 @@ export async function GET(request: NextRequest, { params }: { params: RequestPar
       }
 
       // session 토큰 생성
-      const kakaoSessionToken = jwt.sign(kakaoUserData, JWT_SECRET, { expiresIn: "1h" });
+      const kakaoSessionToken = jwt.sign(kakaoUserData, jwtSecret, { expiresIn: "1h" });
 
       // 쿠키 설정
       setAuthCookies(kakaoAccessToken, kakaoRefreshToken, kakaoSessionToken);
 
       return NextResponse.redirect(new URL('/chatforyouio/front', request.url));
     case "google":
-      const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-      const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
-      const googleRedirectUri = process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI;
       const googleCode = searchParams.get("code");
       const googleState = searchParams.get("state");
 
@@ -166,8 +168,8 @@ export async function GET(request: NextRequest, { params }: { params: RequestPar
         return NextResponse.json({ error: "토큰이 존재하지 않습니다." }, { status: 400 });
       }
 
-      const googleSessionToken = jwt.sign(googleUserData, JWT_SECRET, { expiresIn: "1h" });
-
+      const googleSessionToken = jwt.sign(googleUserData, jwtSecret, { expiresIn: "1h" });
+      
       // 쿠키 설정
       setAuthCookies(googleAccessToken, googleRefreshToken, googleSessionToken);
 
@@ -176,21 +178,23 @@ export async function GET(request: NextRequest, { params }: { params: RequestPar
 }
 
 function setAuthCookies(accessToken: string, refreshToken: string, sessionToken: string) {
+  const { NODE_ENV: nodeEnv = "" } = process.env;
+
   cookies().set("AccessToken", accessToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: nodeEnv === "production",
     sameSite: "lax",
   });
 
   cookies().set("RefreshToken", refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: nodeEnv === "production",
     sameSite: "lax",
   });
 
   cookies().set("SessionToken", sessionToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: nodeEnv === "production",
     sameSite: "lax",
   });
 }
