@@ -46,7 +46,6 @@ jobs:
           echo "NAVER_CLIENT_SECRET=$NAVER_CLIENT_SECRET" >> .env
           echo "NEXT_PUBLIC_NAVER_REDIRECT_URI=$NEXT_PUBLIC_NAVER_REDIRECT_URI" >> .env
           echo "NEXT_PUBLIC_NAVER_STATE=$NEXT_PUBLIC_NAVER_STATE" >> .env
-          echo "NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH" >> .env
           echo "JWT_SECRET=$JWT_SECRET" >> .env
         env:
           NEXT_PUBLIC_DOMAIN: ${{ secrets.NEXT_PUBLIC_DOMAIN }}
@@ -63,7 +62,6 @@ jobs:
           NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
           NEXT_PUBLIC_NAVER_REDIRECT_URI: ${{ secrets.NEXT_PUBLIC_NAVER_REDIRECT_URI }}
           NEXT_PUBLIC_NAVER_STATE: ${{ secrets.NEXT_PUBLIC_NAVER_STATE }}
-          NEXT_PUBLIC_BASE_PATH: ${{ secrets.NEXT_PUBLIC_BASE_PATH }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
       # 4. TIMESTAMP 생성 (한국 시간으로) && IMAGE_URI 로 이미지명:태크명 공통화
