@@ -107,7 +107,7 @@ export async function POST(request: NextRequest, { params }: { params: RequestPa
     return NextResponse.json({ isSuccess: true, userData, accessToken, refreshToken, sessionToken }, { status: 200 });
   } catch (error) {
     console.error(error); 
-    return NextResponse.json({ isSuccess: false, message: "로그인에 실패했습니다." }, { status: 500 });
+    return NextResponse.json({ isSuccess: false, message: error }, { status: 500 });
   }  
 }
 
