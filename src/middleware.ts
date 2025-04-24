@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function middleware(request: NextRequest) {
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
   const { pathname, origin } = request.nextUrl;
 
   const isPublicPath = pathname.startsWith("/auth/");
@@ -9,13 +8,13 @@ export async function middleware(request: NextRequest) {
 
   // 인증된 사용자가 인증 페이지에 접근할 경우 홈으로 리다이렉트
   if (accessToken && isPublicPath) {
-    return NextResponse.redirect(`${origin}${basePath}/`);
+    return NextResponse.redirect(`${origin}/chatforyouio/front/`);
   }
   
   // 인증되지 않은 사용자가 보호된 경로에 접근할 경우 로그인 페이지로 리다이렉트
   if (!accessToken && !isPublicPath) {
-    const loginUrl = new URL(`${basePath}/auth/login`, origin);
-    loginUrl.searchParams.set("callbackUrl", `${basePath}${pathname}`);
+    const loginUrl = new URL("/chatforyouio/front/auth/login", origin);
+    loginUrl.searchParams.set("callbackUrl", `/chatforyouio/front${pathname}`);
     return NextResponse.redirect(loginUrl);
   }
   
