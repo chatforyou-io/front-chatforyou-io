@@ -43,7 +43,7 @@ export default function Page({ params }: { params: { provider: string } }) {
     const state = searchParams.get("state");
   
     if (!code || !state) {
-      router.push("/auth/signup");
+      router.push("/auth/login");
       return;
     }
 
@@ -61,7 +61,7 @@ export default function Page({ params }: { params: { provider: string } }) {
         }
       } catch (error) {
         handleRequestFail(error);
-        router.push("/auth/signup");
+        router.push("/auth/login");
       }
     };
 
