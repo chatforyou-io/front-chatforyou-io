@@ -49,7 +49,7 @@ export default function Page({ params }: { params: { provider: string } }) {
 
     const fetchSocialData = async () => {
       try {
-        const response = await axios.post(`/chatforyouio/front/api/auth/callback/${provider}`, { code, state });
+        const response = await axios.post(`/chatforyouio/front/api/auth/social/${provider}/callback`, { code, state });
 
         const { data } = response;
 

@@ -5,18 +5,32 @@ import { socialSignIn } from "@/src/libs/auth";
 import { cookies } from "next/headers";
 
 // 소셜 플랫폼 타입
-interface RequestParams {
-  provider: "naver" | "kakao" | "google";
-}
+type SocialProviderType = "naver" | "kakao" | "google";
+
+type UserInfo = {
+  id: string;
+  email: string;
+  name: string;
+  nickname: string;
+};
+
+type SocialProviderConfig = {
+  tokenUrl: string;
+  userInfoUrl: string;
+  clientId: string;
+  clientSecret: string;
+  redirectUri: string;
+  getUserInfo: (data: any) => UserInfo;
+};
 
 // 소셜 플랫폼별 설정
-const config = {
+const socialProviderConfig: Record<SocialProviderType, SocialProviderConfig> = {
   naver: {
     tokenUrl: "https://nid.naver.com/oauth2.0/token",
     userInfoUrl: "https://openapi.naver.com/v1/nid/me",
-    clientId: process.env.NEXT_PUBLIC_NAVER_CLIENT_ID ?? "",
+    clientId: process.env.NAVER_CLIENT_ID ?? "",
     clientSecret: process.env.NAVER_CLIENT_SECRET ?? "",
-    redirectUri: process.env.NEXT_PUBLIC_NAVER_REDIRECT_URI ?? "",
+    redirectUri: process.env.NAVER_REDIRECT_URI ?? "",
     getUserInfo: (data: any) => ({
       id: data.response.id,
       email: data.response.email,
@@ -27,9 +41,9 @@ const config = {
   kakao: {
     tokenUrl: "https://kauth.kakao.com/oauth/token",
     userInfoUrl: "https://kapi.kakao.com/v2/user/me",
-    clientId: process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID ?? "",
+    clientId: process.env.KAKAO_CLIENT_ID ?? "",
     clientSecret: process.env.KAKAO_CLIENT_SECRET ?? "",
-    redirectUri: process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI ?? "",
+    redirectUri: process.env.KAKAO_REDIRECT_URI ?? "",
     getUserInfo: (data: any) => ({
       id: data.id,
       email: data.kakao_account.email,
@@ -40,9 +54,9 @@ const config = {
   google: {
     tokenUrl: "https://oauth2.googleapis.com/token",
     userInfoUrl: "https://www.googleapis.com/oauth2/v3/userinfo",
-    clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? "",
+    clientId: process.env.GOOGLE_CLIENT_ID ?? "",
     clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
-    redirectUri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI ?? "",
+    redirectUri: process.env.GOOGLE_REDIRECT_URI ?? "",
     getUserInfo: (data: any) => ({
       id: data.sub,
       email: data.email,
@@ -52,10 +66,10 @@ const config = {
   },
 };
 
-export async function POST(request: NextRequest, { params }: { params: RequestParams }) {
-  const { provider } = params;
+export async function POST(request: NextRequest, { params }: { params: { provider: SocialProviderType } }) {
+  const provider = params.provider;
   const { code, state } = await request.json();
-  const providerConfig = config[provider];
+  const providerConfig = socialProviderConfig[provider];
 
   try {
     // 소셜 플랫폼에 토큰 요청
