@@ -18,7 +18,7 @@ interface SignOutResponse extends DefaultResponse {
 
 // 이메일 유효성 검사 응답 타입
 interface ValidateResponse extends DefaultResponse {
-  result?: boolean;
+  result?: string;
   mailCode?: string;
 }
 

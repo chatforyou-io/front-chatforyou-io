@@ -1,37 +1,64 @@
-import { FormEvent } from "react";
-import InputWithError from "@/src/components/items/InputWithError";
-import { useSignUpValidation } from "@/src/hooks/useSignUpValidation";
+import clsx from "clsx";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signUpSchema, SignUpSchemaType } from "@/src/schemas/signUpSchema";
 
-interface SignUpUserInfoFormProps {
+interface SignUpFormProps {
   onSubmit: (name: string, pwd: string, confirmPwd: string) => void;
 }
 
-export default function SignUpForm({ onSubmit }: SignUpUserInfoFormProps) {
-  const { errors, validate } = useSignUpValidation();
+export default function SignUpForm({ onSubmit }: SignUpFormProps) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignUpSchemaType>({
+    resolver: zodResolver(signUpSchema),
+  });
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    const formData = new FormData(event.currentTarget);
-    const name = formData.get("name") as string;
-    const pwd = formData.get("pwd") as string;
-    const confirmPwd = formData.get("confirmPwd") as string;
-
-    if (!validate(name, pwd, confirmPwd)) return;
-
-    // 부모 컴포넌트로 id 전달
-    onSubmit(name, pwd, confirmPwd);
+  const processSubmit = async (data: SignUpSchemaType) => {
+    onSubmit(data.name, data.pwd, data.confirmPwd);
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit(processSubmit)}>
       <div className="space-y-4">
-        <InputWithError type="text" name="name" placeholder="이름" label="이름" errorMessage={errors.name} />
-        <InputWithError type="password" name="pwd" placeholder="비밀번호" label="비밀번호" errorMessage={errors.password} />
-        <InputWithError type="password" name="confirmPwd" placeholder="비밀번호 확인" label="비밀번호 확인" errorMessage={errors.confirmPwd} />
+        <input
+          type="text"
+          placeholder="이름"
+          aria-label="이름"
+          className={clsx("border px-4 h-16 w-full bg-white rounded-full", {
+            "border-red-500": errors.name,
+          })}
+          {...register("name")} />
+        {errors.name && <p className="text-error">{errors.name?.message}</p>}
+        <input
+          type="password"
+          placeholder="비밀번호"
+          aria-label="비밀번호"
+          className={clsx("border px-4 h-16 w-full bg-white rounded-full", {
+            "border-red-500": errors.pwd,
+          })}
+          {...register("pwd")} />
+        {errors.pwd && <p className="text-error">{errors.pwd?.message}</p>}
+        <input
+          type="password"
+          placeholder="비밀번호 확인"
+          aria-label="비밀번호 확인"
+          className={clsx("border px-4 h-16 w-full bg-white rounded-full", {
+            "border-red-500": errors.confirmPwd,
+          })}
+          {...register("confirmPwd")} />
+        {errors.confirmPwd && <p className="text-error">{errors.confirmPwd?.message}</p>}
       </div>
       <div className="pt-4">
-        <button type="submit" className="border p-4 w-full h-16 bg-primary text-white rounded-full">계속</button>
+        <button
+          type="submit"
+          className={clsx("border p-4 w-full h-16 bg-primary text-white rounded-full", {
+            "border-red-500": errors.root,
+          })}>
+          계속
+        </button>
       </div>
     </form>
   );
