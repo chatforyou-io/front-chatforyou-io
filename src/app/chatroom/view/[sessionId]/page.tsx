@@ -6,7 +6,7 @@ import OpenviduStream from '@/src/components/openvidu/OpenviduStream';
 import { chatroomToken } from "@/src/libs/chatroom";
 import { OpenviduContext } from "@/src/contexts/OpenviduContext";
 import DeviceSelectors from "@/src/components/bars/DeviceSelectors";
-import { useHandleRequestFail } from "@/src/webhooks/useHandleRequestFail";
+import { useHandleRequestFail } from "@/src/hooks/useHandleRequestFail";
 import IconUser from "@/public/images/icon-user.svg";
 import { useSession } from "@/src/contexts/SessionContext";
 import { connectChatroomInfoSSE } from "@/src/libs/sses/chatroomInfo";

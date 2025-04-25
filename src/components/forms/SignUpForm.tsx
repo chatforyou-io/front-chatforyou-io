@@ -1,6 +1,6 @@
 import { FormEvent } from "react";
 import InputWithError from "@/src/components/items/InputWithError";
-import { useSignUpValidation } from "@/src/webhooks/useSignUpValidation";
+import { useSignUpValidation } from "@/src/hooks/useSignUpValidation";
 
 interface SignUpUserInfoFormProps {
   onSubmit: (name: string, pwd: string, confirmPwd: string) => void;

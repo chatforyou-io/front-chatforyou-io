@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import ButtonWithError from "@/src/components/items/ButtonWithError";
 import InputWithError from "@/src/components/items/InputWithError";
 import { useSession } from "@/src/contexts/SessionContext";
-import { useLoginValidation } from "@/src/webhooks/useLoginValidation";
+import { useLoginValidation } from "@/src/hooks/useLoginValidation";
 
 export default function LoginForm() {
   const { signIn } = useSession();
