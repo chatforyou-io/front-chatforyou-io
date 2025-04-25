@@ -51,14 +51,13 @@ export default function Page({ params }: { params: { provider: string } }) {
       try {
         const response = await axios.post(`/chatforyouio/front/api/auth/social/${provider}/callback`, { code, state });
 
-        const { data } = response;
-
-        if (data.isSuccess) {
-          router.push("/");
-        } else {
-          setUserInfo(data.userInfo);
-          setIsLoading(false);
+        if (response.data.isSuccess) {
+          window.location.reload();
+          return;
         }
+
+        setUserInfo(response.data.userInfo);
+        setIsLoading(false);
       } catch (error) {
         handleRequestFail(error);
         router.push("/auth/login");
