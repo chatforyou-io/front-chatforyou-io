@@ -8,7 +8,7 @@ import EmailForm from "@/src/components/forms/EmailForm";
 import SignUpForm from "@/src/components/forms/SignUpForm";
 import ValidForm from "@/src/components/forms/ValidForm";
 import { userCreate } from "@/src/libs/user";
-import { useHandleRequestFail } from "@/src/webhooks/useHandleRequestFail";
+import { useHandleRequestFail } from "@/src/hooks/useHandleRequestFail";
 
 const STEPS = {
   EMAIL: 1,

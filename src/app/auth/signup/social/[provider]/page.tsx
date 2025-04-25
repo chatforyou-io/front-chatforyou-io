@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import { userCreate } from "@/src/libs/user";
 import IconLoader from "@/public/images/icons/loader.svg";
-import { useHandleRequestFail } from "@/src/webhooks/useHandleRequestFail";
+import { useHandleRequestFail } from "@/src/hooks/useHandleRequestFail";
 import InputWithError from "@/src/components/items/InputWithError";
 
 interface UserInfo {

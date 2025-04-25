@@ -9,7 +9,7 @@ import { useSession } from "@/src/contexts/SessionContext";
 import IconPlus from "@/public/images/icons/plus.svg";
 import { chatroomList } from "@/src/libs/chatroom";
 import { connectChatroomListSSE } from "@/src/libs/sses/chatroomList";
-import { useHandleRequestFail } from "@/src/webhooks/useHandleRequestFail";
+import { useHandleRequestFail } from "@/src/hooks/useHandleRequestFail";
 
 export default function Home() {
   const { user } = useSession();

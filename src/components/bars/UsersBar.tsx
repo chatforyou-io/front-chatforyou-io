@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import clsx from "clsx";
 import { userCurrentList, userList } from "@/src/libs/user";
-import { useHandleRequestFail } from "@/src/webhooks/useHandleRequestFail";
+import { useHandleRequestFail } from "@/src/hooks/useHandleRequestFail";
 import IconDown from "@/public/images/icons/arrow-down.svg";
 import UserItem from "@/src/components/items/UserItem";
 import { useSession } from "@/src/contexts/SessionContext";

@@ -1,7 +1,7 @@
 import { FormEvent, useState } from "react";
 import InputWithError from "@/src/components/items/InputWithError";
 import { validate } from "@/src/libs/auth";
-import { useHandleRequestFail } from "@/src/webhooks/useHandleRequestFail";
+import { useHandleRequestFail } from "@/src/hooks/useHandleRequestFail";
 
 interface SignUpEmailFormProps {
   onSubmit: (id: string, mailCode: string) => void;
