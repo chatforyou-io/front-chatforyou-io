@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import ProfileCard from "@/src/components/cards/ProfileCard";
 import UserUpdateForm from "@/src/components/forms/UserUpdateForm";
 import Modal from "@/src/components/items/Modal";
@@ -13,7 +12,6 @@ export default function Header() {
   const { user, signOut } = useSession();
 	const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
   const [isUserUpdateFormOpen, setIsUserUpdateFormOpen] = useState<boolean>(false);
-  const router = useRouter();
 
   const handleProfile = () => {
     setIsProfileOpen(!isProfileOpen);
