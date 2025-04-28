@@ -45,7 +45,11 @@ export default function SocialSignUpForm({ id, name, nickName }: SocialSignUpFor
 
   return (
     <form onSubmit={handleSubmit(processSubmit)}>
-      <input type="hidden" {...register("id")} />
+      <input
+        type="hidden"
+        defaultValue={id}
+        {...register("id")}
+      />
       
       <div className="space-y-4">
         <div className="space-y-2">

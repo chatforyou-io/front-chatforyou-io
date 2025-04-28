@@ -34,11 +34,6 @@ export default function Page({ params }: { params: { provider: string } }) {
   const code = searchParams.get("code");
   const state = searchParams.get("state");
 
-  if (!code || !state) {
-    router.push("/auth/login");
-    return;
-  }
-
   useEffect(() => {
     if (!provider || !code || !state) {
       router.push("/auth/login");
