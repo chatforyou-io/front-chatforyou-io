@@ -24,9 +24,9 @@ export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
   });
 
   // 회원 정보 수정 제출
-  const processSubmit = async (data: UserUpdateSchemaType) => {
+  const processSubmit = async ({ nickName }: UserUpdateSchemaType) => {
     try {
-      const { isSuccess, message } = await updateUser(user?.idx!, data.nickName);
+      const { isSuccess, message } = await updateUser(user?.idx!, nickName);
 
       // 회원 정보 수정 실패 시
       if (!isSuccess) {

@@ -19,9 +19,9 @@ export default function SignUpForm({ onSubmit }: SignUpFormProps) {
   });
 
   // 회원가입 제출
-  const processSubmit = async (data: SignUpSchemaType) => {
+  const processSubmit = async ({ name, pwd, confirmPwd }: SignUpSchemaType) => {
     try {
-      onSubmit(data.name, data.pwd, data.confirmPwd);
+      onSubmit(name, pwd, confirmPwd);
     } catch (error) {
       console.error(`회원가입 유효성 검사 중 오류 발생: ${error}`);
       setError("root", { message: "회원가입 유효성 검사 중 오류 발생" });

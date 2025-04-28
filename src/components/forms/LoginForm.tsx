@@ -18,10 +18,10 @@ export default function LoginForm() {
   });
 
   // 로그인 제출
-  const processSubmit = async (data: LoginFormType) => {
+  const processSubmit = async ({ username, password }: LoginFormType) => {
     try {
       // 로그인 요청
-      const { isSuccess, message } = await signIn(data.username, data.password);
+      const { isSuccess, message } = await signIn(username, password);
 
       // 로그인 실패 시
       if (!isSuccess) {

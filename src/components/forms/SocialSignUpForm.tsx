@@ -27,7 +27,7 @@ export default function SocialSignUpForm({ id, name, nickName }: SocialSignUpFor
   // 소셜 회원가입 제출
   const processSubmit = async ({ id, name, nickName, pwd, confirmPwd }: SocialSignUpSchemaType) => {
     try {
-      const { isSuccess, message } = await userCreate({ id, name, nickName, pwd, confirmPwd, usePwd: false});
+      const { isSuccess, message } = await userCreate({ id, name, nickName, pwd, confirmPwd, usePwd: false });
 
       // 회원가입 실패 시 오류 메시지 설정
       if (!isSuccess) {
