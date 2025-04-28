@@ -9,6 +9,7 @@ interface SignUpEmailFormProps {
 }
 
 export default function SignUpEmailForm({ onSubmit }: SignUpEmailFormProps) {
+  // 이메일 유효성 검사
   const {
     register,
     handleSubmit,
@@ -18,19 +19,23 @@ export default function SignUpEmailForm({ onSubmit }: SignUpEmailFormProps) {
     resolver: zodResolver(emailSchema),
   });
 
+  // 이메일 유효성 검사 제출
   const processSubmit = async (data: EmailSchemaType) => {
     try {
       // id 중복 체크
       const { isSuccess, result, mailCode } = await validate(data.email);
 
+      // 이메일 중복 체크 실패 시
       if (!isSuccess) {
-        setError('root', { message: result });
+        setError("root", { message: result });
         return;
       }
 
+      // 이메일 중복 체크 성공 시
       onSubmit(data.email, mailCode ?? "");
-    } catch {
-      setError('root', { message: "이메일을 찾을 수 없습니다. 다시 시도하세요." });
+    } catch (error) {
+      console.error(`이메일 중복 체크 중 오류 발생: ${error}`);
+      setError("root", { message: "이메일을 찾을 수 없습니다. 다시 시도하세요." });
     }
   }
 

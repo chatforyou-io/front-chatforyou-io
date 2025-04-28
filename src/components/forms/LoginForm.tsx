@@ -17,6 +17,7 @@ export default function LoginForm() {
     resolver: zodResolver(loginSchema),
   });
 
+  // 로그인 제출
   const processSubmit = async (data: LoginFormType) => {
     try {
       // 로그인 요청
@@ -30,7 +31,7 @@ export default function LoginForm() {
 
       // 로그인 성공 시
       window.location.reload();
-    } catch (error: unknown) {
+    } catch (error) {
       console.error(`로그인 중 오류 발생: ${error}`);
       setError("root", { message: "알 수 없는 오류가 발생했습니다." });
     }

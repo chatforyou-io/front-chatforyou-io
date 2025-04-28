@@ -8,16 +8,24 @@ interface SignUpFormProps {
 }
 
 export default function SignUpForm({ onSubmit }: SignUpFormProps) {
+  // 회원가입 유효성 검사
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm<SignUpSchemaType>({
     resolver: zodResolver(signUpSchema),
   });
 
+  // 회원가입 제출
   const processSubmit = async (data: SignUpSchemaType) => {
-    onSubmit(data.name, data.pwd, data.confirmPwd);
+    try {
+      onSubmit(data.name, data.pwd, data.confirmPwd);
+    } catch (error) {
+      console.error(`회원가입 유효성 검사 중 오류 발생: ${error}`);
+      setError("root", { message: "회원가입 유효성 검사 중 오류 발생" });
+    }
   }
 
   return (

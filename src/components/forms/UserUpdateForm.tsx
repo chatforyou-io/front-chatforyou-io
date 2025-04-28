@@ -1,10 +1,9 @@
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
-import { useSession } from '@/src/contexts/SessionContext';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useSession } from '@/src/contexts/SessionContext';
 import { userUpdateSchema, UserUpdateSchemaType } from '@/src/schemas/userUpdateSchema';
-import { FormEvent } from 'react';
 
 interface UserUpdateFormProps {
   onClose: () => void;
@@ -14,6 +13,7 @@ export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
   const { user, updateUser, deleteUser } = useSession();
   const router = useRouter();
 
+  // 회원 정보 수정 유효성 검사
   const {
     register,
     handleSubmit,
@@ -23,10 +23,7 @@ export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
     resolver: zodResolver(userUpdateSchema),
   });
 
-  /**
-   * 회원 정보 수정
-   * @param event 이벤트
-   */
+  // 회원 정보 수정 제출
   const processSubmit = async (data: UserUpdateSchemaType) => {
     try {
       const { isSuccess, message } = await updateUser(user?.idx!, data.nickName);
@@ -36,19 +33,17 @@ export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
         setError("root", { message });
         return;
       }
+
+      // 회원 정보 수정 성공 시 프로필 수정 폼 닫기
+      onClose();
     } catch (error) {
       console.error(error);
       setError("root", { message: "알 수 없는 오류로 회원 정보 수정에 실패했습니다. 다시 시도해주세요." });
     }
   };
 
-  /**
-   * 회원 탈퇴
-   * @param event 이벤트
-   */
-  const handleDelete = async (event: FormEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    
+  // 회원 탈퇴 제출
+  const handleDelete = async () => {
     try {
       const { isSuccess, message } = await deleteUser(user?.idx!);
 
@@ -57,6 +52,7 @@ export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
         throw new Error(message);
       }
   
+      // 회원 탈퇴 성공 시 로그인 페이지로 이동
       router.push('/auth/login');
     } catch (error) {
       console.error(error);
@@ -76,6 +72,7 @@ export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
                 "border-red-500": errors.nickName,
               })}
               placeholder="닉네임"
+              aria-label="닉네임"
               defaultValue={user?.nickName}
               {...register("nickName")}
             />
