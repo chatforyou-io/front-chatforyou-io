@@ -32,7 +32,7 @@ const socialProviderConfig: Record<SocialProviderType, SocialProviderConfig> = {
     clientId: process.env.GOOGLE_CLIENT_ID ?? "",
     redirectUri: process.env.GOOGLE_REDIRECT_URI ?? "",
     state: process.env.GOOGLE_STATE ?? "",
-    scope: "https://www.googleapis.com/auth/userinfo.profile",
+    scope: "openid email profile",
   },
 };
 

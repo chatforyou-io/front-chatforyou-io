@@ -6,14 +6,14 @@ import axios from "axios";
 import IconLoader from "@/public/images/icons/loader.svg";
 import SocialSignUpForm from "@/src/components/forms/SocialSignUpForm";
 
-interface UserInfo {
+interface UserData {
   id: string;
   email: string;
   name: string;
   nickname: string;
 }
 
-const initialUserInfo: UserInfo = {
+const initialUserData: UserData = {
   id: "",
   email: "",
   name: "",
@@ -25,7 +25,7 @@ export default function Page({ params }: { params: { provider: string } }) {
   const provider = params.provider;
 
   // 소셜 로그인 정보
-  const [userInfo, setUserInfo] = useState<UserInfo>(initialUserInfo);
+  const [userData, setUserData] = useState<UserData>(initialUserData);
   const [isLoading, setIsLoading] = useState(true);
 
   const router = useRouter();
@@ -44,7 +44,7 @@ export default function Page({ params }: { params: { provider: string } }) {
       try {
         const response = await axios.post(`/chatforyouio/front/api/auth/social/${provider}/callback`, { code, state });
 
-        const { isSuccess, userInfo } = response.data;
+        const { isSuccess, userData } = response.data;
 
         // 소셜 로그인 성공 시 페이지 새로고침
         if (isSuccess) {
@@ -53,7 +53,7 @@ export default function Page({ params }: { params: { provider: string } }) {
         }
 
         // 소셜 로그인 정보 설정
-        setUserInfo(userInfo);
+        setUserData(userData);
         setIsLoading(false);
       } catch (error) {
         console.error(`소셜 로그인 중 오류 발생: ${error}`);
@@ -75,7 +75,7 @@ export default function Page({ params }: { params: { provider: string } }) {
           <h3>환영합니다! 귀하의 정보를 입력하십시오.</h3>
         </div>
         <div className="pt-8 w-full">
-          <SocialSignUpForm id={userInfo.email} name={userInfo.name} nickName={userInfo.nickname} />
+          <SocialSignUpForm id={userData.id} name={userData.name} nickName={userData.nickname} />
           </div>
         </div>
       )}
