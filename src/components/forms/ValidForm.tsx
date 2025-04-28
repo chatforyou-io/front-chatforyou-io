@@ -20,11 +20,11 @@ export default function SignUpEmailValidForm({ validCode, onSubmit }: SignUpEmai
   });
 
   // 인증번호 유효성 검사 제출
-  const processSubmit = async (data: ValidSchemaType) => {
+  const processSubmit = async ({ validCode }: ValidSchemaType) => {
     try {
       // 인증번호 유효성 검사
       const isValidCode = (input: string): boolean => input.trim() !== '' && input === validCode;
-      if (!isValidCode(data.validCode)) {
+      if (!isValidCode(validCode)) {
         setError("root", { message: "인증번호가 일치하지 않습니다." });
         return;
       }

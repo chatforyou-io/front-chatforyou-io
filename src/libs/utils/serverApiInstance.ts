@@ -12,6 +12,10 @@ serverApiInstance.interceptors.request.use(
   (config) => {
     const url = config.url;
 
+    if (url?.includes("/login/")) {
+      return config;
+    }
+
     const accessToken = cookies().get("AccessToken")?.value;
     const refreshToken = cookies().get("RefreshToken")?.value;
 

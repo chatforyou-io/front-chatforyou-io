@@ -20,10 +20,10 @@ export default function SignUpEmailForm({ onSubmit }: SignUpEmailFormProps) {
   });
 
   // 이메일 유효성 검사 제출
-  const processSubmit = async (data: EmailSchemaType) => {
+  const processSubmit = async ({ email }: EmailSchemaType) => {
     try {
       // id 중복 체크
-      const { isSuccess, result, mailCode } = await validate(data.email);
+      const { isSuccess, result, mailCode } = await validate(email);
 
       // 이메일 중복 체크 실패 시
       if (!isSuccess) {
@@ -32,7 +32,7 @@ export default function SignUpEmailForm({ onSubmit }: SignUpEmailFormProps) {
       }
 
       // 이메일 중복 체크 성공 시
-      onSubmit(data.email, mailCode ?? "");
+      onSubmit(email, mailCode ?? "");
     } catch (error) {
       console.error(`이메일 중복 체크 중 오류 발생: ${error}`);
       setError("root", { message: "이메일을 찾을 수 없습니다. 다시 시도하세요." });
