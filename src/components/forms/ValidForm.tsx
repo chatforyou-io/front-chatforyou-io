@@ -9,6 +9,7 @@ interface SignUpEmailValidFormProps {
 }
 
 export default function SignUpEmailValidForm({ validCode, onSubmit }: SignUpEmailValidFormProps) {
+  // 인증번호 유효성 검사
   const {
     register,
     handleSubmit,
@@ -18,15 +19,22 @@ export default function SignUpEmailValidForm({ validCode, onSubmit }: SignUpEmai
     resolver: zodResolver(validSchema),
   });
 
+  // 인증번호 유효성 검사 제출
   const processSubmit = async (data: ValidSchemaType) => {
-    // Input 입력 체크
-    const isValidCode = (input: string): boolean => input.trim() !== '' && input === validCode;
-    if (!isValidCode(data.validCode)) {
+    try {
+      // 인증번호 유효성 검사
+      const isValidCode = (input: string): boolean => input.trim() !== '' && input === validCode;
+      if (!isValidCode(data.validCode)) {
+        setError("root", { message: "인증번호가 일치하지 않습니다." });
+        return;
+      }
+
+      // 인증번호 유효성 검사 성공 시
+      onSubmit(); // 부모 컴포넌트로 id 전달
+    } catch (error) {
+      console.error(`인증번호 유효성 검사 중 오류 발생: ${error}`);
       setError("root", { message: "인증번호가 일치하지 않습니다." });
-      return;
     }
-    
-    onSubmit(); // 부모 컴포넌트로 id 전달
   };
 
   return (

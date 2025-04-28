@@ -15,6 +15,8 @@ export default function ChatroomCreateForm({ onClose }: ChatroomCreateFormProps)
   const { user } = useSession();
   const userIdx = useMemo(() => user?.idx, [user?.idx]);
   const router = useRouter();
+
+  // 방 만들기 폼 유효성 검사
   const {
     register,
     handleSubmit,
@@ -24,15 +26,18 @@ export default function ChatroomCreateForm({ onClose }: ChatroomCreateFormProps)
     resolver: zodResolver(chatroomCreateSchema),
   });
 
+  // 방 만들기 폼 제출
   const processSubmit = async ({ roomName, maxUserCount, usePwd, pwd }: ChatroomCreateSchemaType) => {
     try {
       const { isSuccess, message, roomData } = await chatroomCreate({roomName, maxUserCount, usePwd, pwd, userIdx });
 
+      // 방 만들기 실패 시
       if (!isSuccess) {
         setError("root", { message });
         return;
       }
 
+      // 방 만들기 성공 시 방 상세 페이지로 이동
       router.push(`/chatroom/view/${roomData.sessionId}`);
     } catch (error) {
       console.error(error);
