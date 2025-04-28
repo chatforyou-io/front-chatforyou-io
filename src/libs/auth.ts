@@ -1,6 +1,6 @@
 "use server";
 
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { handleAxiosError } from "@/src/libs/utils/serverCommon";
 import serverApiInstance from "@/src/libs/utils/serverApiInstance";
 

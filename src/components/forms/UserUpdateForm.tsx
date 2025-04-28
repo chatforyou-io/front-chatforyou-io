@@ -34,8 +34,11 @@ export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
         return;
       }
 
-      // 회원 정보 수정 성공 시 프로필 수정 폼 닫기
+      // 회원 정보 수정 후 회원 정보 수정 폼 닫기
       onClose();
+
+      // 회원 정보 수정 후 세션 업데이트
+      router.refresh();
     } catch (error) {
       console.error(error);
       setError("root", { message: "알 수 없는 오류로 회원 정보 수정에 실패했습니다. 다시 시도해주세요." });
@@ -54,6 +57,12 @@ export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
   
       // 회원 탈퇴 성공 시 로그인 페이지로 이동
       router.push('/auth/login');
+
+      // 회원 정보 삭제 후 회원 정보 수정 폼 닫기
+      onClose();
+
+      // 회원 정보 삭제 후 세션 업데이트
+      router.refresh();
     } catch (error) {
       console.error(error);
     }
