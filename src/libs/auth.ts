@@ -1,6 +1,6 @@
 "use server";
 
-import { AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 import { handleAxiosError } from "@/src/libs/utils/serverCommon";
 import serverApiInstance from "@/src/libs/utils/serverApiInstance";
 
@@ -30,7 +30,7 @@ interface ValidateResponse extends DefaultResponse {
  */
 async function signIn(id: string, pwd: string): Promise<SignInResponse> {
   try {
-    const { headers, data } = await serverApiInstance.post("/chatforyouio/auth/login", { id, pwd: btoa(pwd) });
+    const { headers, data } = await axios.post("/chatforyouio/auth/login", { id, pwd: btoa(pwd) });
 
     const accessToken = headers["accesstoken"];
     const refreshToken = headers["refreshtoken"];
@@ -61,7 +61,7 @@ async function signIn(id: string, pwd: string): Promise<SignInResponse> {
  */ 
 async function socialSignIn(provider: string, providerAccountId: string, id?: string, name?: string, nickName?: string): Promise<SignInResponse> {
   try {
-    const { headers, data } = await serverApiInstance.post("/chatforyouio/auth/login/social", { provider, providerAccountId, id, name, nickName });
+    const { headers, data } = await axios.post("/chatforyouio/auth/login/social", { provider, providerAccountId, id, name, nickName });
 
     const accessToken = headers["accesstoken"];
     const refreshToken = headers["refreshtoken"];
