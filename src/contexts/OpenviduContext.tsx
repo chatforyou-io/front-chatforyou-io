@@ -132,8 +132,8 @@ export default function OpenviduProvider({ children }: { children: ReactNode }) 
     if (!ov.current) return;
     if (!session.current) return;
 
-    if (device.kind === "audioinput") publisherProperties.current.audioSource = device.deviceId;
-    if (device.kind === "videoinput") publisherProperties.current.videoSource = device.deviceId;
+    if (device.kind === "audioinput") publisherProperties.current.audioSource = device.deviceId ? device.deviceId : false;
+    if (device.kind === "videoinput") publisherProperties.current.videoSource = device.deviceId ? device.deviceId : false;
 
     const newPublisher = await ov.current.initPublisherAsync(undefined, publisherProperties.current);
 
