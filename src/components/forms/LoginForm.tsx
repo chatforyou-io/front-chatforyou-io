@@ -39,7 +39,7 @@ export default function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit(processSubmit)} className="w-full">
-      <div className="pt-4 space-y-4">
+      <div className="pt-8 space-y-4">
         <div className="space-y-2">
           <input
             type="text"

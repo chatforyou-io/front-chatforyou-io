@@ -31,14 +31,17 @@ export default function SignUpEmailValidForm({ validCode, onSubmit }: SignUpEmai
   };
 
   return (
-    <form onSubmit={handleSubmit(processSubmit)}>
+    <form onSubmit={handleSubmit(processSubmit)} className="pt-8 w-full">
       <input
         type="hidden"
         defaultValue={validCode}
         {...register("validCode")}
       />
 
-      <div className="space-y-2">
+      <div className="flex justify-center items-center">
+        <h3>전송받은 인증번호를 입력해주세요.</h3>
+      </div>
+      <div className="pt-4 space-y-2">
         <input
           type="text"
           placeholder="8자리 입력"

@@ -59,26 +59,21 @@ export default function Page() {
   }
 
   return (
-    <main className="flex flex-col justify-center items-center size-full bg-gray-200">
-      <div className="flex flex-col justify-center items-center p-8 w-sm md:w-144 bg-white rounded-3xl">
-        <div className="flex flex-col items-center gap-8">
-          <h1 className="text-4xl font-semibold">계정 생성</h1>
-          <h3>환영합니다! 귀하의 정보를 입력하십시오.</h3>
-        </div>
-        <div className="pt-8 w-full">
-          {renderForm()}
-        </div>
+    <div className="flex flex-col justify-center items-center size-full bg-white">
+      <main className="flex flex-col justify-center items-center p-8 w-md md:w-144 bg-white rounded-2xl">
+        <h1 className="text-4xl text-primary font-semibold">ChatForYou.io</h1>
+        {renderForm()}
         <div className="relative flex justify-center items-center border-b border-gray-700 pt-8 w-full">
           <div className="absolute -bottom-3.5 px-4 bg-white">
             <span>또는 다음으로 로그인</span>
           </div>
         </div>
         <SocialLoginCard />
-        <div className="flex justify-center gap-4 pt-4 w-full">
+        <div className="flex gap-2 pt-4">
           <p>이미 계정이 있습니까?</p>
-          <Link href="/" className="text-primary">로그인</Link>
+          <Link href="/" className="text-primary font-semibold">로그인</Link>
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }
