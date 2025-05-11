@@ -10,7 +10,7 @@ export default function ProfileCard({ onActiveUserUpdateForm, onSignOut }: Profi
   const { user } = useSession();
   
   return (
-    <div className="w-80 bg-white p-8 space-y-8 rounded-xl">
+    <div className="w-80 bg-white p-8 space-y-8 rounded-2xl">
       <div className="flex justify-center">
         <IconUser aria-label="room" width={48} height={48} className="border-2 border-gray-700 rounded-full" />
       </div>

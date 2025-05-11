@@ -16,7 +16,7 @@ export default function OpenviduStream({ streamManager }: SessionProps) {
 	}, [streamManager]);
   
   return (
-		<video autoPlay={autoplay} ref={videoRef} className="w-full rounded-xl">
+		<video autoPlay={autoplay} ref={videoRef} className="w-full rounded-2xl">
       <track kind="captions" />
     </video>
   );

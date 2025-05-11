@@ -69,7 +69,7 @@ export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
   };
 
   return (
-    <div className="p-8 w-144 space-y-8 bg-white rounded-xl">
+    <div className="p-8 w-144 space-y-8 bg-white rounded-2xl">
       <h1 className="text-2xl text-primary font-bold">회원 정보 수정</h1>
       <form className="space-y-4" onSubmit={handleSubmit(processSubmit)}>
         <div className="space-y-2">

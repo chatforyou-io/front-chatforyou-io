@@ -7,20 +7,17 @@ import UserUpdateForm from "@/src/components/forms/UserUpdateForm";
 import Modal from "@/src/components/items/Modal";
 import { useSession } from "@/src/contexts/SessionContext";
 import IconUser from "@/public/images/icon-user.svg";
+import IconLoader from "@/public/images/icons/loader.svg";
+
+type ModalType = "profile" | "update" | null;
 
 export default function Header() {
   const { user, signOut } = useSession();
-	const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
-  const [isUserUpdateFormOpen, setIsUserUpdateFormOpen] = useState<boolean>(false);
+  const [activeModal, setActiveModal] = useState<ModalType>(null);
 
-  const handleProfile = () => {
-    setIsProfileOpen(!isProfileOpen);
-  }
-
-  const handleActiveUserUpdateForm = () => {
-    setIsProfileOpen(false);
-    setIsUserUpdateFormOpen(true);
-  }
+  const openProfileModal = () => setActiveModal("profile");
+  const openUserUpdateFormModal = () => setActiveModal("update");
+  const closeModal = () => setActiveModal(null);
 
   const handleSignOut = async () => {
     await signOut();
@@ -29,24 +26,21 @@ export default function Header() {
 
   return (
     <>
-      <div className="flex flex-shrink-0 justify-between items-center px-4 w-full h-20 bg-white">
-        <Link href="/" className="text-xl font-bold text-primary">ChatForYou.io</Link>
-        {user && (
-          <div className="flex gap-4">
-            <button
-              type="button"
-              onClick={handleProfile}
-              aria-label="profile">
-              <IconUser aria-label="room" width={36} height={36} className="border-2 border-gray-700 rounded-full" />
-            </button>
-          </div>
+      <div className="flex justify-between items-center p-4 w-full h-20 bg-white">
+        <Link href="/" className="text-2xl font-bold text-primary">ChatForYou.io</Link>
+        {user ? (
+          <button type="button" onClick={openProfileModal} aria-label="profile">
+            <IconUser aria-label="room" width={40} height={40} className="border-2 border-gray-700 rounded-full" />
+          </button>
+        ) : (
+          <IconLoader className="w-10 h-10 animate-spin" aria-hidden="true" />
         )}
       </div>
-      <Modal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)}>
-        <ProfileCard onActiveUserUpdateForm={() => handleActiveUserUpdateForm()} onSignOut={() => handleSignOut()} />
+      <Modal isOpen={activeModal === "profile"} onClose={closeModal}>
+        <ProfileCard onActiveUserUpdateForm={openUserUpdateFormModal} onSignOut={handleSignOut} />
       </Modal>
-      <Modal isOpen={isUserUpdateFormOpen} onClose={() => setIsUserUpdateFormOpen(false)}>
-        <UserUpdateForm onClose={() => setIsUserUpdateFormOpen(false)} />
+      <Modal isOpen={activeModal === "update"} onClose={closeModal}>
+        <UserUpdateForm onClose={closeModal} />
       </Modal>
     </>
   );
