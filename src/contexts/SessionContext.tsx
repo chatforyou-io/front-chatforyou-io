@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
 import axios, { AxiosError } from 'axios';
 import { usePathname } from 'next/navigation';
+
 interface SessionContextType {
   user: User | null;
   signIn: (username: string, password: string) => Promise<{ isSuccess: boolean, message: string }>;
@@ -27,7 +28,6 @@ const SessionContext = createContext<SessionContextType | undefined>(undefined);
 export function SessionProvider({ children }: { children: ReactNode }): ReactNode {
   const [user, setUser] = useState<User | null>(null);
   const pathname = usePathname();
-
   /**
    * 로그인
    * @param {string} username 사용자 이름
@@ -99,13 +99,21 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
       }
 
       setUser(session);
-
       return { isSuccess: true, message: "사용자 정보 조회에 성공했습니다.", session };
     } catch (error) {
+      if (error instanceof AxiosError) {
+        const status = error.response?.status;
+
+        if (status === 401) {
+          await signOut();
+          window.location.reload();
+        }
+      }
+
       const errorMessage = error instanceof AxiosError ? error.response?.data.message : "알 수 없는 오류로 사용자 정보를 가져오지 못했습니다. 다시 시도해주세요.";
       return { isSuccess: false, message: errorMessage };
     }
-  }, [user]);
+  }, [user, signOut]);
 
   /**
    * 사용자 정보 수정
