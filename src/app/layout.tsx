@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Noto_Sans_KR } from "next/font/google";
-import Header from "@/src/components/items/Header";
 import { SessionProvider } from "@/src/contexts/SessionContext";
 import "./globals.css";
 
@@ -23,7 +22,6 @@ export default function RootLayout({
     <html lang="en">
       <body className={notoSansKR.className}>
         <SessionProvider>
-          <Header />
           {children}
         </SessionProvider>
       </body>
