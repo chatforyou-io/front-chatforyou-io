@@ -4,6 +4,8 @@ import jwt from "jsonwebtoken";
 import { refreshToken, signOut } from "@/src/libs/auth";
 import { userUpdate, userDelete } from "@/src/libs/user";
 
+const JWT_SECRET = process.env.JWT_SECRET || '';
+
 async function GET() {
   try {
     // 토큰 쿠키 가져오기
@@ -63,20 +65,19 @@ async function PATCH(request: NextRequest) {
       return NextResponse.json({ message: "사용자 정보 수정에 실패했습니다." }, { status: 400 });
     }
 
-    // 세션 토큰 데이터 생성
-    const session = {
-      idx: userData.idx,
-      id: userData.id,
-      pwd: userData.pwd,
-      name: userData.name,
-      nickName: userData.nickName,
-      provider: userData.provider,
-      friendList: userData.friendList,
-      createDate: userData.createDate,
-      lastLoginDate: userData.lastLoginDate
-    }
+    // session 토큰 생성
+    const sessionToken = jwt.sign(userData, JWT_SECRET, { expiresIn: "1h" });
 
-    return NextResponse.json({ message: "사용자 정보 수정에 성공했습니다.", session }, { status: 200 });
+    // 세션 토큰 데이터 생성
+    cookies().set("SessionToken", sessionToken, {
+      httpOnly: true, // 자바스크립트에서 접근 불가능
+      secure: process.env.NODE_ENV === "production", // 프로덕션 환경에서만 쿠키 전송
+      sameSite: "lax", // 쿠키 동작 방식
+      path: "/", // 쿠키 적용 범위
+      expires: new Date(Date.now() + 60 * 60 * 1000), // 1시간
+    });
+
+    return NextResponse.json({ message: "사용자 정보 수정에 성공했습니다." }, { status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ message: "사용자 정보 수정에 실패했습니다." }, { status: 400 });

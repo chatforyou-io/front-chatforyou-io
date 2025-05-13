@@ -38,7 +38,7 @@ export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
       onClose();
 
       // 회원 정보 수정 후 세션 업데이트
-      router.refresh();
+      window.location.reload();
     } catch (error) {
       console.error(error);
       setError("root", { message: "알 수 없는 오류로 회원 정보 수정에 실패했습니다. 다시 시도해주세요." });
