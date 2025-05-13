@@ -5,17 +5,27 @@ import { handleAxiosError } from "@/src/libs/utils/serverCommon";
 import serverApiInstance from "@/src/libs/utils/serverApiInstance";
 
 // 로그인 응답 타입
-interface SignInResponse extends DefaultResponse {
+interface SignInResponse {
+  isSuccess: boolean;
+  code?: number;
+  message?: string;
   userData?: UserData;
   accessToken?: string;
   refreshToken?: string;
 }
 
 // 로그아웃 응답 타입
-interface SignOutResponse extends DefaultResponse {}
+interface SignOutResponse {
+  isSuccess: boolean;
+  code?: number;
+  message?: string;
+}
 
 // 이메일 유효성 검사 응답 타입
-interface ValidateResponse extends DefaultResponse {
+interface ValidateResponse {
+  isSuccess: boolean;
+  code?: number;
+  message?: string;
   result?: string;
   mailCode?: string;
 }

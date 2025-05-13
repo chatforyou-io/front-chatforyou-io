@@ -4,6 +4,7 @@ import { useContext, useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import OpenviduStream from '@/src/components/openvidu/OpenviduStream';
 import { chatroomToken } from "@/src/libs/chatroom";
+import Header from "@/src/components/items/Header";
 import { OpenviduContext } from "@/src/contexts/OpenviduContext";
 import DeviceSelectors from "@/src/components/bars/DeviceSelectors";
 import { useHandleRequestFail } from "@/src/hooks/useHandleRequestFail";
@@ -114,51 +115,54 @@ export default function Page({ params }: PageProps) {
   }, [state.redirect, router]);
   
   return (
-    <main className="flex flex-col justify-center items-center size-full bg-gray-200">
-      <div className="flex flex-col justify-center items-center p-4 md:p-8 w-sm md:w-160 space-y-4 bg-white rounded-2xl overflow-y-auto">
-        {/* 디바이스 선택 UI */}
-        <DeviceSelectors />
+    <div className="flex flex-col justify-start items-center size-full bg-white md:bg-gray-200">
+      <Header />
+      <main className="flex flex-col justify-center items-center w-md md:w-160 h-full">
+        <div className="flex flex-col justify-center items-center p-4 md:p-8 space-y-4 bg-white rounded-2xl overflow-y-auto">
+          {/* 디바이스 선택 UI */}
+          <DeviceSelectors />
 
-        {/* 채팅방 정보 */}
-        <div className="flex w-full space-x-4">
-          <div className="flex justify-center items-center">
-            <IconUser aria-label="room" width={48} height={48} className="border-2 border-gray-700 rounded-full" />
-          </div>
-          <div className="w-full">
-            <h3 className="font-semibold">{chatroom?.roomName}</h3>
-            <span className="text-sm">{chatroom?.createDatetime}</span>
-          </div>
-          <div>
-            <button
-              type="button"
-              onClick={handleClick}
-              className="w-20 h-10 text-sm text-white bg-blue-500 rounded-xl">
-              나가기
-            </button>
-          </div>
-        </div>
-
-        {/* 채팅방 인원수 */}
-        <div className="flex w-full space-x-4">
-          <span className="text-sm">인원수: {chatroom?.currentUserCount}명</span>
-        </div>
-
-        {/* 채팅방 퍼블리셔 스트림 */}
-        <div className="flex w-full aspect-video space-x-4 bg-gray-200 rounded-xl">
-          {publisher && (
-            <OpenviduStream key={publisher.stream.streamId} streamManager={publisher} />
-          )}
-        </div>
-
-        {/* 채팅방 구독자 스트림 */}
-        <div className="grid grid-cols-3 w-full space-x-4">
-          {subscribers && subscribers.map(subscriber => (
-            <div key={subscriber.stream.streamId} className="w-full aspect-video bg-gray-200 rounded-xl">
-              <OpenviduStream streamManager={subscriber} />
+          {/* 채팅방 정보 */}
+          <div className="flex w-full space-x-4">
+            <div className="flex justify-center items-center">
+              <IconUser aria-label="room" width={48} height={48} className="border-2 border-gray-700 rounded-full" />
             </div>
-          ))}
+            <div className="w-full">
+              <h3 className="font-semibold">{chatroom?.roomName}</h3>
+              <span className="text-sm">{chatroom?.createDatetime}</span>
+            </div>
+            <div>
+              <button
+                type="button"
+                onClick={handleClick}
+                className="w-20 h-10 text-sm text-white bg-primary rounded-2xl">
+                나가기
+              </button>
+            </div>
+          </div>
+
+          {/* 채팅방 인원수 */}
+          <div className="flex w-full space-x-4">
+            <span className="text-sm">인원수: {chatroom?.currentUserCount}명</span>
+          </div>
+
+          {/* 채팅방 퍼블리셔 스트림 */}
+          <div className="flex w-full aspect-video space-x-4 bg-gray-200 rounded-2xl">
+            {publisher && (
+              <OpenviduStream key={publisher.stream.streamId} streamManager={publisher} />
+            )}
+          </div>
+
+          {/* 채팅방 구독자 스트림 */}
+          <div className="grid grid-cols-3 w-full space-x-4">
+            {subscribers && subscribers.map(subscriber => (
+              <div key={subscriber.stream.streamId} className="w-full aspect-video bg-gray-200 rounded-2xl">
+                <OpenviduStream streamManager={subscriber} />
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }

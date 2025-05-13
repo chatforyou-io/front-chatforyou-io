@@ -5,7 +5,10 @@ import serverApiInstance from "@/src/libs/utils/serverApiInstance";
 import { handleAxiosError } from "@/src/libs/utils/serverCommon";
 
 // 사용자 응답 타입
-interface UserResponse extends DefaultResponse {
+interface UserResponse {
+  isSuccess: boolean,
+  code?: number,
+  message?: string
   result?: string,
   userData?: User,
   userList?: User[],

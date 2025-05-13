@@ -46,7 +46,7 @@ export default function ChatroomCreateForm({ onClose }: ChatroomCreateFormProps)
   };
 
   return (
-    <form className="p-8 w-sm md:w-144 space-y-8 bg-white rounded-xl" onSubmit={handleSubmit(processSubmit)}>
+    <form className="p-8 w-sm md:w-144 space-y-8 bg-white rounded-2xl" onSubmit={handleSubmit(processSubmit)}>
       <h1 className="text-2xl text-primary font-bold">방 만들기</h1>
       <div className="space-y-8">
         <div className="space-y-4">

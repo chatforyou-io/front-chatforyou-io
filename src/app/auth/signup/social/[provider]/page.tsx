@@ -1,40 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import axios from "axios";
 import IconLoader from "@/public/images/icons/loader.svg";
-import SocialSignUpForm from "@/src/components/forms/SocialSignUpForm";
 
-interface UserData {
-  id: string;
-  email: string;
-  name: string;
-  nickname: string;
-}
+type SocialProviderType = "naver" | "kakao" | "google";
 
-const initialUserData: UserData = {
-  id: "",
-  email: "",
-  name: "",
-  nickname: "",
-};
+export default function Page({ params }: { params: { provider: SocialProviderType } }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-export default function Page({ params }: { params: { provider: string } }) {
   // 소셜 로그인 플랫폼
   const provider = params.provider;
 
-  // 소셜 로그인 정보
-  const [userData, setUserData] = useState<UserData>(initialUserData);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const router = useRouter();
-
-  const searchParams = useSearchParams();
-  const code = searchParams.get("code");
-  const state = searchParams.get("state");
-
   useEffect(() => {
+    const code = searchParams.get("code");
+    const state = searchParams.get("state");
+
     if (!provider || !code || !state) {
       router.push("/auth/login");
       return;
@@ -42,19 +25,10 @@ export default function Page({ params }: { params: { provider: string } }) {
 
     const fetchSocialData = async () => {
       try {
-        const response = await axios.post(`/chatforyouio/front/api/auth/social/${provider}/callback`, { code, state });
+        await axios.post(`/chatforyouio/front/api/auth/social/${provider}/callback`, { code, state });
 
-        const { isSuccess, userData } = response.data;
-
-        // 소셜 로그인 성공 시 페이지 새로고침
-        if (isSuccess) {
-          window.location.reload();
-          return;
-        }
-
-        // 소셜 로그인 정보 설정
-        setUserData(userData);
-        setIsLoading(false);
+        // 소셜 로그인 시도 후 페이지 새로고침
+        window.location.reload();
       } catch (error) {
         console.error(`소셜 로그인 중 오류 발생: ${error}`);
         router.push("/auth/login");
@@ -62,23 +36,11 @@ export default function Page({ params }: { params: { provider: string } }) {
     };
 
     fetchSocialData();
-  }, [provider, code, state, router]);
+  }, [searchParams, router, provider]);
 
   return (
     <main className="flex flex-col justify-center items-center size-full bg-gray-200">
-      {isLoading ? (
-        <IconLoader className="w-12 h-12 animate-spin" />
-      ) : (
-        <div className="flex flex-col justify-center items-center p-8 w-sm md:w-144 bg-white rounded-3xl">
-          <div className="flex flex-col items-center gap-8">
-          <h1 className="text-4xl font-semibold">계정 생성</h1>
-          <h3>환영합니다! 귀하의 정보를 입력하십시오.</h3>
-        </div>
-        <div className="pt-8 w-full">
-          <SocialSignUpForm id={userData.id} name={userData.name} nickName={userData.nickname} />
-          </div>
-        </div>
-      )}
+      <IconLoader className="w-12 h-12 animate-spin" />
     </main>
   );
 }

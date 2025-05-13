@@ -1,19 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
-import { refreshToken } from "@/src/libs/auth";
+import { refreshToken, signOut } from "@/src/libs/auth";
 import { userUpdate, userDelete } from "@/src/libs/user";
 
-const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
-
-async function GET(request: NextRequest) {
+async function GET() {
   try {
     // 토큰 쿠키 가져오기
     const accessToken = cookies().get("AccessToken")?.value;
     const sessionToken = cookies().get("SessionToken")?.value;
     
     if (!accessToken || !sessionToken) {
-      return NextResponse.json({ message: "토큰이 존재하지 않습니다." }, { status: 200 });
+      return NextResponse.json({ message: "토큰이 존재하지 않습니다." }, { status: 401 });
     }
 
     // 액세스 토큰 디코딩
@@ -29,30 +27,15 @@ async function GET(request: NextRequest) {
       const { isSuccess, accessToken: newAccessToken, refreshToken: newRefreshToken } = await refreshToken(idx, id);
 
       if (!isSuccess) {
-        return NextResponse.redirect(new URL(`${DOMAIN}/chatforyouio/front`, request.url));
+        return NextResponse.json({ message: "액세스 토큰 갱신에 실패했습니다." }, { status: 401 });
       }
 
       if (!newAccessToken || !newRefreshToken) {
-        return NextResponse.redirect(new URL(`${DOMAIN}/chatforyouio/front`, request.url));
+        return NextResponse.json({ message: "액세스 토큰 갱신에 실패했습니다." }, { status: 401 });
       }
 
-      // AccessToken 쿠키 설정
-      cookies().set("AccessToken", newAccessToken, {
-        httpOnly: true, // 자바스크립트에서 접근 불가능
-        secure: process.env.NODE_ENV === "production", // 프로덕션 환경에서만 쿠키 전송
-        sameSite: "lax", // 쿠키 동작 방식
-        path: "/", // 쿠키 적용 범위
-        expires: new Date(Date.now() + 60 * 60 * 1000), // 1시간
-      });
-
-      // RefreshToken 쿠키 설정
-      cookies().set("RefreshToken", newRefreshToken, {
-        httpOnly: true, // 자바스크립트에서 접근 불가능
-        secure: process.env.NODE_ENV === "production", // 프로덕션 환경에서만 쿠키 전송
-        sameSite: "lax", // 쿠키 동작 방식
-        path: "/", // 쿠키 적용 범위
-        expires: new Date(Date.now() + 60 * 60 * 24 * 1000), // 1일
-      });
+      // 인증 관련 쿠키 설정
+      setAuthCookies(newAccessToken, newRefreshToken, sessionToken);
     }
 
     // 세션 토큰 데이터 생성
@@ -62,7 +45,7 @@ async function GET(request: NextRequest) {
     return NextResponse.json({ message: "로그인에 성공했습니다.", session }, { status: 200 });
   } catch (error) {
     console.error(error);
-    return NextResponse.redirect(new URL(`${DOMAIN}/chatforyouio/front`, request.url));
+    return NextResponse.json({ message: "로그인에 실패했습니다." }, { status: 401 });
   }
 }
 
@@ -110,14 +93,11 @@ async function DELETE(request: NextRequest) {
       return NextResponse.json({ message: "사용자 정보 삭제에 실패했습니다." }, { status: 400 });
     }
 
-    // AccessToken 쿠키 삭제
-    cookies().delete("AccessToken");
+    // 인증 관련 쿠키 삭제
+    deleteAuthCookies();
 
-    // RefreshToken 쿠키 삭제
-    cookies().delete("RefreshToken");
-    
-    // SessionToken 쿠키 삭제
-    cookies().delete("SessionToken");
+    // 로그아웃 요청
+    await signOut();
 
     return NextResponse.json({ message: "사용자 정보 삭제에 성공했습니다." }, { status: 200 });
   } catch (error) {
@@ -127,3 +107,31 @@ async function DELETE(request: NextRequest) {
 }
 
 export { GET, PATCH, DELETE };
+
+// 인증 관련 쿠키 설정
+function setAuthCookies(accessToken: string, refreshToken: string, sessionToken: string) {
+  cookies().set("AccessToken", accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  });
+
+  cookies().set("RefreshToken", refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  });
+
+  cookies().set("SessionToken", sessionToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  });
+}
+
+// 인증 관련 쿠키 삭제
+function deleteAuthCookies() {
+  cookies().delete("AccessToken");
+  cookies().delete("RefreshToken");
+  cookies().delete("SessionToken");
+}

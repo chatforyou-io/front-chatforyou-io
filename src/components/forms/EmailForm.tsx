@@ -40,8 +40,11 @@ export default function SignUpEmailForm({ onSubmit }: SignUpEmailFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit(processSubmit)}>
-      <div className="space-y-2">
+    <form onSubmit={handleSubmit(processSubmit)} className="pt-8 w-full">
+      <div className="flex justify-center items-center">
+        <h3>귀하의 이메일을 입력해주세요.</h3>
+      </div>
+      <div className="pt-4 space-y-2">
         <input
           type="text"
           placeholder="이메일"

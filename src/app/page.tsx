@@ -1,92 +1,25 @@
-"use client";
-
-import { useEffect, useState, useCallback } from "react";
+import ChatroomCreateBar from "@/src/components/bars/ChatroomCreateBar";
 import UsersBar from "@/src/components/bars/UsersBar";
-import ChatroomCard from "@/src/components/cards/ChatroomCard";
-import ChatroomCreateForm from "@/src/components/forms/ChatroomCreateForm";
-import Modal from "@/src/components/items/Modal";
-import { useSession } from "@/src/contexts/SessionContext";
-import IconPlus from "@/public/images/icons/plus.svg";
-import { chatroomList } from "@/src/libs/chatroom";
-import { connectChatroomListSSE } from "@/src/libs/sses/chatroomList";
-import { useHandleRequestFail } from "@/src/hooks/useHandleRequestFail";
+import Header from "@/src/components/items/Header";
+import ChatroomList from "@/src/components/lists/ChatroomList";
 
 export default function Home() {
-  const { user } = useSession();
-  const [isPopup, setIsPopup] = useState<boolean>(false);
-  const [chatrooms, setChatrooms] = useState<Chatroom[]>([]);
-  const handleRequestFail = useHandleRequestFail();
-
-  const fetchChatrooms = useCallback(async () => {
-    if (!user?.idx) return;
-
-    try {
-      // 채팅방 목록 조회
-      const data = await chatroomList();
-
-      if (!data.isSuccess) {
-        throw new Error(handleRequestFail(data));
-      }
-
-      setChatrooms(data.roomList || []);
-
-      // SSE 연결
-      const eventSource = connectChatroomListSSE(user.idx, {
-        onUpdateChatroomList: (chatrooms) => setChatrooms(chatrooms)
-      });
-
-      return () => {
-        eventSource.close();
-      };
-    } catch (error) {
-      console.error("Failed to fetch chatrooms:", error);
-    }
-  }, [user?.idx, handleRequestFail]);
-
-  useEffect(() => {
-    fetchChatrooms();
-  }, [fetchChatrooms]);
-
   return (
-    <>
-      <main className="flex flex-col items-center size-full bg-gray-200">
-        <div className="flex flex-shrink-0 justify-between lg:justify-between items-center lg:px-4 py-4 w-sm md:w-full bg-gray-200">
-          <div className="hidden lg:inline-block justify-center items-center px-4 w-40">
-            <h1 className="text-2xl font-bold">대시보드</h1>
+    <div className="flex flex-col justify-start items-center size-full bg-white md:bg-gray-200">
+      <Header />
+      <main className="flex flex-row-reverse justify-start w-md md:w-full h-full bg-white md:bg-gray-200">
+        <div className="flex flex-col items-center md:items-start md:pl-48 w-md md:w-full h-full">
+          <div className="p-4 w-md md:w-full">
+            <ChatroomCreateBar />
           </div>
-          <div className="flex gap-4 justify-center lg:justify-end w-sm md:w-full">
-            <input
-              type="text"
-              name="keyword"
-              className="border px-4 h-16 w-full md:w-128 bg-white rounded-full"
-              placeholder="검색" />
-            <button
-              type="button"
-              className="flex justify-center items-center w-24 lg:w-full lg:max-w-44 px-4 h-16 border bg-primary text-white rounded-full"
-              onClick={() => setIsPopup(true)}>
-              <IconPlus aria-label="plus" width={24} height={24} />
-              <span className="hidden lg:inline-block">방 만들기</span>
-            </button>
+          <div className="flex items-start size-full pt-4 px-4 overflow-y-auto">
+            <ChatroomList />
           </div>
         </div>
-        <div className="flex flex-col lg:flex-row justify-center items-center lg:items-start lg:px-4 w-sm md:w-full h-full">
-          {/* 인원 목록 */}
+        <div className="absolute left-0 h-full bg-white">
           <UsersBar />
-
-          {/* 채팅방 목록 */}
-          <div className="flex items-start size-full pt-4 lg:p-0 overflow-y-auto">
-            {chatrooms.length === 0
-              ? <div className="flex justify-center items-center size-full"><p>채팅방이 존재하지 않습니다.</p></div>
-              : (<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mx-auto">
-                  {chatrooms.map((chatroom, index) => <ChatroomCard key={index} chatroom={chatroom} />)}
-                </div>
-              )}
-          </div>
         </div>
       </main>
-      <Modal isOpen={isPopup} onClose={() => setIsPopup(false)}>
-        <ChatroomCreateForm onClose={() => setIsPopup(false)} />
-      </Modal>
-    </>
+    </div>
   );
 }

@@ -4,21 +4,23 @@ import { signOut } from "@/src/libs/auth";
 
 export async function POST() {
   try {
-    // AccessToken 쿠키 삭제
-    cookies().delete("AccessToken");
-
-    // RefreshToken 쿠키 삭제
-    cookies().delete("RefreshToken");
-    
-    // SessionToken 쿠키 삭제
-    cookies().delete("SessionToken");
+    // 인증 관련 쿠키 삭제
+    deleteAuthCookies();
 
     // 로그아웃 요청
-    const { isSuccess } = await signOut();
+    await signOut();
 
-    return NextResponse.json({ isSuccess });
+    return NextResponse.json({ isSuccess: true });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ isSuccess: false });
   }
 }
+
+// 인증 관련 쿠키 삭제
+function deleteAuthCookies() {
+  cookies().delete("AccessToken");
+  cookies().delete("RefreshToken");
+  cookies().delete("SessionToken");
+}
+
