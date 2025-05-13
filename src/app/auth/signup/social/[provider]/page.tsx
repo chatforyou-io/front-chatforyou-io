@@ -30,8 +30,7 @@ export default function Page({ params }: { params: { provider: SocialProviderTyp
         // 소셜 로그인 시도 후 페이지 새로고침
         window.location.reload();
       } catch (error) {
-        console.error(`소셜 로그인 중 오류 발생: ${error}`);
-        router.push("/auth/login");
+        console.error(error);
       }
     };
 

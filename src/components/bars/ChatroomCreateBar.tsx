@@ -9,7 +9,7 @@ export default function ChatroomCreateBar() {
   const [isPopup, setIsPopup] = useState(false);
 
   return (
-    <div className="flex items-center gap-4 w-full">
+    <div className="flex justify-end items-center gap-4 w-full">
       <input
         type="text"
         name="keyword"
