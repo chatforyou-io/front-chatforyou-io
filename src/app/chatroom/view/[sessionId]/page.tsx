@@ -7,7 +7,6 @@ import { chatroomToken } from "@/src/libs/chatroom";
 import Header from "@/src/components/items/Header";
 import { OpenviduContext } from "@/src/contexts/OpenviduContext";
 import DeviceSelectors from "@/src/components/bars/DeviceSelectors";
-import { useHandleRequestFail } from "@/src/hooks/useHandleRequestFail";
 import IconUser from "@/public/images/icon-user.svg";
 import { useSession } from "@/src/contexts/SessionContext";
 import { connectChatroomInfoSSE } from "@/src/libs/sses/chatroomInfo";
@@ -30,24 +29,23 @@ export default function Page({ params }: PageProps) {
     leave: false,
   });
   const router = useRouter();
-  const handleRequestFail = useHandleRequestFail();
 
   const fetchChatroom = useCallback(async () => {
     if (!user?.idx) return;
 
     try {
       // 채팅방 토큰 발급
-      const data = await chatroomToken(sessionId, user.idx);
+      const { isSuccess, roomInfo, joinUserInfo } = await chatroomToken(sessionId, user.idx);
 
-      if (!data.isSuccess) {
-        throw new Error(handleRequestFail(data));
+      if (!isSuccess) {
+        throw new Error("채팅방 토큰 발급 중 오류 발생");
       }
 
       // 채팅방 생성일자 포맷팅
-      const createDatetime = formatDateTime(data.roomInfo.createDate);
+      const createDatetime = formatDateTime(roomInfo.createDate);
 
-      setChatroom({ ...data.roomInfo, createDatetime });
-      setToken(data.joinUserInfo.camera_token);
+      setChatroom({ ...roomInfo, createDatetime });
+      setToken(joinUserInfo.camera_token);
 
       // SSE 연결
       const eventSource = connectChatroomInfoSSE(sessionId, user.idx, {
@@ -66,7 +64,7 @@ export default function Page({ params }: PageProps) {
       console.error(error);
       setState((prev) => ({ ...prev, redirect: true }));
     }
-  }, [user?.idx, sessionId, handleRequestFail]);
+  }, [user?.idx, sessionId]);
 
   useEffect(() => {
     fetchChatroom();

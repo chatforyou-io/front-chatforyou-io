@@ -38,7 +38,7 @@ export default function SocialSignUpForm({ id, name, nickName }: SocialSignUpFor
       // 회원가입 성공 시 로그인 페이지로 이동
       router.push("/auth/login");
     } catch (error) {
-      console.error(`회원가입 유효성 검사 중 오류 발생: ${error}`);
+      console.error(error);
       setError("root", { message: "회원가입 유효성 검사 중 오류 발생" });
     }
   }

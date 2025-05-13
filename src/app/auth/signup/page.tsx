@@ -8,7 +8,6 @@ import EmailForm from "@/src/components/forms/EmailForm";
 import SignUpForm from "@/src/components/forms/SignUpForm";
 import ValidForm from "@/src/components/forms/ValidForm";
 import { userCreate } from "@/src/libs/user";
-import { useHandleRequestFail } from "@/src/hooks/useHandleRequestFail";
 
 const STEPS = {
   EMAIL: 1,
@@ -18,7 +17,6 @@ const STEPS = {
 
 export default function Page() {
   const router = useRouter();
-  const handleRequestFail = useHandleRequestFail();
   
   const [step, setStep] = useState(STEPS.EMAIL);
   const [id, setId] = useState('');
@@ -36,12 +34,15 @@ export default function Page() {
 
   const handleSubmitUserInfo = async (name: string, pwd: string, confirmPwd: string) => {
     try {
-      const data = await userCreate({ id, name, pwd, confirmPwd, usePwd: true});
-      if (!data.isSuccess) throw new Error(handleRequestFail(data));
+      const { isSuccess } = await userCreate({ id, name, pwd, confirmPwd, usePwd: true});
+      
+      if (!isSuccess) {
+        throw new Error("가입 요청 중 오류 발생");
+      }
   
       router.push("/auth/login");
     } catch (error) {
-      console.error("가입 요청 중 오류 발생:", error);
+      console.error(error);
     }
   }
 

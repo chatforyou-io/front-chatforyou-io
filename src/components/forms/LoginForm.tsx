@@ -32,7 +32,7 @@ export default function LoginForm() {
       // 로그인 성공 시
       window.location.reload();
     } catch (error) {
-      console.error(`로그인 중 오류 발생: ${error}`);
+      console.error(error);
       setError("root", { message: "알 수 없는 오류가 발생했습니다." });
     }
   };
