@@ -70,7 +70,7 @@ export const useOpenvidu = ({ sessionId, userIdx }: UseOpenViduProps): UseOpenVi
       setSession(sessionRef.current);
       setPublisher(newPublisher);
     } catch (error) {
-      console.error('Error joining session:', error);
+      console.error(error);
     }
   }, [sessionId, userIdx, getToken]);
 

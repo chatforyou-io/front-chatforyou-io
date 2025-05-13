@@ -25,7 +25,7 @@ export default function SignUpEmailValidForm({ validCode, onSubmit }: SignUpEmai
       // 인증번호 유효성 검사 성공 시
       onSubmit(); // 부모 컴포넌트로 id 전달
     } catch (error) {
-      console.error(`인증번호 유효성 검사 중 오류 발생: ${error}`);
+      console.error(error);
       setError("root", { message: "인증번호 유효성 검사 중 오류가 발생했습니다." });
     }
   };

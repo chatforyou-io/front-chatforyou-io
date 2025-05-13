@@ -1,13 +1,11 @@
 "use server";
 
 import { AxiosError } from "axios";
-import { handleAxiosError } from "@/src/libs/utils/serverCommon";
 import serverApiInstance from "@/src/libs/utils/serverApiInstance";
 
 // 로그인 응답 타입
 interface SignInResponse {
   isSuccess: boolean;
-  code?: number;
   message?: string;
   userData?: UserData;
   accessToken?: string;
@@ -17,14 +15,12 @@ interface SignInResponse {
 // 로그아웃 응답 타입
 interface SignOutResponse {
   isSuccess: boolean;
-  code?: number;
   message?: string;
 }
 
 // 이메일 유효성 검사 응답 타입
 interface ValidateResponse {
   isSuccess: boolean;
-  code?: number;
   message?: string;
   result?: string;
   mailCode?: string;
@@ -54,7 +50,7 @@ async function signIn(id: string, pwd: string): Promise<SignInResponse> {
       refreshToken
     };
   } catch (error: any) {
-    return handleAxiosError(error as AxiosError);
+    return { isSuccess: false, message: error.message };
   }
 }
 
@@ -84,8 +80,8 @@ async function socialSignIn(provider: string, providerAccountId: string, id?: st
       accessToken,
       refreshToken
     };
-  } catch (error) {
-    return handleAxiosError(error as AxiosError);
+  } catch (error: any) {
+    return { isSuccess: false, message: error.message };
   }
 }
 
@@ -100,8 +96,8 @@ async function signOut(): Promise<SignOutResponse> {
     return {
       isSuccess: true,
     };
-  } catch (error) {
-    return handleAxiosError(error as AxiosError);
+  } catch (error: any) {
+    return { isSuccess: false, message: error.message };
   }
 }
 
@@ -132,9 +128,8 @@ async function validate(email: string): Promise<ValidateResponse> {
       result: data.result,
       mailCode
     };
-  } catch (error) {
-    console.error(error);
-    return handleAxiosError(error as AxiosError);
+  } catch (error: any) {
+    return { isSuccess: false, message: error.message };
   }
 }
 
@@ -158,8 +153,8 @@ async function refreshToken(idx: number, id: string): Promise<SignInResponse> {
       accessToken,
       refreshToken
     };
-  } catch (error) {
-    return handleAxiosError(error as AxiosError);
+  } catch (error: any) {
+    return { isSuccess: false, message: error.message };
   }
 }
 

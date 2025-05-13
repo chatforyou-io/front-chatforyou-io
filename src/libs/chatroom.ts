@@ -1,7 +1,6 @@
 "use server";
 
 import { AxiosError } from "axios";
-import { handleAxiosError } from "@/src/libs/utils/serverCommon";
 import serverApiInstance from "@/src/libs/utils/serverApiInstance";
 
 const chatroomCreate = async (chatroom: Chatroom) => {
@@ -11,8 +10,8 @@ const chatroomCreate = async (chatroom: Chatroom) => {
     const { data } = await serverApiInstance.post("/chatforyouio/chatroom/create", chatroom.usePwd ? { ...chatroom, pwd: chatroom.pwd } : chatroom);
     
     return { isSuccess: true,  ...data };
-  } catch (error) {
-    return handleAxiosError(error as AxiosError);
+  } catch (error: any) {
+    return { isSuccess: false, message: error.message };
   }
 };
 
@@ -21,8 +20,8 @@ const chatroomList = async () => {
     const { data } = await serverApiInstance.get("/chatforyouio/chatroom/list");
     
     return { isSuccess: true, ...data };
-  } catch (error) {
-    return handleAxiosError(error as AxiosError);
+  } catch (error: any) {
+    return { isSuccess: false, message: error.message };
   }
 };
 
@@ -31,8 +30,8 @@ const chatroomInfo = async (sessionId: string) => {
     const { data } = await serverApiInstance.get(`/chatforyouio/chatroom/info/${sessionId}`);
     
     return { isSuccess: true, ...data };
-  } catch (error) {
-    return handleAxiosError(error as AxiosError);
+  } catch (error: any) {
+    return { isSuccess: false, message: error.message };
   }
 };
 
@@ -44,8 +43,8 @@ const chatroomToken = async (sessionId: string, userIdx: number) => {
     if (result !== "success") throw new AxiosError("토큰을 가져오는데 실패했습니다.");
 
     return { isSuccess: true, ...joinData };
-  } catch (error) {
-    return handleAxiosError(error as AxiosError);
+  } catch (error: any) {
+    return { isSuccess: false, message: error.message };
   }
 }
 
