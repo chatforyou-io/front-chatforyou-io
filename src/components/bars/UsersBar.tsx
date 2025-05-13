@@ -60,8 +60,6 @@ export default function UsersBar() {
     return b.lastLoginDate - a.lastLoginDate;
   });
 
-  console.log(sortedUsers);
-
   return (
     <>
       <div className={clsx(
