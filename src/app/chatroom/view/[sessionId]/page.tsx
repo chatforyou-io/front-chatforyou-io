@@ -106,7 +106,7 @@ export default function Page({ params }: PageProps) {
 
   useEffect(() => {
     if (state.redirect) {
-      window.location.href = "/";
+      window.location.href = "/chatforyouio/front";
     }
   }, [state.redirect]);
   
