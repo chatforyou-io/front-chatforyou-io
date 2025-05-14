@@ -1,7 +1,6 @@
 "use client";
 
 import { useContext, useEffect, useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
 import OpenviduStream from '@/src/components/openvidu/OpenviduStream';
 import { chatroomToken } from "@/src/libs/chatroom";
 import Header from "@/src/components/items/Header";
@@ -28,7 +27,6 @@ export default function Page({ params }: PageProps) {
     redirect: false,
     leave: false,
   });
-  const router = useRouter();
 
   const fetchChatroom = useCallback(async () => {
     if (!user?.idx) return;
@@ -108,9 +106,9 @@ export default function Page({ params }: PageProps) {
 
   useEffect(() => {
     if (state.redirect) {
-      router.push("/");
+      window.location.href = "/";
     }
-  }, [state.redirect, router]);
+  }, [state.redirect]);
   
   return (
     <div className="flex flex-col justify-start items-center size-full bg-white md:bg-gray-200">
