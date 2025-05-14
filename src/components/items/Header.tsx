@@ -15,6 +15,7 @@ export default function Header() {
   const { user, signOut } = useSession();
   const [activeModal, setActiveModal] = useState<ModalType>(null);
 
+  const redirectToHome = () => window.location.href = "/";
   const openProfileModal = () => setActiveModal("profile");
   const openUserUpdateFormModal = () => setActiveModal("update");
   const closeModal = () => setActiveModal(null);
@@ -27,7 +28,7 @@ export default function Header() {
   return (
     <>
       <div className="flex justify-between items-center p-4 w-full h-20 bg-white">
-        <Link href="/" className="text-2xl font-bold text-primary">ChatForYou.io</Link>
+        <button type="button" onClick={redirectToHome} className="text-2xl font-bold text-primary">ChatForYou.io</button>
         {user ? (
           <button type="button" onClick={openProfileModal} aria-label="profile">
             <IconUser aria-label="room" width={40} height={40} className="border-2 border-gray-700 rounded-full" />
