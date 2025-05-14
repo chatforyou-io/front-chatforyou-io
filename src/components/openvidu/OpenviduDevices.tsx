@@ -1,10 +1,7 @@
-import { FC, useContext, useEffect } from 'react';
-import { OpenviduContext } from '@/src/contexts/OpenviduContext';
+import { useContext, useEffect } from "react";
+import { OpenviduContext } from "@/src/contexts/OpenviduContext";
 
-interface DeviceSelectorsProps {
-}
-
-const DeviceSelectors: FC<DeviceSelectorsProps> = () => {
+export default function OpenviduDevices() {
   const { audioInputs, videoInputs, getDevices, setDevice } = useContext(OpenviduContext);
 
   const handleAudioChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -46,5 +43,3 @@ const DeviceSelectors: FC<DeviceSelectorsProps> = () => {
     </>
   );
 };
-
-export default DeviceSelectors;
