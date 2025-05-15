@@ -14,7 +14,7 @@ export default function Header() {
   const { user, signOut } = useSession();
   const [activeModal, setActiveModal] = useState<ModalType>(null);
 
-  const redirectToHome = () => window.location.href = "/";
+  const redirectToHome = () => window.location.href = "/chatforyouio/front";
   const openProfileModal = () => setActiveModal("profile");
   const openUserUpdateFormModal = () => setActiveModal("update");
   const closeModal = () => setActiveModal(null);
