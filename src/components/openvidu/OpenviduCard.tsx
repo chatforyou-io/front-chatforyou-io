@@ -4,8 +4,7 @@ import { useContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import OpenviduDevices from "@/src/components/openvidu/OpenviduDevices";
 import OpenviduHeader from "@/src/components/openvidu/OpenviduHeader";
-import OpenviduPublisher from "@/src/components/openvidu/OpenviduPublisher";
-import OpenviduSubscribers from "@/src/components/openvidu/OpenviduSubscribers";
+import OpenviduStreamList from "@/src/components/openvidu/OpenviduStreamList";
 import { OpenviduContext } from "@/src/contexts/OpenviduContext";
 import { useSession } from "@/src/contexts/SessionContext";
 
@@ -26,16 +25,15 @@ export default function OpenviduCard({ chatroom, token }: OpenviduCardProps) {
       joinSession(token, user.idx);
     } catch (error) {
       console.error(error);
-      router.push("/chatforyouio/front");
+      router.push("/");
     }
   }, [token, user?.idx, joinSession]);
   
   return (
-    <div className="flex flex-col justify-center items-center gap-4 p-4 md:p-8 bg-white rounded-2xl shadow-xl">
+    <div className="flex flex-col justify-center items-center gap-4 p-4 md:p-8 bg-white rounded-2xl md:shadow-xl">
       <OpenviduDevices />
       <OpenviduHeader chatroom={chatroom} />
-      <OpenviduPublisher streamManager={publisher} />
-      <OpenviduSubscribers streamManagers={subscribers ?? []} />
+      <OpenviduStreamList streamManagers={publisher ? [publisher, ...subscribers] : subscribers} />
     </div>
   );
 }

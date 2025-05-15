@@ -23,23 +23,21 @@ export default function OpenviduDevices() {
   }, [getDevices]);
 
   return (
-    <>
-      <div className="flex gap-4 w-full bg-white">
-        <select
-          onChange={handleAudioChange}
-          className="border-2 border-dimmed p-2 w-full rounded-2xl truncate">
-          {audioInputs?.map((device) => (
-            <option key={device.deviceId} value={device.deviceId}>{device.label}</option>
-          ))}
-        </select>
-        <select
-          onChange={handleVideoChange}
-          className="border-2 border-dimmed p-2 w-full rounded-2xl truncate">
-          {videoInputs?.map((device) => (
-            <option key={device.deviceId} value={device.deviceId}>{device.label}</option>
-          ))}
-        </select>
-      </div>
-    </>
+    <div className="flex gap-4 w-full bg-white">
+      <select
+        onChange={handleAudioChange}
+        className="border border-primary p-2 w-full rounded-2xl shadow-md truncate">
+        {audioInputs?.map((device) => (
+          <option key={device.deviceId} className="text-sm" value={device.deviceId}>{device.label}</option>
+        ))}
+      </select>
+      <select
+        onChange={handleVideoChange}
+        className="border border-primary p-2 w-full rounded-2xl shadow-md truncate">
+        {videoInputs?.map((device) => (
+          <option key={device.deviceId} className="text-sm" value={device.deviceId}>{device.label}</option>
+        ))}
+      </select>
+    </div>
   );
 };

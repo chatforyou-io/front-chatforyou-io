@@ -53,7 +53,7 @@ export default function Page({ params: { sessionId } }: PageProps) {
       };
     } catch (error) {
       console.error(error);
-      router.push("/chatforyouio/front");
+      router.push("/");
     }
   }, [sessionId, user?.idx]);
 
