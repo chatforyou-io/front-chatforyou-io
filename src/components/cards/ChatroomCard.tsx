@@ -1,16 +1,21 @@
 import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import IconExclamationCircle from '@/public/images/icon-exclamation-circle.svg';
 import IconUser from '@/public/images/icon-user.svg';
-import IconStar from '@/public/images/icons/star.svg';
 
 interface ChatroomCardProps {
   chatroom: Chatroom;
 }
 
 const ChatroomCard: React.FC<ChatroomCardProps> = ({ chatroom }) => {
+  const router = useRouter();
+  
   return (
-    <div className="px-4 py-6 space-y-4">
+    <button
+      type="button"
+      onClick={() => router.push(`/chatroom/view/${chatroom.sessionId}`)}
+      className="flex flex-col gap-4 p-4">
       <div className="flex flex-col justify-between gap-4">
         <h1 className="text-lg font-bold">{chatroom.roomName}</h1>
         <div className="flex justify-between items-center">
@@ -34,11 +39,8 @@ const ChatroomCard: React.FC<ChatroomCardProps> = ({ chatroom }) => {
             <p className="text-sm">{chatroom.roomName}</p>
           </div>
         </div>
-        <div className="flex justify-center items-center">
-          <IconStar aria-label="room" width={32} height={32} className="w-8 h-8 text-gray-400 rounded-full" />
-        </div>
       </div>
-    </div>
+    </button>
   );
 };
 
