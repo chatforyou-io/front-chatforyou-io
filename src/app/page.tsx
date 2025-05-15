@@ -8,20 +8,16 @@ import ChatroomList from "@/src/components/lists/ChatroomList";
 import { useSession } from "@/src/contexts/SessionContext";
 import { chatroomList } from "@/src/libs/chatroom";
 import { connectChatroomListSSE } from "@/src/libs/sses/chatroomList";
-import IconLoader from "@/public/images/icons/loader.svg";
 
 export default function Home() {
   const { user } = useSession();
   const [chatrooms, setChatrooms] = useState<Chatroom[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (!user?.idx) return;
 
     // 채팅방 목록 조회
     const fetchChatrooms = async () => {
-      setIsLoading(true);
-
       try {
         const { isSuccess, roomList } = await chatroomList();
   
@@ -33,16 +29,17 @@ export default function Home() {
       } catch (error) {
         console.error(error);
       }
-
-      setIsLoading(false);
     };
+
     fetchChatrooms();
     
     // SSE 연결
     const eventSource = connectChatroomListSSE(user.idx, {
       onUpdateChatroomList: (chatrooms) => setChatrooms(chatrooms)
     });
-    return () => eventSource.close();
+    return () => {
+      eventSource.close();
+    };
   }, [user?.idx]);
   
   return (
@@ -54,13 +51,7 @@ export default function Home() {
             <ChatroomCreateBar />
           </div>
           <div className="flex items-start size-full pt-4 px-4 overflow-y-auto">
-            {isLoading && chatrooms.length === 0 ? (
-              <div className="flex items-center justify-center w-full h-full">
-                <IconLoader className="w-12 h-12 animate-spin" />
-              </div>
-            ) : (
-              <ChatroomList chatrooms={chatrooms} />
-            )}
+            <ChatroomList chatrooms={chatrooms} />
           </div>
         </div>
         <div className="absolute left-0 h-full bg-white">
