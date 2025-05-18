@@ -63,7 +63,7 @@ export default function Page({ params: { sessionId } }: PageProps) {
       console.error(error);
       router.push("/");
     }
-  }, [sessionId, user?.idx]);
+  }, [router, sessionId, user?.idx]);
 
   useEffect(() => {
     fetchChatroom();
