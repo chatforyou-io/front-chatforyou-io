@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import clsx from "clsx";
 import { userCurrentList, userList } from "@/src/libs/user";
 import IconChevronRight from "@/public/images/icons/chevron-right.svg";
-import UserItem from "@/src/components/items/UserItem";
+import UserCard from "@/src/components/cards/UserCard";
 import { useSession } from "@/src/contexts/SessionContext";
 import { connectUserListSSE } from "@/src/libs/sses/userList";
 
@@ -71,7 +71,7 @@ export default function UsersBar() {
       )}>
         {sortedUsers.map((user) => {
           const isCurrent = currentUsers.some((currentUser) => currentUser.idx === user.idx);
-          return <UserItem key={`${user.idx}`} user={user} isCurrent={isCurrent} />;
+          return <UserCard key={`${user.idx}`} user={user} isCurrent={isCurrent} />;
         })}
       </div>
       <button

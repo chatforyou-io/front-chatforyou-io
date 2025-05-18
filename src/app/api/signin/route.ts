@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 로그인 요청
-    const { isSuccess, userData, accessToken, refreshToken } = await signIn(username, password);
+    const { isSuccess, userData, accessToken: newAccessToken, refreshToken: newRefreshToken } = await signIn(username, password);
 
     // 로그인 실패 시
     if (!isSuccess) {
@@ -34,43 +34,40 @@ export async function POST(request: NextRequest) {
     }
 
     // 토큰이 존재하지 않을 경우
-    if (!accessToken || !refreshToken) {
+    if (!newAccessToken || !newRefreshToken) {
       return NextResponse.json({ message: "토큰이 존재하지 않습니다." }, { status: 400 });
     }
 
     // session 토큰 생성
     const sessionToken = jwt.sign(userData, JWT_SECRET, { expiresIn: "1h" });
 
-    // AccessToken 쿠키 설정
-    cookies().set("AccessToken", accessToken, {
-      httpOnly: true, // 자바스크립트에서 접근 불가능
-      secure: process.env.NODE_ENV === "production", // 프로덕션 환경에서만 쿠키 전송
-      sameSite: "lax", // 쿠키 동작 방식
-      path: "/", // 쿠키 적용 범위
-      expires: new Date(Date.now() + 60 * 60 * 1000), // 1시간
-    });
-
-    // RefreshToken 쿠키 설정
-    cookies().set("RefreshToken", refreshToken, {
-      httpOnly: true, // 자바스크립트에서 접근 불가능
-      secure: process.env.NODE_ENV === "production", // 프로덕션 환경에서만 쿠키 전송
-      sameSite: "lax", // 쿠키 동작 방식
-      path: "/", // 쿠키 적용 범위
-      expires: new Date(Date.now() + 60 * 60 * 24 * 1000), // 1일
-    });
-
-    // SessionToken 쿠키 설정
-    cookies().set("SessionToken", sessionToken, {
-      httpOnly: true, // 자바스크립트에서 접근 불가능
-      secure: process.env.NODE_ENV === "production", // 프로덕션 환경에서만 쿠키 전송
-      sameSite: "lax", // 쿠키 동작 방식
-      path: "/", // 쿠키 적용 범위
-      expires: new Date(Date.now() + 60 * 60 * 1000), // 1시간
-    });
+    // 인증 관련 쿠키 설정
+    setAuthCookies(newAccessToken, newRefreshToken, sessionToken);
 
     return NextResponse.json({ isSuccess: true, message: "로그인 성공", userData }, { status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ isSuccess: false, message: "로그인 실패" }, { status: 400 });
   }
+}
+
+// 인증 관련 쿠키 설정
+function setAuthCookies(accessToken: string, refreshToken: string, sessionToken: string) {
+  cookies().set("AccessToken", accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  });
+
+  cookies().set("RefreshToken", refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  });
+
+  cookies().set("SessionToken", sessionToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  });
 }

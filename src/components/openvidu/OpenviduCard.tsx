@@ -27,7 +27,7 @@ export default function OpenviduCard({ chatroom, token }: OpenviduCardProps) {
       console.error(error);
       router.push("/");
     }
-  }, [token, user?.idx, joinSession]);
+  }, [token, user?.idx, joinSession, router]);
   
   return (
     <div className="flex flex-col justify-center items-center gap-4 p-4 md:p-8 bg-white rounded-2xl md:shadow-xl">

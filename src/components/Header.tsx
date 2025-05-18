@@ -3,7 +3,7 @@
 import { useState } from "react";
 import ProfileCard from "@/src/components/cards/ProfileCard";
 import UserUpdateForm from "@/src/components/forms/UserUpdateForm";
-import Modal from "@/src/components/items/Modal";
+import Modal from "@/src/components/Modal";
 import { useSession } from "@/src/contexts/SessionContext";
 import IconUser from "@/public/images/icon-user.svg";
 import IconLoader from "@/public/images/icons/loader.svg";

@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema, SignUpSchemaType } from "@/src/schemas/signUpSchema";
 
 interface SignUpFormProps {
-  onSubmit: (name: string, pwd: string, confirmPwd: string) => void;
+  onSubmit: (name: string, nickName: string, pwd: string, confirmPwd: string) => void;
 }
 
 export default function SignUpForm({ onSubmit }: SignUpFormProps) {
@@ -19,9 +19,9 @@ export default function SignUpForm({ onSubmit }: SignUpFormProps) {
   });
 
   // 회원가입 제출
-  const processSubmit = async ({ name, pwd, confirmPwd }: SignUpSchemaType) => {
+  const processSubmit = async ({ name, nickName, pwd, confirmPwd }: SignUpSchemaType) => {
     try {
-      onSubmit(name, pwd, confirmPwd);
+      onSubmit(name, nickName, pwd, confirmPwd);
     } catch (error) {
       console.error(error);
       setError("root", { message: "회원가입 유효성 검사 중 오류 발생" });
@@ -43,6 +43,15 @@ export default function SignUpForm({ onSubmit }: SignUpFormProps) {
           })}
           {...register("name")} />
         {errors.name && <p className="text-error">{errors.name?.message}</p>}
+        <input
+          type="text"
+          placeholder="닉네임"
+          aria-label="닉네임"
+          className={clsx("border px-4 h-16 w-full bg-white rounded-full", {
+            "border-red-500": errors.nickName,
+          })}
+          {...register("nickName")} />
+        {errors.nickName && <p className="text-error">{errors.nickName?.message}</p>}
         <input
           type="password"
           placeholder="비밀번호"

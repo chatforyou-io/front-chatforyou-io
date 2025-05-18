@@ -1,13 +1,11 @@
 interface User {
-  provider?: string,
-  idx?: number,
-  id: string,
-  pwd?: string,
-  confirmPwd?: string,
-  usePwd?: boolean,
-  name?: string,
-  nickName?: string,
-  friendList?: string[],
-  createDate?: number,
-  lastLoginDate?: number,
+  idx: number;
+  id: string;
+  pwd: string;
+  name: string;
+  nickName: string;
+  provider: string;
+  friendList?: string
+  createDate?: string
+  lastLoginDate: number;
 }
