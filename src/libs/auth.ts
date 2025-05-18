@@ -7,7 +7,7 @@ import serverApi from "@/src/libs/utils/serverApi";
 interface SignInResponse {
   isSuccess: boolean;
   message?: string;
-  userData?: UserData;
+  userData?: User;
   accessToken?: string;
   refreshToken?: string;
 }

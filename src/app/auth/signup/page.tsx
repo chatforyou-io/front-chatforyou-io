@@ -32,9 +32,9 @@ export default function Page() {
     setStep(STEPS.USER_INFO);
   }
 
-  const handleSubmitUserInfo = async (name: string, pwd: string, confirmPwd: string) => {
+  const handleSubmitUserInfo = async (name: string, nickName: string, pwd: string, confirmPwd: string) => {
     try {
-      const { isSuccess } = await userCreate({ id, name, pwd, confirmPwd, usePwd: true});
+      const { isSuccess } = await userCreate(id, name, nickName, pwd, confirmPwd, true);
       
       if (!isSuccess) {
         throw new Error("가입 요청 중 오류 발생");

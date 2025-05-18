@@ -17,13 +17,13 @@ interface UserResponse {
  * @param {User} user 사용자 정보
  * @returns {Promise<UserResponse>} 사용자 정보
  */
-const userCreate = async (user: User): Promise<UserResponse> => {
+const userCreate = async (id: string, name: string, nickName: string, pwd: string, confirmPwd: string, usePwd: boolean): Promise<UserResponse> => {
   try {
-    if (!user.pwd || !user.confirmPwd) {
+    if (!pwd || !confirmPwd) {
       throw new AxiosError("비밀번호를 입력해주세요.");
     }
 
-    const { data } = await serverApi.post("/chatforyouio/user/create", { ...user, pwd: btoa(user.pwd), confirmPwd: btoa(user.confirmPwd) });
+    const { data } = await serverApi.post("/chatforyouio/user/create", { id, name, nickName, pwd: btoa(pwd), confirmPwd: btoa(confirmPwd), usePwd });
 
     return { isSuccess: true, ...data };
   } catch (error: any) {
