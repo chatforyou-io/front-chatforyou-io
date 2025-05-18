@@ -3,12 +3,12 @@ import { cookies } from "next/headers";
 
 const authHost = process.env.NEXT_PUBLIC_API_DOMAIN;
 
-const serverApiInstance = axios.create({
+const serverApi = axios.create({
   baseURL: authHost,
   timeout: 3000,
 });
 
-serverApiInstance.interceptors.request.use(
+serverApi.interceptors.request.use(
   (config) => {
     const url = config.url;
 
@@ -33,4 +33,4 @@ serverApiInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-export default serverApiInstance;
+export default serverApi;

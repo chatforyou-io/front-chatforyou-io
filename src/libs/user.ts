@@ -1,7 +1,7 @@
 "use server";
 
 import { AxiosError } from "axios";
-import serverApiInstance from "@/src/libs/utils/serverApiInstance";
+import serverApi from "@/src/libs/utils/serverApi";
 
 // 사용자 응답 타입
 interface UserResponse {
@@ -23,7 +23,7 @@ const userCreate = async (user: User): Promise<UserResponse> => {
       throw new AxiosError("비밀번호를 입력해주세요.");
     }
 
-    const { data } = await serverApiInstance.post("/chatforyouio/user/create", { ...user, pwd: btoa(user.pwd), confirmPwd: btoa(user.confirmPwd) });
+    const { data } = await serverApi.post("/chatforyouio/user/create", { ...user, pwd: btoa(user.pwd), confirmPwd: btoa(user.confirmPwd) });
 
     return { isSuccess: true, ...data };
   } catch (error: any) {
@@ -39,7 +39,7 @@ const userCreate = async (user: User): Promise<UserResponse> => {
  */
 const userUpdate = async (idx: number, nickName: string): Promise<UserResponse> => {
   try {
-    const { data } = await serverApiInstance.patch("/chatforyouio/user/update", { idx, nickName });
+    const { data } = await serverApi.patch("/chatforyouio/user/update", { idx, nickName });
     
     return { isSuccess: true, ...data };
   } catch (error: any) {
@@ -54,7 +54,7 @@ const userUpdate = async (idx: number, nickName: string): Promise<UserResponse> 
  */
 const userDelete = async (idx: number): Promise<UserResponse> => {
   try {
-    const { data } = await serverApiInstance.delete("/chatforyouio/user/delete", { data: { idx } });
+    const { data } = await serverApi.delete("/chatforyouio/user/delete", { data: { idx } });
     
     return { isSuccess: true, ...data };
   } catch (error: any) {
@@ -70,7 +70,7 @@ const userDelete = async (idx: number): Promise<UserResponse> => {
  */
 const userInfo = async (id: string, pwd: string): Promise<UserResponse> => {
   try {
-    const { data } = await serverApiInstance.get(`/chatforyouio/user/info`, { params: { id, pwd: btoa(pwd) } });
+    const { data } = await serverApi.get(`/chatforyouio/user/info`, { params: { id, pwd: btoa(pwd) } });
     
     return { isSuccess: true, ...data };
   } catch (error: any) {
@@ -85,7 +85,7 @@ const userInfo = async (id: string, pwd: string): Promise<UserResponse> => {
  */
 const userCheckNickname = async (nickname: string): Promise<UserResponse> => {
   try {
-    const { data } = await serverApiInstance.get("/chatforyouio/user/check_nick_name", { params: { nickName: nickname } });
+    const { data } = await serverApi.get("/chatforyouio/user/check_nick_name", { params: { nickName: nickname } });
     
     return { isSuccess: true, ...data };
   } catch (error: any) {
@@ -99,7 +99,7 @@ const userCheckNickname = async (nickname: string): Promise<UserResponse> => {
  */
 const userList = async (): Promise<UserResponse> => {
   try {
-    const response = await serverApiInstance.get("/chatforyouio/user/list");
+    const response = await serverApi.get("/chatforyouio/user/list");
     
     return { isSuccess: true, ...response.data };
   } catch (error: any) {
@@ -113,7 +113,7 @@ const userList = async (): Promise<UserResponse> => {
  */ 
 const userCurrentList = async (): Promise<UserResponse> => {
   try {
-    const response = await serverApiInstance.get("/chatforyouio/user/list/current");
+    const response = await serverApi.get("/chatforyouio/user/list/current");
     
     return { isSuccess: true, ...response.data };
   } catch (error: any) {

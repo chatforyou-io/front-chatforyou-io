@@ -1,7 +1,7 @@
 "use server";
 
 import { AxiosError } from "axios";
-import serverApiInstance from "@/src/libs/utils/serverApiInstance";
+import serverApi from "@/src/libs/utils/serverApi";
 
 // 로그인 응답 타입
 interface SignInResponse {
@@ -34,7 +34,7 @@ interface ValidateResponse {
  */
 async function signIn(id: string, pwd: string): Promise<SignInResponse> {
   try {
-    const { headers, data } = await serverApiInstance.post("/chatforyouio/auth/login", { id, pwd: btoa(pwd) });
+    const { headers, data } = await serverApi.post("/chatforyouio/auth/login", { id, pwd: btoa(pwd) });
 
     const accessToken = headers["accesstoken"];
     const refreshToken = headers["refreshtoken"];
@@ -65,7 +65,7 @@ async function signIn(id: string, pwd: string): Promise<SignInResponse> {
  */ 
 async function socialSignIn(provider: string, providerAccountId: string, id?: string, name?: string, nickName?: string): Promise<SignInResponse> {
   try {
-    const { headers, data } = await serverApiInstance.post("/chatforyouio/auth/login/social", { provider, providerAccountId, id, name, nickName });
+    const { headers, data } = await serverApi.post("/chatforyouio/auth/login/social", { provider, providerAccountId, id, name, nickName });
 
     const accessToken = headers["accesstoken"];
     const refreshToken = headers["refreshtoken"];
@@ -91,7 +91,7 @@ async function socialSignIn(provider: string, providerAccountId: string, id?: st
  */
 async function signOut(): Promise<SignOutResponse> {
   try {
-    await serverApiInstance.post("/chatforyouio/auth/logout");
+    await serverApi.post("/chatforyouio/auth/logout");
 
     return {
       isSuccess: true,
@@ -108,7 +108,7 @@ async function signOut(): Promise<SignOutResponse> {
  */
 async function validate(email: string): Promise<ValidateResponse> {
   try {
-    const { headers, data } = await serverApiInstance.get("/chatforyouio/auth/validate", { params: { email } });
+    const { headers, data } = await serverApi.get("/chatforyouio/auth/validate", { params: { email } });
 
     const cookies = headers["set-cookie"];
 
@@ -139,7 +139,7 @@ async function validate(email: string): Promise<ValidateResponse> {
  */
 async function refreshToken(idx: number, id: string): Promise<SignInResponse> {
   try {
-    const { headers } = await serverApiInstance.post("/chatforyouio/auth/refresh_token", { idx, id });
+    const { headers } = await serverApi.post("/chatforyouio/auth/refresh_token", { idx, id });
 
     const accessToken = headers["accesstoken"];
     const refreshToken = headers["refreshtoken"];
