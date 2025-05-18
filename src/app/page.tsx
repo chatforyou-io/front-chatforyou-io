@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import ChatroomCreateBar from "@/src/components/bars/ChatroomCreateBar";
 import UsersBar from "@/src/components/bars/UsersBar";
-import Header from "@/src/components/items/Header";
+import Header from "@/src/components/Header";
 import ChatroomList from "@/src/components/lists/ChatroomList";
 import { useSession } from "@/src/contexts/SessionContext";
 import { chatroomList } from "@/src/libs/chatroom";

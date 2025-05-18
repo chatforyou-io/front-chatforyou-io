@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import ChatroomCreateForm from "@/src/components/forms/ChatroomCreateForm";
-import Modal from "@/src/components/items/Modal";
+import Modal from "@/src/components/Modal";
 import IconPlus from "@/public/images/icons/plus.svg";
 
 export default function ChatroomCreateBar() {

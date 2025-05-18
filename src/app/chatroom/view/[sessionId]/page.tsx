@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import IconLoader from "@/public/images/icons/loader.svg";
 import { chatroomToken } from "@/src/libs/chatroom";
-import Header from "@/src/components/items/Header";
+import Header from "@/src/components/Header";
 import { useSession } from "@/src/contexts/SessionContext";
 import { connectChatroomInfoSSE } from "@/src/libs/sses/chatroomInfo";
 import { formatDateTime } from "@/src/libs/utils/clientCommon";
