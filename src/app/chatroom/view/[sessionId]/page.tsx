@@ -60,7 +60,7 @@ export default function Page({ params: { sessionId } }: PageProps) {
 
     // SSE 연결
     const eventSource = connectChatroomInfoSSE(sessionId, user.idx, {
-      onUpdateChatroomInfo: (chatroom) => setChatroom({ ...chatroom, createDatetime: formatDateTime(chatroom.createDate!) })
+      onUpdateChatroomInfo: (chatroom) => setChatroom({ ...chatroom, createDatetime: chatroom.createDate ? formatDateTime(chatroom.createDate) : undefined })
     });
 
     return () => {
