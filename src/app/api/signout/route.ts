@@ -2,13 +2,15 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { signOut } from "@/src/libs/auth";
 
-export async function POST() {
+export async function POST(request: Request) {
+  const { idx, id } = await request.json();
+
   try {
+    // 로그아웃 요청
+    await signOut(idx, id);
+
     // 인증 관련 쿠키 삭제
     deleteAuthCookies();
-
-    // 로그아웃 요청
-    await signOut();
 
     return NextResponse.json({ isSuccess: true });
   } catch (error) {

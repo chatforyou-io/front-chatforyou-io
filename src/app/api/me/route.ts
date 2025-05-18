@@ -85,7 +85,7 @@ async function PATCH(request: NextRequest) {
 }
 
 async function DELETE(request: NextRequest) {
-  const { idx } = await request.json();
+  const { idx, id } = await request.json();
   
   try {
     const { isSuccess } = await userDelete(idx);
@@ -94,11 +94,11 @@ async function DELETE(request: NextRequest) {
       return NextResponse.json({ message: "사용자 정보 삭제에 실패했습니다." }, { status: 400 });
     }
 
+    // 로그아웃 요청
+    await signOut(idx, id);
+
     // 인증 관련 쿠키 삭제
     deleteAuthCookies();
-
-    // 로그아웃 요청
-    await signOut();
 
     return NextResponse.json({ message: "사용자 정보 삭제에 성공했습니다." }, { status: 200 });
   } catch (error) {

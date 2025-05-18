@@ -89,9 +89,9 @@ async function socialSignIn(provider: string, providerAccountId: string, id?: st
  * 로그아웃
  * @returns {Promise<SignOutResponse>} 로그아웃 성공 여부 또는 에러 응답
  */
-async function signOut(): Promise<SignOutResponse> {
+async function signOut(idx: number, id: string): Promise<SignOutResponse> {
   try {
-    await serverApi.post("/chatforyouio/auth/logout");
+    await serverApi.post("/chatforyouio/auth/logout", { idx, id });
 
     return {
       isSuccess: true,
