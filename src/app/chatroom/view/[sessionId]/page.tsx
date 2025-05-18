@@ -6,7 +6,6 @@ import { chatroomToken } from "@/src/libs/chatroom";
 import Header from "@/src/components/Header";
 import { useSession } from "@/src/contexts/SessionContext";
 import { connectChatroomInfoSSE } from "@/src/libs/sses/chatroomInfo";
-import { formatDateTime } from "@/src/libs/utils/clientCommon";
 import OpenviduCard from "@/src/components/openvidu/OpenviduCard";
 import { useRouter } from "next/navigation";
 
@@ -33,6 +32,15 @@ export default function Page({ params: { sessionId } }: PageProps) {
       if (!isSuccess) {
         throw new Error("채팅방 토큰 발급 실패");
       }
+
+      const formatDateTime = (date: string) => new Date(date).toLocaleString("ko-KR", {
+        timeZone: "Asia/Seoul",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
 
       // 채팅방 생성일자 포맷팅
       const createDatetime = formatDateTime(roomInfo.createDate);
