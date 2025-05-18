@@ -14,13 +14,12 @@ export default function UsersBar() {
   const [currentUsers, setCurrentUsers] = useState<User[]>([]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  // 유저 목록 조회
   useEffect(() => {
     if (!user?.idx) return;
 
+    // 유저 목록 조회
     const fetchUsers = async () => {
       try {
-        // 유저 목록 조회
         const [userData, currentUserData] = await Promise.all([userList(), userCurrentList()]);
 
         if (!userData.isSuccess || !currentUserData.isSuccess) {
@@ -35,11 +34,6 @@ export default function UsersBar() {
     };
 
     fetchUsers();
-  }, [user?.idx]);
-
-  // 유저 목록 조회 SSE 연결
-  useEffect(() => {
-    if (!user?.idx) return;
 
     // SSE 연결
     const eventSource = connectUserListSSE(user.idx, {

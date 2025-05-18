@@ -17,7 +17,7 @@ export const connectUserListSSE = (
   });
 
   eventSource.addEventListener("updateUserList", (event) => {
-    const data = JSON.parse(event.data);
+    const { data } = JSON.parse(event.data);
     callbacks.onUpdateUserList?.(data);
   });
 

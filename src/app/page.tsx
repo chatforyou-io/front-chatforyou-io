@@ -37,6 +37,7 @@ export default function Home() {
     const eventSource = connectChatroomListSSE(user.idx, {
       onUpdateChatroomList: (chatrooms) => setChatrooms(chatrooms)
     });
+    
     return () => {
       eventSource.close();
     };
