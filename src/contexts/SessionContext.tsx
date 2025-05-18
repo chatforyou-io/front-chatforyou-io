@@ -9,7 +9,7 @@ interface SessionContextType {
   signIn: (username: string, password: string) => Promise<{ isSuccess: boolean, message: string }>;
   signOut: () => Promise<{ isSuccess: boolean, message: string }>;
   updateUser: (idx: number, nickName: string) => Promise<{ isSuccess: boolean, message: string }>;
-  deleteUser: (idx: number) => Promise<{ isSuccess: boolean, message: string }>;
+  deleteUser: (idx: number, id: string) => Promise<{ isSuccess: boolean, message: string }>;
 }
 
 interface SessionResultType {
@@ -61,8 +61,14 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
    */
   const signOut = useCallback(async (): Promise<SessionResultType> => {
     try {
+      if (!user) {
+        return { isSuccess: false, message: "로그인 상태가 아닙니다." };
+      }
+
+      const { idx, id } = user;
+
       // 로그아웃 요청
-      const { status, data } = await axios.post("/chatforyouio/front/api/signout");
+      const { status, data } = await axios.post("/chatforyouio/front/api/signout", { idx, id });
       const { message } = data;
 
       // 로그아웃 실패 시
@@ -79,7 +85,7 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
       const errorMessage = error instanceof AxiosError ? error.response?.data.message : "알 수 없는 오류로 로그아웃에 실패했습니다. 다시 시도해주세요.";
       return { isSuccess: false, message: errorMessage };
     }
-  }, []);
+  }, [user]);
 
   /**
    * 사용자 정보 가져오기
@@ -142,9 +148,9 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
    * @param {number} idx 사용자 인덱스
    * @returns {Promise<SessionResultType>} 사용자 정보 삭제 결과
    */
-  const deleteUser = useCallback(async (idx: number): Promise<SessionResultType> => {
+  const deleteUser = useCallback(async (idx: number, id: string): Promise<SessionResultType> => {
     try {
-      const { status, data } = await axios.delete("/chatforyouio/front/api/me", { data: { idx } });
+      const { status, data } = await axios.delete("/chatforyouio/front/api/me", { data: { idx, id } });
       const { message } = data;
 
       if (status !== 200) { 

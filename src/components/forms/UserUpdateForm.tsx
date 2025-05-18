@@ -48,7 +48,12 @@ export default function UserUpdateForm({ onClose }: UserUpdateFormProps) {
   // 회원 탈퇴 제출
   const handleDelete = async () => {
     try {
-      const { isSuccess, message } = await deleteUser(user?.idx!);
+      if (!user) {
+        throw new Error("회원 정보가 존재하지 않습니다.");
+      }
+
+      const { idx, id } = user;
+      const { isSuccess, message } = await deleteUser(idx, id);
 
       // 회원 탈퇴 실패 시
       if (!isSuccess) {
