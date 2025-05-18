@@ -12,7 +12,7 @@ serverApi.interceptors.request.use(
   (config) => {
     const url = config.url;
 
-    if (url?.includes("/auth/")) {
+    if (url?.includes("/auth/") && !url.includes("/auth/logout")) {
       return config;
     }
 
