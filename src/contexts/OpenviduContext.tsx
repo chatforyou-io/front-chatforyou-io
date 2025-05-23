@@ -15,6 +15,10 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
 
+  /**
+   * OpenVidu 세션 초기화
+   * @returns {Promise<void>}
+   */
   const initSession = async () => {
     if (ov.current) return;
 
@@ -35,6 +39,12 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
     });
   };
 
+  /**
+   * OpenVidu 세션 참여
+   * @param {string}
+   * @param {number} userIdx
+   * @returns {Promise<void>}
+   */
   const joinSession = async (token: string, userIdx: number) => {
     if (!ov.current) {
       console.error("OpenVidu 인스턴스가 초기화되지 않았습니다.");
@@ -64,6 +74,10 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
     setPublisher(newPublisher);
   };
 
+  /**
+   * OpenVidu 세션 종료
+   * @returns {Promise<void>}
+   */
   const leaveSession = useCallback(() => {
     if (session.current) {
       if (publisher) {
@@ -81,6 +95,7 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
     ov.current = null;
   }, [publisher]);
 
+  // 장치 목록 가져오기
   useEffect(() => {
     navigator.mediaDevices.enumerateDevices().then((devices) => {
       setVideoDevices(devices.filter((d) => d.kind === 'videoinput'));
@@ -88,9 +103,11 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
     });
   }, []);
 
+  // 장치 변경 시 선택된 장치 업데이트
   const changeAudioDevice = (deviceId: string) => setSelectedAudio(deviceId);
   const changeVideoDevice = (deviceId: string) => setSelectedVideo(deviceId);
 
+  // 오디오 장치 변경
   const toggleAudio = () => {
     if (publisher) {
       publisher.publishAudio(!isAudioEnabled);
@@ -98,6 +115,7 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
     }
   };
 
+  // 비디오 장치 변경
   const toggleVideo = () => {
     if (publisher) {
       publisher.publishVideo(!isVideoEnabled);
