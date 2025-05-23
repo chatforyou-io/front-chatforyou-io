@@ -3,11 +3,10 @@ interface OpenViduContextType {
   session: Session | null;
   publisher: Publisher | null;
   subscribers: Subscriber[];
-  audioInputs: Device[];
-  videoInputs: Device[];
+  audioDevices: MediaDeviceInfo[];
+  videoDevices: MediaDeviceInfo[];
   initSession: () => void;
-  joinSession: (token: string, userIdx: number) => void;
+  joinSession: (token: string, userIdx: number) => Promise<void>;
   leaveSession: () => void;
-  getDevices: () => void;
-  setDevice: (device: Device) => void;
+  setDevice: (device: MediaDeviceInfo) => void;
 }

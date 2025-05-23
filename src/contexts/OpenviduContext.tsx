@@ -1,5 +1,5 @@
-import { Device, OpenVidu, Publisher, Session, Subscriber } from "openVidu-browser";
-import { createContext, useState, ReactNode, useRef, useCallback, useContext } from "react";
+import { OpenVidu, Publisher, Session, Subscriber } from "openVidu-browser";
+import { createContext, useState, ReactNode, useRef, useCallback, useContext, useEffect } from "react";
 
 const OpenViduContext = createContext<OpenViduContextType | undefined>(undefined);
 
@@ -8,8 +8,8 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
   const session = useRef<Session | null>(null);
   const [publisher, setPublisher] = useState<Publisher | null>(null);
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
-  const [audioInputs, setAudioInputs] = useState<Device[]>([]);
-  const [videoInputs, setVideoInputs] = useState<Device[]>([]);
+  const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>([]);
+  const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
 
   const initSession = async () => {
     if (ov.current) return;
@@ -77,16 +77,14 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
     ov.current = null;
   }, [publisher]);
 
-  const getDevices = useCallback(async () => {
-    const devices = await ov.current!.getDevices();
-    const audioDevices = devices.filter((device) => device.kind === "audioinput");
-    const videoDevices = devices.filter((device) => device.kind === "videoinput");
-    
-    setAudioInputs(audioDevices);
-    setVideoInputs(videoDevices);
+  useEffect(() => {
+    navigator.mediaDevices.enumerateDevices().then((devices) => {
+      setVideoDevices(devices.filter((d) => d.kind === 'videoinput'));
+      setAudioDevices(devices.filter((d) => d.kind === 'audioinput'));
+    });
   }, []);
 
-  const setDevice = useCallback(async (device: Device) => {
+  const setDevice = useCallback(async (device: MediaDeviceInfo) => {
     if (!ov.current) return;
     if (!session.current) return;
 
@@ -109,7 +107,7 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
   }, [publisher]);
 
   return (
-    <OpenViduContext.Provider value={{ ov: ov.current, session: session.current, publisher, subscribers, audioInputs, videoInputs, initSession, joinSession, leaveSession, getDevices, setDevice }}>
+    <OpenViduContext.Provider value={{ ov: ov.current, session: session.current, publisher, subscribers, audioDevices, videoDevices, initSession, joinSession, leaveSession, setDevice }}>
       {children}
     </OpenViduContext.Provider>
   );
