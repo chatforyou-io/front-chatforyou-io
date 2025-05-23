@@ -14,7 +14,7 @@ interface OpenViduCardProps {
 }
 
 export default function OpenViduCard({ chatroom, token }: OpenViduCardProps) {
-  const { publisher, subscribers, joinSession } = useOpenVidu();
+  const { publisher, subscribers, initSession, joinSession } = useOpenVidu();
   const { user } = useSession();
   const router = useRouter();
 
@@ -22,6 +22,7 @@ export default function OpenViduCard({ chatroom, token }: OpenViduCardProps) {
     if (!token || !user?.idx) return;
 
     try {
+      initSession();
       joinSession(token, user.idx);
     } catch (error) {
       console.error(error);

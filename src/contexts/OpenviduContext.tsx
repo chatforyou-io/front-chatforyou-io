@@ -4,46 +4,47 @@ import { createContext, useState, ReactNode, useRef, useCallback, useContext } f
 const OpenViduContext = createContext<OpenViduContextType | undefined>(undefined);
 
 export default function OpenViduProvider({ children }: { children: ReactNode }) {
-  const ov = useRef<OpenVidu>();
-  const session = useRef<Session>();
-  const [publisher, setPublisher] = useState<Publisher>();
+  const ov = useRef<OpenVidu | null>(null);
+  const session = useRef<Session | null>(null);
+  const [publisher, setPublisher] = useState<Publisher | null>(null);
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [audioInputs, setAudioInputs] = useState<Device[]>([]);
   const [videoInputs, setVideoInputs] = useState<Device[]>([]);
 
-  const initOpenVidu = async () => {
+  const initSession = async () => {
     if (ov.current) return;
 
     ov.current = new OpenVidu();
+    session.current = ov.current.initSession();
+
+    // 프로덕션 모드
     ov.current.enableProdMode();
-  };
 
-  const joinSession = useCallback(async (token: string, userIdx: number) => {
-    await initOpenVidu();
-
-    if (session.current?.connection?.connectionId) {
-      console.error("이미 세션에 참여 중입니다.");
-      return;
-    }
-  
-    session.current = ov.current!.initSession();
-
+    // 세션 이벤트 리스너 등록
     session.current.on("streamCreated", (event) => {
-      const streamManager = event.stream.streamManager;
-      if (streamManager?.stream.connection.connectionId === session.current?.connection.connectionId) return;
-    
       const subscriber = session.current!.subscribe(event.stream, undefined);
       setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
     });
-
     session.current.on("streamDestroyed", (event) => {
       const streamManager = event.stream.streamManager;
       setSubscribers((prevSubscribers) => prevSubscribers.filter((subscriber) => subscriber !== streamManager));
     });
+  };
+
+  const joinSession = async (token: string, userIdx: number) => {
+    if (!ov.current) {
+      console.error("OpenVidu 인스턴스가 초기화되지 않았습니다.");
+      return;
+    }
+
+    if (!session.current) {
+      console.error("세션이 초기화되지 않았습니다.");
+      return;
+    }
 
     await session.current.connect(token, { clientData: userIdx });
 
-    const newPublisher = ov.current!.initPublisher(undefined, {
+    const newPublisher = ov.current.initPublisher(undefined, {
       audioSource: undefined,
       videoSource: undefined,
       publishAudio: true,
@@ -57,7 +58,7 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
     await session.current.publish(newPublisher);
 
     setPublisher(newPublisher);
-  }, []);
+  };
 
   const leaveSession = useCallback(() => {
     if (session.current) {
@@ -67,18 +68,16 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
       }
       
       session.current.disconnect();
-      session.current = undefined;
+      session.current = null;
     }
 
-    setPublisher(undefined);
+    setPublisher(null);
     setSubscribers([]);
 
-    ov.current = undefined;
+    ov.current = null;
   }, [publisher]);
 
   const getDevices = useCallback(async () => {
-    await initOpenVidu();
-
     const devices = await ov.current!.getDevices();
     const audioDevices = devices.filter((device) => device.kind === "audioinput");
     const videoDevices = devices.filter((device) => device.kind === "videoinput");
@@ -88,8 +87,6 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
   }, []);
 
   const setDevice = useCallback(async (device: Device) => {
-    await initOpenVidu();
-
     if (!ov.current) return;
     if (!session.current) return;
 
@@ -112,7 +109,7 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
   }, [publisher]);
 
   return (
-    <OpenViduContext.Provider value={{ ov: ov.current, session: session.current, publisher, subscribers, audioInputs, videoInputs, joinSession, leaveSession, getDevices, setDevice }}>
+    <OpenViduContext.Provider value={{ ov: ov.current, session: session.current, publisher, subscribers, audioInputs, videoInputs, initSession, joinSession, leaveSession, getDevices, setDevice }}>
       {children}
     </OpenViduContext.Provider>
   );
