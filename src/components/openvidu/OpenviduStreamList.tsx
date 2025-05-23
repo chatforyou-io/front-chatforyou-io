@@ -1,12 +1,12 @@
-import { StreamManager } from "openvidu-browser";
+import { StreamManager } from "openVidu-browser";
 import clsx from "clsx";
-import OpenviduStream from "@/src/components/openvidu/OpenviduStream";
+import OpenViduStream from "@/src/components/openvidu/OpenViduStream";
 
-interface OpenviduStreamListProps {
+interface OpenViduStreamListProps {
   streamManagers: StreamManager[];
 }
 
-export default function OpenviduStreamList({ streamManagers }: OpenviduStreamListProps) {
+export default function OpenViduStreamList({ streamManagers }: OpenViduStreamListProps) {
   return (
     <div className="grid grid-cols-3 gap-4 w-full">
       {streamManagers.map((streamManager, index) => (
@@ -16,7 +16,7 @@ export default function OpenviduStreamList({ streamManagers }: OpenviduStreamLis
             "col-span-3": index === 0,
           })}
         >
-          <OpenviduStream streamManager={streamManager} />
+          <OpenViduStream streamManager={streamManager} />
         </div>
       ))}
     </div>

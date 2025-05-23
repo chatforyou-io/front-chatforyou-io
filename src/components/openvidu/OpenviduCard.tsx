@@ -1,39 +1,40 @@
 "use client";
 
-import { useContext, useEffect } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import OpenviduDevices from "@/src/components/openvidu/OpenviduDevices";
-import OpenviduHeader from "@/src/components/openvidu/OpenviduHeader";
-import OpenviduStreamList from "@/src/components/openvidu/OpenviduStreamList";
-import { OpenviduContext } from "@/src/contexts/OpenviduContext";
+import OpenViduDevices from "@/src/components/openvidu/OpenViduDevices";
+import OpenViduHeader from "@/src/components/openvidu/OpenViduHeader";
+import OpenViduStreamList from "@/src/components/openvidu/OpenViduStreamList";
+import { useOpenVidu } from "@/src/contexts/OpenViduContext";
 import { useSession } from "@/src/contexts/SessionContext";
 
-interface OpenviduCardProps {
+interface OpenViduCardProps {
   chatroom: Chatroom;
   token: string;
 }
 
-export default function OpenviduCard({ chatroom, token }: OpenviduCardProps) {
-  const { publisher, subscribers, joinSession } = useContext(OpenviduContext);
+export default function OpenViduCard({ chatroom, token }: OpenViduCardProps) {
+  const { publisher, subscribers, initSession, joinSession } = useOpenVidu();
   const { user } = useSession();
   const router = useRouter();
 
   useEffect(() => {
-    if (!token || !user?.idx) return;
+    if (!token || !user) return;
 
     try {
+      initSession();
       joinSession(token, user.idx);
     } catch (error) {
       console.error(error);
       router.push("/");
     }
-  }, [token, user?.idx, joinSession, router]);
+  }, [token, user, initSession, joinSession, router]);
   
   return (
     <div className="flex flex-col justify-center items-center gap-4 p-4 md:p-8 bg-white rounded-2xl md:shadow-xl">
-      <OpenviduDevices />
-      <OpenviduHeader chatroom={chatroom} />
-      <OpenviduStreamList streamManagers={publisher ? [publisher, ...subscribers] : subscribers} />
+      <OpenViduDevices />
+      <OpenViduHeader chatroom={chatroom} />
+      <OpenViduStreamList streamManagers={publisher ? [publisher, ...subscribers] : subscribers} />
     </div>
   );
 }

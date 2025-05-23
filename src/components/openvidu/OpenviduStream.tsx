@@ -1,12 +1,12 @@
 import React, { useEffect, useRef } from 'react';
-import { StreamManager } from 'openvidu-browser';
+import { StreamManager } from 'openVidu-browser';
 import IconLoader from "@/public/images/icons/loader.svg";
 
 interface SessionProps {
 	streamManager?: StreamManager;
 }
 
-export default function OpenviduStream({ streamManager }: SessionProps) {
+export default function OpenViduStream({ streamManager }: SessionProps) {
 	const videoRef = useRef<HTMLVideoElement>(null);
 	const autoplay = true;
 

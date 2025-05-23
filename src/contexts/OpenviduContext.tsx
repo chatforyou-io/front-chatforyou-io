@@ -1,102 +1,64 @@
-import { Device, OpenVidu, Publisher, PublisherProperties, Session, Subscriber } from "openvidu-browser";
-import { createContext, useState, ReactNode, useRef, useCallback } from "react";
+import { OpenVidu, Publisher, Session, Subscriber } from "openVidu-browser";
+import { createContext, useState, ReactNode, useRef, useCallback, useContext, useEffect } from "react";
 
-interface OpenviduContextType {
-  ov: OpenVidu | undefined;
-  session: Session | undefined;
-  publisher: Publisher | undefined;
-  subscribers: Subscriber[];
-  audioInputs: Device[];
-  videoInputs: Device[];
-  publisherProperties: PublisherProperties | undefined;
-  joinSession: (token: string, userIdx: number) => void;
-  leaveSession: () => void;
-  getDevices: () => void;
-  setDevice: (device: Device) => void;
-}
+const OpenViduContext = createContext<OpenViduContextType | undefined>(undefined);
 
-export const OpenviduContext = createContext<OpenviduContextType>({
-  ov: undefined,
-  session: undefined,
-  publisher: undefined,
-  subscribers: [],
-  audioInputs: [],
-  videoInputs: [],
-  publisherProperties: undefined,
-  joinSession: () => {},
-  leaveSession: () => {},
-  getDevices: () => {},
-  setDevice: () => {},
-});
-
-export default function OpenviduProvider({ children }: { children: ReactNode }) {
-  const ov = useRef<OpenVidu>();
-  const session = useRef<Session>();
-  const publisherProperties = useRef<PublisherProperties>({
-    audioSource: undefined,
-    videoSource: undefined,
-    publishAudio: true,
-    publishVideo: true,
-    resolution: "640x480",
-    frameRate: 30,
-    insertMode: "APPEND",
-  });
-  const [publisher, setPublisher] = useState<Publisher>();
+export default function OpenViduProvider({ children }: { children: ReactNode }) {
+  const ov = useRef<OpenVidu | null>(null);
+  const session = useRef<Session | null>(null);
+  const [publisher, setPublisher] = useState<Publisher | null>(null);
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
-  const [audioInputs, setAudioInputs] = useState<Device[]>([]);
-  const [videoInputs, setVideoInputs] = useState<Device[]>([]);
+  const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>([]);
+  const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
 
-  const initOpenvidu = async () => {
+  const initSession = async () => {
     if (ov.current) return;
 
     ov.current = new OpenVidu();
+    session.current = ov.current.initSession();
+
+    // 프로덕션 모드
     ov.current.enableProdMode();
-    await ov.current.getUserMedia(publisherProperties.current);
-  };
 
-  const joinSession = useCallback(async (token: string, userIdx: number) => {
-    await initOpenvidu();
-
-    if (session.current?.connection?.connectionId) {
-      console.error("이미 세션에 참여 중입니다.");
-      return;
-    }
-
-    const devices = await ov.current!.getDevices();
-    const audioDevices = devices.filter((device) => device.kind === "audioinput");
-    const videoDevices = devices.filter((device) => device.kind === "videoinput");
-
-    if (!audioDevices.length || !videoDevices.length) {
-      console.error("디바이스가 없습니다.");
-      return;
-    }
-
-    audioDevices.length ? publisherProperties.current.audioSource = audioDevices[0].deviceId : undefined;
-    videoDevices.length ? publisherProperties.current.videoSource = videoDevices[0].deviceId : undefined;
-  
-    session.current = ov.current!.initSession();
-
+    // 세션 이벤트 리스너 등록
     session.current.on("streamCreated", (event) => {
-      const streamManager = event.stream.streamManager;
-      if (streamManager?.stream.connection.connectionId === session.current?.connection.connectionId) return;
-    
       const subscriber = session.current!.subscribe(event.stream, undefined);
       setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
     });
-
     session.current.on("streamDestroyed", (event) => {
       const streamManager = event.stream.streamManager;
       setSubscribers((prevSubscribers) => prevSubscribers.filter((subscriber) => subscriber !== streamManager));
     });
+  };
+
+  const joinSession = async (token: string, userIdx: number) => {
+    if (!ov.current) {
+      console.error("OpenVidu 인스턴스가 초기화되지 않았습니다.");
+      return;
+    }
+
+    if (!session.current) {
+      console.error("세션이 초기화되지 않았습니다.");
+      return;
+    }
 
     await session.current.connect(token, { clientData: userIdx });
 
-    const newPublisher = ov.current!.initPublisher(undefined, publisherProperties.current);
+    const newPublisher = ov.current.initPublisher(undefined, {
+      audioSource: undefined,
+      videoSource: undefined,
+      publishAudio: true,
+      publishVideo: true,
+      resolution: "640x480",
+      frameRate: 30,
+      insertMode: "APPEND",
+      mirror: false,
+    });
 
     await session.current.publish(newPublisher);
 
     setPublisher(newPublisher);
-  }, []);
+  };
 
   const leaveSession = useCallback(() => {
     if (session.current) {
@@ -106,36 +68,36 @@ export default function OpenviduProvider({ children }: { children: ReactNode }) 
       }
       
       session.current.disconnect();
-      session.current = undefined;
+      session.current = null;
     }
 
-    setPublisher(undefined);
+    setPublisher(null);
     setSubscribers([]);
 
-    ov.current = undefined;
+    ov.current = null;
   }, [publisher]);
 
-  const getDevices = useCallback(async () => {
-    await initOpenvidu();
-
-    const devices = await ov.current!.getDevices();
-    const audioDevices = devices.filter((device) => device.kind === "audioinput");
-    const videoDevices = devices.filter((device) => device.kind === "videoinput");
-    
-    setAudioInputs(audioDevices);
-    setVideoInputs(videoDevices);
+  useEffect(() => {
+    navigator.mediaDevices.enumerateDevices().then((devices) => {
+      setVideoDevices(devices.filter((d) => d.kind === 'videoinput'));
+      setAudioDevices(devices.filter((d) => d.kind === 'audioinput'));
+    });
   }, []);
 
-  const setDevice = useCallback(async (device: Device) => {
-    await initOpenvidu();
-
+  const setDevice = useCallback(async (device: MediaDeviceInfo) => {
     if (!ov.current) return;
     if (!session.current) return;
 
-    if (device.kind === "audioinput") publisherProperties.current.audioSource = device.deviceId;
-    if (device.kind === "videoinput") publisherProperties.current.videoSource = device.deviceId;
-
-    const newPublisher = await ov.current.initPublisherAsync(undefined, publisherProperties.current);
+    const newPublisher = await ov.current.initPublisherAsync(undefined, {
+      audioSource: device.kind === "audioinput" ? device.deviceId : undefined,
+      videoSource: device.kind === "videoinput" ? device.deviceId : undefined,
+      publishAudio: true,
+      publishVideo: true,
+      resolution: "640x480",
+      frameRate: 30,
+      insertMode: "APPEND",
+      mirror: false,
+    });
 
     if (publisher) await session.current.unpublish(publisher);
 
@@ -145,8 +107,16 @@ export default function OpenviduProvider({ children }: { children: ReactNode }) 
   }, [publisher]);
 
   return (
-    <OpenviduContext.Provider value={{ ov: ov.current, session: session.current, publisherProperties: publisherProperties.current, publisher, subscribers, audioInputs, videoInputs, joinSession, leaveSession, getDevices, setDevice }}>
+    <OpenViduContext.Provider value={{ ov: ov.current, session: session.current, publisher, subscribers, audioDevices, videoDevices, initSession, joinSession, leaveSession, setDevice }}>
       {children}
-    </OpenviduContext.Provider>
+    </OpenViduContext.Provider>
   );
 };
+
+export const useOpenVidu = (): OpenViduContextType => {
+  const context = useContext(OpenViduContext);
+  if (context === undefined) {
+    throw new Error("useOpenVidu는 OpenViduProvider 안에서만 사용할 수 있습니다.");
+  }
+  return context;
+}
