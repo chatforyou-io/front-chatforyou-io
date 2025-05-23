@@ -5,7 +5,6 @@ interface OpenViduContextType {
   subscribers: Subscriber[];
   audioInputs: Device[];
   videoInputs: Device[];
-  publisherProperties: PublisherProperties | undefined;
   joinSession: (token: string, userIdx: number) => void;
   leaveSession: () => void;
   getDevices: () => void;
