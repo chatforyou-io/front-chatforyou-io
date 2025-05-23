@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { StreamManager } from 'openVidu-browser';
+import { StreamManager } from 'openvidu-browser';
 import IconLoader from "@/public/images/icons/loader.svg";
 
 interface SessionProps {
