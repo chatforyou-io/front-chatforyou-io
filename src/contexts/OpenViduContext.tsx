@@ -1,4 +1,4 @@
-import { OpenVidu, Publisher, Session, Subscriber } from "openVidu-browser";
+import { OpenVidu, Publisher, Session, Subscriber } from "openvidu-browser";
 import { createContext, useState, ReactNode, useRef, useCallback, useContext, useEffect } from "react";
 
 const OpenViduContext = createContext<OpenViduContextType | undefined>(undefined);
