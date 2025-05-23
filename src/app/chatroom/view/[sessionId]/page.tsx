@@ -6,7 +6,7 @@ import { chatroomToken } from "@/src/libs/chatroom";
 import Header from "@/src/components/Header";
 import { useSession } from "@/src/contexts/SessionContext";
 import { connectChatroomInfoSSE } from "@/src/libs/sses/chatroomInfo";
-import OpenviduCard from "@/src/components/openvidu/OpenviduCard";
+import OpenViduCard from "@/src/components/openVidu/OpenViduCard";
 import { useRouter } from "next/navigation";
 
 interface PageProps {
@@ -80,7 +80,7 @@ export default function Page({ params: { sessionId } }: PageProps) {
     <div className="flex flex-col justify-start items-center size-full bg-white md:bg-gray-200">
       <Header />
       <main className="flex flex-col justify-center items-center w-md md:w-160 h-full">
-        <OpenviduCard chatroom={chatroom} token={token} />
+        <OpenViduCard chatroom={chatroom} token={token} />
       </main>
     </div>
   );

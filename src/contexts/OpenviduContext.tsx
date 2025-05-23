@@ -1,35 +1,9 @@
-import { Device, OpenVidu, Publisher, PublisherProperties, Session, Subscriber } from "openvidu-browser";
-import { createContext, useState, ReactNode, useRef, useCallback } from "react";
+import { Device, OpenVidu, Publisher, PublisherProperties, Session, Subscriber } from "openVidu-browser";
+import { createContext, useState, ReactNode, useRef, useCallback, useContext } from "react";
 
-interface OpenviduContextType {
-  ov: OpenVidu | undefined;
-  session: Session | undefined;
-  publisher: Publisher | undefined;
-  subscribers: Subscriber[];
-  audioInputs: Device[];
-  videoInputs: Device[];
-  publisherProperties: PublisherProperties | undefined;
-  joinSession: (token: string, userIdx: number) => void;
-  leaveSession: () => void;
-  getDevices: () => void;
-  setDevice: (device: Device) => void;
-}
+const OpenViduContext = createContext<OpenViduContextType | undefined>(undefined);
 
-export const OpenviduContext = createContext<OpenviduContextType>({
-  ov: undefined,
-  session: undefined,
-  publisher: undefined,
-  subscribers: [],
-  audioInputs: [],
-  videoInputs: [],
-  publisherProperties: undefined,
-  joinSession: () => {},
-  leaveSession: () => {},
-  getDevices: () => {},
-  setDevice: () => {},
-});
-
-export default function OpenviduProvider({ children }: { children: ReactNode }) {
+export default function OpenViduProvider({ children }: { children: ReactNode }) {
   const ov = useRef<OpenVidu>();
   const session = useRef<Session>();
   const publisherProperties = useRef<PublisherProperties>({
@@ -46,7 +20,7 @@ export default function OpenviduProvider({ children }: { children: ReactNode }) 
   const [audioInputs, setAudioInputs] = useState<Device[]>([]);
   const [videoInputs, setVideoInputs] = useState<Device[]>([]);
 
-  const initOpenvidu = async () => {
+  const initOpenVidu = async () => {
     if (ov.current) return;
 
     ov.current = new OpenVidu();
@@ -55,7 +29,7 @@ export default function OpenviduProvider({ children }: { children: ReactNode }) 
   };
 
   const joinSession = useCallback(async (token: string, userIdx: number) => {
-    await initOpenvidu();
+    await initOpenVidu();
 
     if (session.current?.connection?.connectionId) {
       console.error("이미 세션에 참여 중입니다.");
@@ -116,7 +90,7 @@ export default function OpenviduProvider({ children }: { children: ReactNode }) 
   }, [publisher]);
 
   const getDevices = useCallback(async () => {
-    await initOpenvidu();
+    await initOpenVidu();
 
     const devices = await ov.current!.getDevices();
     const audioDevices = devices.filter((device) => device.kind === "audioinput");
@@ -127,7 +101,7 @@ export default function OpenviduProvider({ children }: { children: ReactNode }) 
   }, []);
 
   const setDevice = useCallback(async (device: Device) => {
-    await initOpenvidu();
+    await initOpenVidu();
 
     if (!ov.current) return;
     if (!session.current) return;
@@ -145,8 +119,16 @@ export default function OpenviduProvider({ children }: { children: ReactNode }) 
   }, [publisher]);
 
   return (
-    <OpenviduContext.Provider value={{ ov: ov.current, session: session.current, publisherProperties: publisherProperties.current, publisher, subscribers, audioInputs, videoInputs, joinSession, leaveSession, getDevices, setDevice }}>
+    <OpenViduContext.Provider value={{ ov: ov.current, session: session.current, publisherProperties: publisherProperties.current, publisher, subscribers, audioInputs, videoInputs, joinSession, leaveSession, getDevices, setDevice }}>
       {children}
-    </OpenviduContext.Provider>
+    </OpenViduContext.Provider>
   );
 };
+
+export const useOpenVidu = (): OpenViduContextType => {
+  const context = useContext(OpenViduContext);
+  if (context === undefined) {
+    throw new Error("useOpenVidu는 OpenViduProvider 안에서만 사용할 수 있습니다.");
+  }
+  return context;
+}

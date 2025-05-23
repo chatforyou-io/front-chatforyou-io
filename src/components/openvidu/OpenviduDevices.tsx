@@ -1,8 +1,8 @@
-import { useContext, useEffect } from "react";
-import { OpenviduContext } from "@/src/contexts/OpenviduContext";
+import { useEffect } from "react";
+import { useOpenVidu } from "@/src/contexts/OpenViduContext";
 
-export default function OpenviduDevices() {
-  const { audioInputs, videoInputs, getDevices, setDevice } = useContext(OpenviduContext);
+export default function OpenViduDevices() {
+  const { audioInputs, videoInputs, getDevices, setDevice } = useOpenVidu();
 
   const handleAudioChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const audioInput = audioInputs?.find((device) => device.deviceId === e.target.value);

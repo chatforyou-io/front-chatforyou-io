@@ -1,13 +1,12 @@
-import { useContext } from "react";
 import IconUser from "@/public/images/icon-user.svg";
-import { OpenviduContext } from "@/src/contexts/OpenviduContext";
+import { useOpenVidu } from "@/src/contexts/OpenViduContext";
 
-interface OpenviduHeaderProps {
+interface OpenViduHeaderProps {
   chatroom: Chatroom;
 }
 
-export default function OpenviduHeader({ chatroom }: OpenviduHeaderProps) {
-  const { leaveSession } = useContext(OpenviduContext);
+export default function OpenViduHeader({ chatroom }: OpenViduHeaderProps) {
+  const { leaveSession } = useOpenVidu();
 
   // 나가기 버튼 클릭 시 세션 종료 후 이동
   const handleClick = () => {
