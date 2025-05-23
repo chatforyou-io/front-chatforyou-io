@@ -1,6 +1,6 @@
 import { StreamManager } from "openVidu-browser";
 import clsx from "clsx";
-import OpenViduStream from "@/src/components/openVidu/OpenViduStream";
+import OpenViduStream from "@/src/components/openvidu/OpenViduStream";
 
 interface OpenViduStreamListProps {
   streamManagers: StreamManager[];

@@ -6,7 +6,7 @@ import { chatroomToken } from "@/src/libs/chatroom";
 import Header from "@/src/components/Header";
 import { useSession } from "@/src/contexts/SessionContext";
 import { connectChatroomInfoSSE } from "@/src/libs/sses/chatroomInfo";
-import OpenViduCard from "@/src/components/openVidu/OpenViduCard";
+import OpenViduCard from "@/src/components/openvidu/OpenViduCard";
 import { useRouter } from "next/navigation";
 
 interface PageProps {

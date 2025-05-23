@@ -2,9 +2,9 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import OpenViduDevices from "@/src/components/openVidu/OpenViduDevices";
-import OpenViduHeader from "@/src/components/openVidu/OpenViduHeader";
-import OpenViduStreamList from "@/src/components/openVidu/OpenViduStreamList";
+import OpenViduDevices from "@/src/components/openvidu/OpenViduDevices";
+import OpenViduHeader from "@/src/components/openvidu/OpenViduHeader";
+import OpenViduStreamList from "@/src/components/openvidu/OpenViduStreamList";
 import { useOpenVidu } from "@/src/contexts/OpenViduContext";
 import { useSession } from "@/src/contexts/SessionContext";
 
@@ -19,7 +19,7 @@ export default function OpenViduCard({ chatroom, token }: OpenViduCardProps) {
   const router = useRouter();
 
   useEffect(() => {
-    if (!token || !user?.idx) return;
+    if (!token || !user) return;
 
     try {
       initSession();
@@ -28,7 +28,7 @@ export default function OpenViduCard({ chatroom, token }: OpenViduCardProps) {
       console.error(error);
       router.push("/");
     }
-  }, [token, user?.idx, joinSession, router]);
+  }, [token, user, initSession, joinSession, router]);
   
   return (
     <div className="flex flex-col justify-center items-center gap-4 p-4 md:p-8 bg-white rounded-2xl md:shadow-xl">

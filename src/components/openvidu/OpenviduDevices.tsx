@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useOpenVidu } from "@/src/contexts/OpenViduContext";
 
 export default function OpenViduDevices() {
