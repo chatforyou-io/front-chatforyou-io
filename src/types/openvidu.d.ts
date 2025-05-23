@@ -5,8 +5,15 @@ interface OpenViduContextType {
   subscribers: Subscriber[];
   audioDevices: MediaDeviceInfo[];
   videoDevices: MediaDeviceInfo[];
+  selectedAudio: string | undefined;
+  selectedVideo: string | undefined;
+  isAudioEnabled: boolean;
+  isVideoEnabled: boolean;
+  changeAudioDevice: (deviceId: string) => void;
+  changeVideoDevice: (deviceId: string) => void;
+  toggleAudio: () => void;
+  toggleVideo: () => void;
   initSession: () => void;
   joinSession: (token: string, userIdx: number) => Promise<void>;
   leaveSession: () => void;
-  setDevice: (device: MediaDeviceInfo) => void;
 }

@@ -10,6 +10,10 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>([]);
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
+  const [selectedAudio, setSelectedAudio] = useState<string | undefined>(undefined);
+  const [selectedVideo, setSelectedVideo] = useState<string | undefined>(undefined);
+  const [isAudioEnabled, setIsAudioEnabled] = useState(true);
+  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
 
   const initSession = async () => {
     if (ov.current) return;
@@ -84,30 +88,42 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
     });
   }, []);
 
-  const setDevice = useCallback(async (device: MediaDeviceInfo) => {
-    if (!ov.current) return;
-    if (!session.current) return;
+  const changeAudioDevice = (deviceId: string) => setSelectedAudio(deviceId);
+  const changeVideoDevice = (deviceId: string) => setSelectedVideo(deviceId);
 
-    const newPublisher = await ov.current.initPublisherAsync(undefined, {
-      audioSource: device.kind === "audioinput" ? device.deviceId : undefined,
-      videoSource: device.kind === "videoinput" ? device.deviceId : undefined,
-      publishAudio: true,
-      publishVideo: true,
-      resolution: "640x480",
-      frameRate: 30,
-      insertMode: "APPEND",
-      mirror: false,
-    });
+  const toggleAudio = () => {
+    if (publisher) {
+      publisher.publishAudio(!isAudioEnabled);
+      setIsAudioEnabled((prev) => !prev);
+    }
+  };
 
-    if (publisher) await session.current.unpublish(publisher);
-
-    await session.current.publish(newPublisher);
-
-    setPublisher(newPublisher);
-  }, [publisher]);
+  const toggleVideo = () => {
+    if (publisher) {
+      publisher.publishVideo(!isVideoEnabled);
+      setIsVideoEnabled((prev) => !prev);
+    }
+  };
 
   return (
-    <OpenViduContext.Provider value={{ ov: ov.current, session: session.current, publisher, subscribers, audioDevices, videoDevices, initSession, joinSession, leaveSession, setDevice }}>
+    <OpenViduContext.Provider value={{ ov: ov.current,
+      session: session.current,
+      publisher,
+      subscribers,
+      audioDevices,
+      videoDevices,
+      selectedAudio,
+      selectedVideo,
+      isAudioEnabled,
+      isVideoEnabled,
+      changeAudioDevice,
+      changeVideoDevice,
+      toggleAudio,
+      toggleVideo,
+      initSession,
+      joinSession,
+      leaveSession,  
+    }}>
       {children}
     </OpenViduContext.Provider>
   );
