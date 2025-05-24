@@ -1,5 +1,5 @@
 import { OpenVidu, Publisher, Session, Subscriber } from "openvidu-browser";
-import { createContext, useState, ReactNode, useRef, useCallback, useContext, useEffect } from "react";
+import { createContext, useState, ReactNode, useRef, useContext, useEffect, useCallback, useMemo } from "react";
 
 const OpenViduContext = createContext<OpenViduContextType | undefined>(undefined);
 
@@ -19,7 +19,7 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
    * OpenVidu 세션 초기화
    * @returns {Promise<void>}
    */
-  const initSession = async () => {
+  const initSession = useCallback(async (): Promise<void> => {
     if (ov.current) return;
 
     ov.current = new OpenVidu();
@@ -37,7 +37,7 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
       const streamManager = event.stream.streamManager;
       setSubscribers((prevSubscribers) => prevSubscribers.filter((subscriber) => subscriber !== streamManager));
     });
-  };
+  }, []);
 
   /**
    * OpenVidu 세션 참여
@@ -45,7 +45,7 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
    * @param {number} userIdx
    * @returns {Promise<void>}
    */
-  const joinSession = async (token: string, userIdx: number) => {
+  const joinSession = useCallback(async (token: string, userIdx: number): Promise<void> => {
     if (!ov.current) {
       console.error("OpenVidu 인스턴스가 초기화되지 않았습니다.");
       return;
@@ -58,9 +58,9 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
 
     await session.current.connect(token, { clientData: userIdx });
 
-    const newPublisher = ov.current.initPublisher(undefined, {
-      audioSource: undefined,
-      videoSource: undefined,
+    const newPublisher = await ov.current.initPublisherAsync(undefined, {
+      audioSource: selectedAudio ?? undefined,
+      videoSource: selectedVideo ?? undefined,
       publishAudio: true,
       publishVideo: true,
       resolution: "640x480",
@@ -72,28 +72,22 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
     await session.current.publish(newPublisher);
 
     setPublisher(newPublisher);
-  };
+  }, [selectedAudio, selectedVideo]);
 
   /**
    * OpenVidu 세션 종료
    * @returns {Promise<void>}
    */
-  const leaveSession = useCallback(() => {
+  const leaveSession = useCallback(async (): Promise<void> => {
     if (session.current) {
-      if (publisher) {
-        const stream = publisher.stream.getMediaStream();
-        stream.getTracks().forEach((track) => track.stop());
-      }
-      
       session.current.disconnect();
-      session.current = null;
     }
 
+    ov.current = null;
+    session.current = null;
     setPublisher(null);
     setSubscribers([]);
-
-    ov.current = null;
-  }, [publisher]);
+  }, []);
 
   // 장치 목록 가져오기
   useEffect(() => {
@@ -104,44 +98,63 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
   }, []);
 
   // 장치 변경 시 선택된 장치 업데이트
-  const changeAudioDevice = (deviceId: string) => setSelectedAudio(deviceId);
-  const changeVideoDevice = (deviceId: string) => setSelectedVideo(deviceId);
+  const changeAudioDevice = useCallback((deviceId: string) => setSelectedAudio(deviceId), []);
+  const changeVideoDevice = useCallback((deviceId: string) => setSelectedVideo(deviceId), []);
 
   // 오디오 장치 변경
-  const toggleAudio = () => {
+  const toggleAudio = useCallback(() => {
     if (publisher) {
       publisher.publishAudio(!isAudioEnabled);
       setIsAudioEnabled((prev) => !prev);
     }
-  };
+  }, [publisher, isAudioEnabled]);
 
   // 비디오 장치 변경
-  const toggleVideo = () => {
+  const toggleVideo = useCallback(() => {
     if (publisher) {
       publisher.publishVideo(!isVideoEnabled);
       setIsVideoEnabled((prev) => !prev);
     }
-  };
+  }, [publisher, isVideoEnabled]);
+
+  const contextValue = useMemo(() => ({
+    ov: ov.current,
+    session: session.current,
+    publisher,
+    subscribers,
+    audioDevices,
+    videoDevices,
+    selectedAudio,
+    selectedVideo,
+    isAudioEnabled,
+    isVideoEnabled,
+    changeAudioDevice,
+    changeVideoDevice,
+    toggleAudio,
+    toggleVideo,
+    initSession,
+    joinSession,
+    leaveSession,
+  }), [
+    publisher,
+    subscribers,
+    audioDevices,
+    videoDevices,
+    selectedAudio,
+    selectedVideo,
+    isAudioEnabled,
+    isVideoEnabled,
+    changeAudioDevice,
+    changeVideoDevice,
+    toggleAudio,
+    toggleVideo,
+    initSession,
+    joinSession,
+    leaveSession,
+  ]);
 
   return (
-    <OpenViduContext.Provider value={{ ov: ov.current,
-      session: session.current,
-      publisher,
-      subscribers,
-      audioDevices,
-      videoDevices,
-      selectedAudio,
-      selectedVideo,
-      isAudioEnabled,
-      isVideoEnabled,
-      changeAudioDevice,
-      changeVideoDevice,
-      toggleAudio,
-      toggleVideo,
-      initSession,
-      joinSession,
-      leaveSession,  
-    }}>
+    <OpenViduContext.Provider value={contextValue}>
       {children}
     </OpenViduContext.Provider>
   );

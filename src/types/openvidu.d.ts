@@ -13,7 +13,7 @@ interface OpenViduContextType {
   changeVideoDevice: (deviceId: string) => void;
   toggleAudio: () => void;
   toggleVideo: () => void;
-  initSession: () => void;
+  initSession: () => Promise<void>;
   joinSession: (token: string, userIdx: number) => Promise<void>;
-  leaveSession: () => void;
+  leaveSession: () => Promise<void>;
 }
