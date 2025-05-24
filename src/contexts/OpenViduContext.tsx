@@ -1,5 +1,5 @@
 import { OpenVidu, Publisher, Session, Subscriber } from "openvidu-browser";
-import { createContext, useState, ReactNode, useRef, useCallback, useContext, useEffect } from "react";
+import { createContext, useState, ReactNode, useRef, useContext, useEffect } from "react";
 
 const OpenViduContext = createContext<OpenViduContextType | undefined>(undefined);
 
@@ -19,7 +19,7 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
    * OpenVidu 세션 초기화
    * @returns {Promise<void>}
    */
-  const initSession = async () => {
+  const initSession = async (): Promise<void> => {
     if (ov.current) return;
 
     ov.current = new OpenVidu();
@@ -45,7 +45,7 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
    * @param {number} userIdx
    * @returns {Promise<void>}
    */
-  const joinSession = async (token: string, userIdx: number) => {
+  const joinSession = async (token: string, userIdx: number): Promise<void> => {
     if (!ov.current) {
       console.error("OpenVidu 인스턴스가 초기화되지 않았습니다.");
       return;
@@ -58,7 +58,7 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
 
     await session.current.connect(token, { clientData: userIdx });
 
-    const newPublisher = ov.current.initPublisher(undefined, {
+    const newPublisher = await ov.current.initPublisherAsync(undefined, {
       audioSource: undefined,
       videoSource: undefined,
       publishAudio: true,
@@ -78,22 +78,16 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
    * OpenVidu 세션 종료
    * @returns {Promise<void>}
    */
-  const leaveSession = useCallback(() => {
+  const leaveSession = async (): Promise<void> => {
     if (session.current) {
-      if (publisher) {
-        const stream = publisher.stream.getMediaStream();
-        stream.getTracks().forEach((track) => track.stop());
-      }
-      
       session.current.disconnect();
-      session.current = null;
     }
 
+    ov.current = null;
+    session.current = null;
     setPublisher(null);
     setSubscribers([]);
-
-    ov.current = null;
-  }, [publisher]);
+  };
 
   // 장치 목록 가져오기
   useEffect(() => {
