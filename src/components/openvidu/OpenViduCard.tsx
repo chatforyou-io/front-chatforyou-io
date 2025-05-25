@@ -14,21 +14,29 @@ interface OpenViduCardProps {
 }
 
 export default function OpenViduCard({ chatroom, token }: OpenViduCardProps) {
-  const { publisher, subscribers, initSession, joinSession } = useOpenVidu();
+  const { publisher, subscribers, initSession, joinSession, leaveSession } = useOpenVidu();
   const { user } = useSession();
   const router = useRouter();
 
   useEffect(() => {
     if (!token || !user) return;
 
-    try {
-      initSession();
-      joinSession(token, user.idx);
-    } catch (error) {
-      console.error(error);
-      router.push("/");
-    }
-  }, [token, user, initSession, joinSession, router]);
+    const setup = async () => {
+      try {
+        initSession();
+        await joinSession(token, user.idx);
+      } catch (error) {
+        console.error(error);
+        router.push("/");
+      }
+    };
+
+    setup();
+
+    return () => {
+      leaveSession();
+    };
+  }, [token, user, initSession, joinSession, leaveSession, router]);
   
   return (
     <div className="flex flex-col justify-center items-center gap-4 p-4 md:p-8 bg-white rounded-2xl md:shadow-xl">
