@@ -1,5 +1,6 @@
 import { OpenVidu, Publisher, Session, Subscriber } from "openvidu-browser";
 import { createContext, useState, ReactNode, useRef, useContext, useEffect, useCallback, useMemo } from "react";
+import { OpenViduContextType } from "@/src/types/openvidu";
 
 const OpenViduContext = createContext<OpenViduContextType | undefined>(undefined);
 
@@ -14,6 +15,57 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
   const [selectedVideo, setSelectedVideo] = useState<string | undefined>(undefined);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
+
+  /**
+   * OpenVidu 퍼블리셔 초기화
+   * @returns {Promise<Publisher>}
+   */
+  const initPublisher = useCallback(async (): Promise<Publisher> => {
+    if (!ov.current) throw new Error("OpenVidu 인스턴스가 없습니다.");
+  
+    try {
+      return await ov.current.initPublisherAsync(undefined, {
+        audioSource: selectedAudio ?? undefined,
+        videoSource: selectedVideo ?? undefined,
+        publishAudio: true,
+        publishVideo: true,
+        resolution: "640x480",
+        frameRate: 30,
+        insertMode: "APPEND",
+        mirror: false,
+      });
+    } catch (error) {
+      console.warn("장치 접근에 문제가 발생했습니다. 기본 퍼블리셔를 사용합니다.", error);
+      
+      return await ov.current.initPublisherAsync(undefined, {
+        audioSource: selectedAudio ?? undefined,
+        videoSource: false,
+        publishAudio: true,
+        publishVideo: false,
+        resolution: "640x480",
+        frameRate: 30,
+        insertMode: "APPEND",
+        mirror: false,
+      });
+    }
+  }, [selectedAudio, selectedVideo]);
+
+  /**
+   * OpenVidu 퍼블리셔 교체
+   * @returns {Promise<void>}
+   */
+  const replacePublisher = useCallback(async () => {
+    if (!session.current) throw new Error("Session이 초기화되지 않았습니다.");
+    if (!publisher) throw new Error("Publisher 인스턴스가 없습니다.");
+  
+    // 기존 퍼블리셔 언퍼블리시
+    await session.current.unpublish(publisher);
+  
+    // 새 퍼블리셔 생성 및 등록
+    const newPublisher = await initPublisher();
+    await session.current.publish(newPublisher);
+    setPublisher(newPublisher);
+  }, [session, publisher, initPublisher]);  
 
   /**
    * OpenVidu 세션 초기화
@@ -58,21 +110,10 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
 
     await session.current.connect(token, { clientData: userIdx });
 
-    const newPublisher = await ov.current.initPublisherAsync(undefined, {
-      audioSource: selectedAudio ?? undefined,
-      videoSource: selectedVideo ?? undefined,
-      publishAudio: true,
-      publishVideo: true,
-      resolution: "640x480",
-      frameRate: 30,
-      insertMode: "APPEND",
-      mirror: false,
-    });
-
+    const newPublisher = await initPublisher();
     await session.current.publish(newPublisher);
-
     setPublisher(newPublisher);
-  }, [selectedAudio, selectedVideo]);
+  }, [initPublisher]);
 
   /**
    * OpenVidu 세션 종료
@@ -98,8 +139,14 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
   }, []);
 
   // 장치 변경 시 선택된 장치 업데이트
-  const changeAudioDevice = useCallback((deviceId: string) => setSelectedAudio(deviceId), []);
-  const changeVideoDevice = useCallback((deviceId: string) => setSelectedVideo(deviceId), []);
+  const changeAudioDevice = useCallback((deviceId: string) => {
+    replacePublisher();
+    setSelectedAudio(deviceId);
+  }, [replacePublisher]);
+  const changeVideoDevice = useCallback((deviceId: string) => {
+    replacePublisher();
+    setSelectedVideo(deviceId);
+  }, [replacePublisher]);
 
   // 오디오 장치 변경
   const toggleAudio = useCallback(() => {
@@ -120,7 +167,7 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
   const contextValue = useMemo(() => ({
     ov: ov.current,
     session: session.current,
-    publisher,
+    publisher: publisher,
     subscribers,
     audioDevices,
     videoDevices,
@@ -135,6 +182,8 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
     initSession,
     joinSession,
     leaveSession,
+    initPublisher,
+    replacePublisher,
   }), [
     publisher,
     subscribers,
@@ -151,6 +200,8 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
     initSession,
     joinSession,
     leaveSession,
+    initPublisher,
+    replacePublisher,
   ]);
 
   return (

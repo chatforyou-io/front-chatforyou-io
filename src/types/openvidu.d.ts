@@ -1,3 +1,5 @@
+import { Publisher } from "openvidu-browser";
+
 interface OpenViduContextType {
   ov: OpenVidu | null;
   session: Session | null;
@@ -16,4 +18,6 @@ interface OpenViduContextType {
   initSession: () => Promise<void>;
   joinSession: (token: string, userIdx: number) => Promise<void>;
   leaveSession: () => Promise<void>;
+  initPublisher: () => Promise<Publisher>;
+  replacePublisher: () => void;
 }

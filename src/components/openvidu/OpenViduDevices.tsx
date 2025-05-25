@@ -21,7 +21,7 @@ export default function OpenViduDevices() {
 
   return (
     <div className="flex gap-2 w-full bg-white">
-      <div className="flex items-center">
+      <div className="flex items-center w-full">
         <button
           type="button"
           onClick={toggleAudio}
@@ -37,12 +37,13 @@ export default function OpenViduDevices() {
           value={selectedAudio}
           onChange={(event) => changeAudioDevice(event.target.value)}
           className="border border-primary p-2 w-full h-12 hover:bg-gray-300 rounded-r-full shadow-md truncate">
+          {audioDevices?.length === 0 && <option className="text-sm" value="">오디오 장치가 없습니다.</option>}
           {audioDevices?.map((device) => (
             <option key={device.deviceId} className="text-sm" value={device.deviceId}>{device.label}</option>
           ))}
         </select>
       </div>
-      <div className="flex items-center">
+      <div className="flex items-center w-full">
         <button
           type="button"
           onClick={toggleVideo}
@@ -58,6 +59,7 @@ export default function OpenViduDevices() {
           value={selectedVideo}
           onChange={(event) => changeVideoDevice(event.target.value)}
           className="border border-primary p-2 w-full h-12 hover:bg-gray-300 rounded-r-full shadow-md truncate">
+          {videoDevices?.length === 0 && <option className="text-sm" value="">비디오 장치가 없습니다.</option>}
           {videoDevices?.map((device) => (
             <option key={device.deviceId} className="text-sm" value={device.deviceId}>{device.label}</option>
           ))}
