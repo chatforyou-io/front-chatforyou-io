@@ -25,10 +25,10 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
   
     try {
       return await ov.current.initPublisherAsync(undefined, {
-        audioSource: selectedAudio ?? undefined,
-        videoSource: selectedVideo ?? undefined,
-        publishAudio: true,
-        publishVideo: true,
+        audioSource: selectedAudio,
+        videoSource: selectedVideo,
+        publishAudio: selectedAudio ? true : false,
+        publishVideo: selectedVideo ? true : false,
         resolution: "640x480",
         frameRate: 30,
         insertMode: "APPEND",
@@ -89,6 +89,18 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
       const streamManager = event.stream.streamManager;
       setSubscribers((prevSubscribers) => prevSubscribers.filter((subscriber) => subscriber !== streamManager));
     });
+
+    // 장치 목록 가져오기
+    try {
+      await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    } catch (error) {
+      console.warn("비디오 장치 접근 권한이 거부되었습니다. 오디오 장치만 사용합니다.", error);
+      await navigator.mediaDevices.getUserMedia({ audio: true });
+    }
+
+    const devices = await ov.current.getDevices();
+    setVideoDevices(devices.filter((device) => device.kind === 'videoinput'));
+    setAudioDevices(devices.filter((device) => device.kind === 'audioinput'));
   }, []);
 
   /**
@@ -129,19 +141,6 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
     setPublisher(null);
     setSubscribers([]);
   }, []);
-
-  // 장치 목록 가져오기
-  useEffect(() => {
-    if (!ov.current) return;
-
-    navigator.mediaDevices.getUserMedia({ audio: true, video: true }) // 오디오와 비디오 장치 접근 요청
-      .then(() => ov.current!.getDevices()) // 장치 목록 가져오기
-      .then((devices) => {
-        setVideoDevices(devices.filter((d) => d.kind === 'videoinput'));
-        setAudioDevices(devices.filter((d) => d.kind === 'audioinput'));
-      })
-      .catch((error) => console.error("장치 접근에 실패했습니다.", error));
-  }, [ov.current]);
 
   // 장치 변경 시 선택된 장치 업데이트
   const changeAudioDevice = useCallback((deviceId: string) => {

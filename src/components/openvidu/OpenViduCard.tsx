@@ -23,7 +23,7 @@ export default function OpenViduCard({ chatroom, token }: OpenViduCardProps) {
 
     const setup = async () => {
       try {
-        initSession();
+        await initSession();
         await joinSession(token, user.idx);
       } catch (error) {
         console.error(error);
