@@ -1,4 +1,4 @@
-import { OpenVidu, Publisher, Session, Subscriber } from "openvidu-browser";
+import { Device, OpenVidu, Publisher, Session, Subscriber } from "openvidu-browser";
 import { createContext, useState, ReactNode, useRef, useContext, useEffect, useCallback, useMemo } from "react";
 import { OpenViduContextType } from "@/src/types/openvidu";
 
@@ -9,8 +9,8 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
   const session = useRef<Session | null>(null);
   const [publisher, setPublisher] = useState<Publisher | null>(null);
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
-  const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>([]);
-  const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
+  const [audioDevices, setAudioDevices] = useState<Device[]>([]);
+  const [videoDevices, setVideoDevices] = useState<Device[]>([]);
   const [selectedAudio, setSelectedAudio] = useState<string | undefined>(undefined);
   const [selectedVideo, setSelectedVideo] = useState<string | undefined>(undefined);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
@@ -132,11 +132,16 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
 
   // 장치 목록 가져오기
   useEffect(() => {
-    navigator.mediaDevices.enumerateDevices().then((devices) => {
-      setVideoDevices(devices.filter((d) => d.kind === 'videoinput'));
-      setAudioDevices(devices.filter((d) => d.kind === 'audioinput'));
-    });
-  }, []);
+    if (!ov.current) return;
+
+    navigator.mediaDevices.getUserMedia({ audio: true, video: true }) // 오디오와 비디오 장치 접근 요청
+      .then(() => ov.current!.getDevices()) // 장치 목록 가져오기
+      .then((devices) => {
+        setVideoDevices(devices.filter((d) => d.kind === 'videoinput'));
+        setAudioDevices(devices.filter((d) => d.kind === 'audioinput'));
+      })
+      .catch((error) => console.error("장치 접근에 실패했습니다.", error));
+  }, [ov.current]);
 
   // 장치 변경 시 선택된 장치 업데이트
   const changeAudioDevice = useCallback((deviceId: string) => {

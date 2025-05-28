@@ -1,12 +1,12 @@
-import { Publisher } from "openvidu-browser";
+import { Device, Publisher } from "openvidu-browser";
 
 interface OpenViduContextType {
   ov: OpenVidu | null;
   session: Session | null;
   publisher: Publisher | null;
   subscribers: Subscriber[];
-  audioDevices: MediaDeviceInfo[];
-  videoDevices: MediaDeviceInfo[];
+  audioDevices: Device[];
+  videoDevices: Device[];
   selectedAudio: string | undefined;
   selectedVideo: string | undefined;
   isAudioEnabled: boolean;
