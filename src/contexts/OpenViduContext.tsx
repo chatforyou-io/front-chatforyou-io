@@ -1,5 +1,5 @@
 import { Device, OpenVidu, Publisher, Session, Subscriber } from "openvidu-browser";
-import { createContext, useState, ReactNode, useRef, useContext, useEffect, useCallback, useMemo } from "react";
+import { createContext, useState, ReactNode, useRef, useContext, useCallback, useMemo } from "react";
 import { OpenViduContextType } from "@/src/types/openvidu";
 
 const OpenViduContext = createContext<OpenViduContextType | undefined>(undefined);
