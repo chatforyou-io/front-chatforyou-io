@@ -1,4 +1,4 @@
-import { OpenVidu, Publisher, Session, Subscriber } from "openvidu-browser";
+import { Device, OpenVidu, Publisher, Session, Subscriber } from "openvidu-browser";
 import { createContext, useState, ReactNode, useRef, useContext, useEffect, useCallback, useMemo } from "react";
 import { OpenViduContextType } from "@/src/types/openvidu";
 
@@ -9,8 +9,8 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
   const session = useRef<Session | null>(null);
   const [publisher, setPublisher] = useState<Publisher | null>(null);
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
-  const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>([]);
-  const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
+  const [audioDevices, setAudioDevices] = useState<Device[]>([]);
+  const [videoDevices, setVideoDevices] = useState<Device[]>([]);
   const [selectedAudio, setSelectedAudio] = useState<string | undefined>(undefined);
   const [selectedVideo, setSelectedVideo] = useState<string | undefined>(undefined);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
@@ -25,10 +25,10 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
   
     try {
       return await ov.current.initPublisherAsync(undefined, {
-        audioSource: selectedAudio ?? undefined,
-        videoSource: selectedVideo ?? undefined,
-        publishAudio: true,
-        publishVideo: true,
+        audioSource: selectedAudio,
+        videoSource: selectedVideo,
+        publishAudio: selectedAudio ? true : false,
+        publishVideo: selectedVideo ? true : false,
         resolution: "640x480",
         frameRate: 30,
         insertMode: "APPEND",
@@ -89,6 +89,18 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
       const streamManager = event.stream.streamManager;
       setSubscribers((prevSubscribers) => prevSubscribers.filter((subscriber) => subscriber !== streamManager));
     });
+
+    // 장치 목록 가져오기
+    try {
+      await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    } catch (error) {
+      console.warn("비디오 장치 접근 권한이 거부되었습니다. 오디오 장치만 사용합니다.", error);
+      await navigator.mediaDevices.getUserMedia({ audio: true });
+    }
+
+    const devices = await ov.current.getDevices();
+    setVideoDevices(devices.filter((device) => device.kind === 'videoinput'));
+    setAudioDevices(devices.filter((device) => device.kind === 'audioinput'));
   }, []);
 
   /**
@@ -128,14 +140,6 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
     session.current = null;
     setPublisher(null);
     setSubscribers([]);
-  }, []);
-
-  // 장치 목록 가져오기
-  useEffect(() => {
-    navigator.mediaDevices.enumerateDevices().then((devices) => {
-      setVideoDevices(devices.filter((d) => d.kind === 'videoinput'));
-      setAudioDevices(devices.filter((d) => d.kind === 'audioinput'));
-    });
   }, []);
 
   // 장치 변경 시 선택된 장치 업데이트
