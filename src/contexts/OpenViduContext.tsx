@@ -144,12 +144,12 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
 
   // 장치 변경 시 선택된 장치 업데이트
   const changeAudioDevice = useCallback((deviceId: string) => {
-    replacePublisher();
     setSelectedAudio(deviceId);
+    replacePublisher();
   }, [replacePublisher]);
   const changeVideoDevice = useCallback((deviceId: string) => {
-    replacePublisher();
     setSelectedVideo(deviceId);
+    replacePublisher();
   }, [replacePublisher]);
 
   // 오디오 장치 변경
