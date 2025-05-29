@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import OpenViduDevices from "@/src/components/openvidu/OpenViduDevices";
 import OpenViduHeader from "@/src/components/openvidu/OpenViduHeader";
@@ -17,11 +17,13 @@ export default function OpenViduCard({ chatroom, token }: OpenViduCardProps) {
   const { publisher, subscribers, initSession, joinSession, leaveSession } = useOpenVidu();
   const { user } = useSession();
   const router = useRouter();
-
+  
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!token || !user) return;
 
     const setup = async () => {
+      console.log("OpenViduCard: Setting up OpenVidu session...");
       try {
         await initSession();
         await joinSession(token, user.idx);
@@ -36,7 +38,7 @@ export default function OpenViduCard({ chatroom, token }: OpenViduCardProps) {
     return () => {
       leaveSession();
     };
-  }, [token, user, initSession, joinSession, leaveSession, router]);
+  }, [token, user]);
   
   return (
     <div className="flex flex-col justify-center items-center gap-4 p-4 md:p-8 bg-white rounded-2xl md:shadow-xl">
