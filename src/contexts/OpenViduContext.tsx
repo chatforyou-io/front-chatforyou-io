@@ -25,10 +25,10 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
   
     try {
       return await ov.current.initPublisherAsync(undefined, {
-        audioSource: selectedAudio,
-        videoSource: selectedVideo,
-        publishAudio: selectedAudio ? true : false,
-        publishVideo: selectedVideo ? true : false,
+        audioSource: undefined,
+        videoSource: undefined,
+        publishAudio: true,
+        publishVideo: true,
         resolution: "640x480",
         frameRate: 30,
         insertMode: "APPEND",
@@ -38,7 +38,7 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
       console.warn("장치 접근에 문제가 발생했습니다. 기본 퍼블리셔를 사용합니다.", error);
       
       return await ov.current.initPublisherAsync(undefined, {
-        audioSource: selectedAudio ?? undefined,
+        audioSource: undefined,
         videoSource: false,
         publishAudio: true,
         publishVideo: false,
@@ -48,7 +48,7 @@ export default function OpenViduProvider({ children }: { children: ReactNode }) 
         mirror: false,
       });
     }
-  }, [selectedAudio, selectedVideo]);
+  }, []);
 
   /**
    * OpenVidu 퍼블리셔 교체

@@ -7,6 +7,7 @@ import OpenViduHeader from "@/src/components/openvidu/OpenViduHeader";
 import OpenViduStreamList from "@/src/components/openvidu/OpenViduStreamList";
 import { useOpenVidu } from "@/src/contexts/OpenViduContext";
 import { useSession } from "@/src/contexts/SessionContext";
+import { StreamManager } from "openvidu-browser";
 
 interface OpenViduCardProps {
   chatroom: Chatroom;
@@ -22,7 +23,6 @@ export default function OpenViduCard({ chatroom, token }: OpenViduCardProps) {
     if (!token || !user) return;
 
     const setup = async () => {
-      console.log("OpenViduCard: Setting up OpenVidu session...");
       try {
         await initSession();
         await joinSession(token, user.idx);
@@ -39,6 +39,18 @@ export default function OpenViduCard({ chatroom, token }: OpenViduCardProps) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, user]);
+
+  const streamManagers: StreamManager[] = publisher ? [publisher, ...subscribers] : subscribers;
+
+  if (streamManagers.length === 0) {
+    return (
+      <div className="flex flex-col justify-center items-center gap-4 p-4 md:p-8 bg-white rounded-2xl md:shadow-xl">
+        <OpenViduDevices />
+        <OpenViduHeader chatroom={chatroom} />
+        <p className="text-gray-500">현재 참여자가 없습니다.</p>
+      </div>
+    );
+  }
   
   return (
     <div className="flex flex-col justify-center items-center gap-4 p-4 md:p-8 bg-white rounded-2xl md:shadow-xl">
