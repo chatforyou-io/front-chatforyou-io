@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { StreamManager } from 'openvidu-browser';
-import IconLoader from "@/public/images/icons/loader.svg";
+import IconVideoOff from "@/public/images/icons/video-off.svg";
 
 interface SessionProps {
 	streamManager?: StreamManager;
@@ -16,10 +16,10 @@ export default function OpenViduStream({ streamManager }: SessionProps) {
 		}
 	}, [streamManager]);
 
-  if (!streamManager) {
+  if (!streamManager?.stream.videoActive) {
     return (
       <div className="flex justify-center items-center w-full aspect-video bg-gray-200 rounded-2xl">
-        <IconLoader className="w-12 h-12 animate-spin" />
+        <IconVideoOff className="w-12 h-12" />
       </div>
     );
   }
