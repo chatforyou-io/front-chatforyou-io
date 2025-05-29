@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import OpenViduDevices from "@/src/components/openvidu/OpenViduDevices";
 import OpenViduHeader from "@/src/components/openvidu/OpenViduHeader";
@@ -18,7 +18,6 @@ export default function OpenViduCard({ chatroom, token }: OpenViduCardProps) {
   const { user } = useSession();
   const router = useRouter();
   
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!token || !user) return;
 
@@ -38,6 +37,7 @@ export default function OpenViduCard({ chatroom, token }: OpenViduCardProps) {
     return () => {
       leaveSession();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, user]);
   
   return (
