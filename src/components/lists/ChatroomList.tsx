@@ -1,24 +1,23 @@
 import ChatroomCard from "@/src/components/cards/ChatroomCard";
+import IconPlus from "@/public/images/icons/plus.svg";
 
 interface ChatroomListProps {
   chatrooms: Chatroom[];
+  toggleChatroomCreateForm: () => void;
 }
 
-export default function ChatroomList({ chatrooms }: ChatroomListProps) {
-  if (chatrooms.length === 0) {
-    return (
-      <div className="flex justify-center items-center size-full">
-        <p className="text-gray-500">채팅방이 존재하지 않습니다.</p>
-      </div>
-    );
-  }
-
+export default function ChatroomList({ chatrooms, toggleChatroomCreateForm }: ChatroomListProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mx-auto">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mx-auto w-full">
+      <button
+        type="button"
+        className="flex flex-col justify-center items-center w-full h-44 bg-white hover:bg-blue-300 rounded-2xl shadow-xl"
+        onClick={toggleChatroomCreateForm}
+      >
+        <IconPlus aria-label="plus" width={24} height={24} className="text-black" />
+      </button>
       {chatrooms.map((chatroom, index) => (
-        <div key={index} className="w-full bg-white rounded-2xl shadow-xl">
-          <ChatroomCard chatroom={chatroom} />
-        </div>
+        <ChatroomCard chatroom={chatroom} />
       ))}
     </div>
   );

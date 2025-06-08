@@ -15,9 +15,15 @@ const chatroomCreate = async (chatroom: Chatroom) => {
   }
 };
 
-const chatroomList = async () => {
+const chatroomList = async (keyword: string, pageNum: number, pageSize: number) => {
+  if (pageNum < 1 || pageSize < 1) {
+    return { isSuccess: false, message: "페이지 번호와 페이지 크기는 1 이상이어야 합니다." };
+  }
+  
   try {
-    const { data } = await serverApi.get("/chatforyouio/chatroom/list");
+    const { data } = await serverApi.get("/chatforyouio/chatroom/list", {
+      params: { keyword, pageNum, pageSize }
+    });
     
     return { isSuccess: true, ...data };
   } catch (error: any) {

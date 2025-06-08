@@ -18,11 +18,7 @@ export default function Header() {
   const openProfileModal = () => setActiveModal("profile");
   const openUserUpdateFormModal = () => setActiveModal("update");
   const closeModal = () => setActiveModal(null);
-
-  const handleSignOut = async () => {
-    await signOut();
-    window.location.reload();
-  }
+  const handleSignOut = async () => signOut();
 
   return (
     <>

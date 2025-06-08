@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 interface SessionContextType {
   user: User | null;
   signIn: (username: string, password: string) => Promise<{ isSuccess: boolean, message: string }>;
-  signOut: () => Promise<{ isSuccess: boolean, message: string }>;
+  signOut: () => void;
   updateUser: (idx: number, nickName: string) => Promise<{ isSuccess: boolean, message: string }>;
   deleteUser: (idx: number, id: string) => Promise<{ isSuccess: boolean, message: string }>;
 }
@@ -59,32 +59,15 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
   /**
    * 로그아웃
    */
-  const signOut = useCallback(async (): Promise<SessionResultType> => {
-    try {
-      if (!user) {
-        return { isSuccess: false, message: "로그인 상태가 아닙니다." };
-      }
-
-      const { idx, id } = user;
-
-      // 로그아웃 요청
-      const { status, data } = await axios.post("/chatforyouio/front/api/signout", { idx, id });
-      const { message } = data;
-
-      // 로그아웃 실패 시
-      if (status !== 200) {
-        throw new AxiosError(message || "알 수 없는 오류로 로그아웃에 실패했습니다. 다시 시도해주세요.");
-      }
-
-      // 사용자 정보 초기화
-      setUser(null);
-
-      // 로그아웃 성공 시
-      return { isSuccess: true, message: "로그아웃에 성공했습니다." };
-    } catch (error) {
-      const errorMessage = error instanceof AxiosError ? error.response?.data.message : "알 수 없는 오류로 로그아웃에 실패했습니다. 다시 시도해주세요.";
-      return { isSuccess: false, message: errorMessage };
+  const signOut = useCallback((): void => {
+    if (!user) {
+      window.location.href = "/chatforyouio/front/auth/login";
+      return;
     }
+
+    // 로그아웃 요청
+    const { idx, id } = user;
+    window.location.href = `/chatforyouio/front/api/signout`;
   }, [user]);
 
   /**
@@ -111,8 +94,8 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
         const status = error.response?.status;
 
         if (status === 401) {
-          await signOut();
-          window.location.reload();
+          signOut();
+          return { isSuccess: false, message: "로그인이 필요합니다. 다시 로그인해주세요." };
         }
       }
 

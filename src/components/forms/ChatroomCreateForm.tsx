@@ -27,9 +27,9 @@ export default function ChatroomCreateForm({ onClose }: ChatroomCreateFormProps)
   });
 
   // 방 만들기 폼 제출
-  const processSubmit = async ({ roomName, maxUserCount, usePwd, pwd }: ChatroomCreateSchemaType) => {
+  const processSubmit = async ({ roomName, maxUserCount }: ChatroomCreateSchemaType) => {
     try {
-      const { isSuccess, message, roomData } = await chatroomCreate({roomName, maxUserCount, usePwd, pwd, userIdx });
+      const { isSuccess, message, roomData } = await chatroomCreate({roomName, maxUserCount, usePwd: false, pwd: '', userIdx });
 
       // 방 만들기 실패 시
       if (!isSuccess) {
@@ -80,28 +80,6 @@ export default function ChatroomCreateForm({ onClose }: ChatroomCreateFormProps)
               <option value="4">4명</option>
             </select>
             {errors.maxUserCount && <p className="text-red-500">{errors.maxUserCount.message}</p>}
-          </div>
-        </div>
-        <div className="space-y-4">
-          <h3 className="font-semibold">암호</h3>
-          <div className="space-y-2">
-            <div className="flex gap-4">
-              <input
-                type="checkbox"
-                aria-label="암호 사용 여부"
-                {...register("usePwd")}
-              />
-              <input
-                type="text"
-                placeholder="방 비밀번호"
-                className={clsx("border px-4 h-16 w-full bg-gray-100 rounded-full", {
-                  "border-red-500": errors.pwd,
-                })}
-                aria-label="방 비밀번호"
-                {...register("pwd")}
-              />
-            </div>
-            {errors.pwd && <p className="text-red-500">{errors.pwd.message}</p>}
           </div>
         </div>
       </div>
