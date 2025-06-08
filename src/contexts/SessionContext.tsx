@@ -60,15 +60,8 @@ export function SessionProvider({ children }: { children: ReactNode }): ReactNod
    * 로그아웃
    */
   const signOut = useCallback((): void => {
-    if (!user) {
-      window.location.href = "/chatforyouio/front/auth/login";
-      return;
-    }
-
-    // 로그아웃 요청
-    const { idx, id } = user;
     window.location.href = `/chatforyouio/front/api/signout`;
-  }, [user]);
+  }, []);
 
   /**
    * 사용자 정보 가져오기

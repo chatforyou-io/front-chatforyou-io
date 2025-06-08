@@ -17,7 +17,7 @@ export default function ChatroomList({ chatrooms, toggleChatroomCreateForm }: Ch
         <IconPlus aria-label="plus" width={24} height={24} className="text-black" />
       </button>
       {chatrooms.map((chatroom, index) => (
-        <ChatroomCard chatroom={chatroom} />
+        <ChatroomCard key={index} chatroom={chatroom} />
       ))}
     </div>
   );

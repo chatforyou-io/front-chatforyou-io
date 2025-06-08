@@ -1,7 +1,5 @@
 import React from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import IconExclamationCircle from '@/public/images/icon-exclamation-circle.svg';
 import IconUser from '@/public/images/icon-user.svg';
 
 interface ChatroomCardProps {
